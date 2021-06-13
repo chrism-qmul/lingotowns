@@ -1,0 +1,13 @@
+version: '2' 
+
+services:
+  server:
+    build: server
+    image: registry.phd.madg.es/lingtowns-server:0.0.1
+    restart: unless-stopped
+    volumes:
+      - ./server/:/app
+    ports:
+      - 8024:5000
+    environment:
+      - FLASK_DEBUG:True

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Lingotowns</title>
+    <link rel="stylesheet" type="text/css" href="dali.css" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script type='text/javascript' src="progresscircle.js"></script>
+    <style>
+    </style>
+    <script>
+      function closewindow() {
+              console.log("posting");
+              window.parent.postMessage({type:"closeframes"},"*");
+            }
+      function showgame() {
+              const game = document.forms[0].game.value;
+              window.parent.postMessage({type:"showgame", game: game},"*");
+              return false;
+            }
+    </script>
+  </head>
+  <body class='staticfooter staticheader'>
+    <header class='static'>
+      <h1>LingoTowns.com</h1>
+    </header>
+    <main>
+      <h2>Town Name</h2>
+
+      <table class='detail'>
+        <tr>
+          <th>Subject:</th>
+          <td>Fiction</td>
+        </tr>
+        <tr>
+          <th>Document Title:</th>
+          <td>Long document titles</td>
+        </tr>
+        <tr>
+          <th>Author/Source:</th>
+          <td>Arthur Conan Doyle</td>
+        </tr>
+        <tr>
+          <th>Level:</th>
+          <td>
+            <div class='progress-bar'>
+              <span id='library-progress'>10%</span>
+              <div  id='library-progress-width' style='width:10%;' class='bar'></div>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <form method='get' action='/game.html' onsubmit='return showgame()'>
+        <div class='options progress'>
+          <label>
+            <input type='radio' name='game' value='farm' checked="checked" />
+            <span class='number'>1</span>
+            <div class='img img-farm'></div>
+            <h2>Farm</h2>
+            <p>Learning English as a second language</p>
+            <div data-text="75%" data-amount='0.75' data-fill='#FFF' data-thickness='6' data-bg-color='#CCC' data-fg-color='#F00' class='progresscircle'></div>
+          </label>
+          <label>
+            <input type='radio' name='game' value='food' />
+            <span class='number'>2</span>
+            <div class='img img-food'></div>
+            <h2>Food</h2>
+            <p>Learning English as a second language</p>
+            <div data-text="75%" data-amount='0.75' data-fill='#FFF' data-thickness='6' data-bg-color='#CCC' data-fg-color='#F00' class='progresscircle'></div>
+          </label>
+          <label>
+            <input type='radio' name='game' value='library' />
+            <span class='number'>3</span>
+            <div class='img img-library'></div>
+            <h2>Library</h2>
+            <p>Assured understanding of grammar</p>
+            <div data-text="75%" data-amount='0.75' data-fill='#FFF' data-thickness='6' data-bg-color='#CCC' data-fg-color='#F00' class='progresscircle'></div>
+          </label>
+          <label>
+            <input type='radio' name='game' value='detectives' />
+            <span class='number'>4</span>
+            <div class='img img-detectives'></div>
+            <h2>Detectives</h2>
+            <p>Grammar whiz or academic studying Linguists</p>
+            <div data-text="75%" data-amount='0.75' data-fill='#FFF' data-thickness='6' data-bg-color='#CCC' data-fg-color='#F00' class='progresscircle'></div>
+          </label>
+        </div>
+        <footer class='static'>
+          <nav class="btn-panel tight">
+            <a class='btn tertiary' onclick='closewindow()' href='#'>Back</a>
+            <button type="submit">Select</button>
+          </nav>
+        </footer>
+      </form>
+    </main> 
+  </body>
+</html>
