@@ -6,9 +6,15 @@ import {BoundingBox} from './collections/BoundingBox.js';
 import {WorldSearch} from './algorithms/WorldSearch.js';
 import {voronoi2} from './algorithms/voronoi.js';
 
+export const RoadWest = 1;
+export const RoadNorth = 1 << 1;
+export const RoadEast = 1 << 2;
+export const RoadSouth = 1 << 3;
+
 export class World {
-  constructor() {
+  constructor(seed) {
     //level indexed
+    this.seed = seed;
     this.number_of_towns = [1];
     this.locations = [];
     this.roads = [];
@@ -27,7 +33,7 @@ export class World {
   }
 
   calculateTownLocations() {
-    const town_placement = new RadialPlacement(new Vec2(0,0), 30, .2);
+    const town_placement = new RadialPlacement(new Vec2(0,0), 30, .2, this.seed);
     for(var i = this.locations.length; i < this.number_of_towns.length; i++) {
       const town_locations = town_placement.getPlacements(i, this.number_of_towns[i]);
       this.locations[i] = {towns: []};
@@ -44,7 +50,7 @@ export class World {
 
   calculateBuildingLocations(town_location) {
     var results = [];
-    const building_placement = new PoissonDiscLayout(town_location, 5); //new RadialPlacement(town_locations[j], 5);
+    const building_placement = new PoissonDiscLayout(town_location, 5, 20, 20, this.seed); //new RadialPlacement(town_locations[j], 5);
     const building_locations = building_placement.getPlacements(1, 2); //2 buildings - 1 dist away
     for(var b = 0; b < building_locations.length; b++) {
         const building_location = building_locations[b].floor();
@@ -104,8 +110,15 @@ export class World {
       const [x, y] = road[r];
       const west = this.grid.get([x-1, y],"").startsWith("r");
       const east = this.grid.get([x+1, y],"").startsWith("r");
-      const north = this.grid.get([x, y+1],"").startsWith("r");
-      const south = this.grid.get([x, y-1],"").startsWith("r");
+      const north = this.grid.get([x, y-1],"").startsWith("r");
+      const south = this.grid.get([x, y+1],"").startsWith("r");
+      let result = 0;
+      if (west) result |= RoadWest;
+      if (east) result |= RoadEast;
+      if (north) result |= RoadNorth;
+      if (south) result |= RoadSouth;
+      this.grid.set([x, y], "r" + result);
+/*
       if (west || east || north || south) {
         this.grid.set([x, y], "rj");
       }
@@ -115,6 +128,7 @@ export class World {
       if (!east && !west && north && south) {
         this.grid.set([x,y], "rv");
       }
+*/
     }
     //take another pass of road to look at neighbours and see which way road
     //is going - or create junction

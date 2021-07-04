@@ -2,9 +2,9 @@
 <html>
   <head>
     <title>Lingotowns</title>
-    <link rel="stylesheet" type="text/css" href="dali.css" />
-    <link rel="stylesheet" type="text/css" href="style.css" />
-    <script type='text/javascript' src="progresscircle.js"></script>
+    <link rel="stylesheet" type="text/css" href="/dali.css" />
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+    <script type='text/javascript' src="/progresscircle.js"></script>
     <style>
     </style>
     <script>
@@ -29,20 +29,19 @@
       <h1>LingoTowns.com</h1>
     </header>
     <main>
-      <h2>Town Name</h2>
-
+      <h2>{{town.town_name}}</h2>
       <table class='detail'>
         <tr>
           <th>Subject:</th>
-          <td>Fiction</td>
+          <td>{{town.subject_type}}</td>
         </tr>
         <tr>
           <th>Document Title:</th>
-          <td>Long document titles</td>
+          <td>{{town.document_name}}</td>
         </tr>
         <tr>
           <th>Author/Source:</th>
-          <td>Arthur Conan Doyle</td>
+          <td>{{town.author}}</td>
         </tr>
         <tr>
           <th>Level:</th>
@@ -54,40 +53,49 @@
           </td>
         </tr>
       </table>
-      <form method='get' action='/game.html' onsubmit='return showgame()'>
+      <form method='get' action='/play-game'>
+        <input type='hidden' name='document_id' value='{{ town.document_id }}' />
         <div class='options progress'>
+          {% if town.games.farms is defined %}
           <label>
             <input type='radio' name='game' value='farm' checked="checked" />
             <span class='number'>1</span>
             <div class='img img-farm'></div>
             <h2>Farm</h2>
             <p>Learning English as a second language</p>
-            <div data-text="75%" data-amount='0.75' data-fill='#FFF' data-thickness='6' data-bg-color='#CCC' data-fg-color='#F00' class='progresscircle'></div>
+            <div data-text="{{town.games.farms.completion}}%" data-amount='{{town.games.farms.completion / 100}}' data-fill='#FFF' data-thickness='6' data-bg-color='#CCC' data-fg-color='#F00' class='progresscircle'></div>
           </label>
+          {% endif %}
+          {% if town.games.food is defined %}
           <label>
             <input type='radio' name='game' value='food' />
             <span class='number'>2</span>
             <div class='img img-food'></div>
             <h2>Food</h2>
             <p>Learning English as a second language</p>
-            <div data-text="75%" data-amount='0.75' data-fill='#FFF' data-thickness='6' data-bg-color='#CCC' data-fg-color='#F00' class='progresscircle'></div>
+            <div data-text="{{town.games.food.completion}}%" data-amount='{{town.games.food.completion / 100}}' data-fill='#FFF' data-thickness='6' data-bg-color='#CCC' data-fg-color='#F00' class='progresscircle'></div>
           </label>
+          {% endif %}
+          {% if town.games.library is defined %}
           <label>
             <input type='radio' name='game' value='library' />
             <span class='number'>3</span>
             <div class='img img-library'></div>
             <h2>Library</h2>
             <p>Assured understanding of grammar</p>
-            <div data-text="75%" data-amount='0.75' data-fill='#FFF' data-thickness='6' data-bg-color='#CCC' data-fg-color='#F00' class='progresscircle'></div>
+            <div data-text="{{town.games.library.completion}}%" data-amount='{{town.games.library.completion / 100}}' data-fill='#FFF' data-thickness='6' data-bg-color='#CCC' data-fg-color='#F00' class='progresscircle'></div>
           </label>
+          {% endif %}
+          {% if town.games.detectives is defined %}
           <label>
             <input type='radio' name='game' value='detectives' />
             <span class='number'>4</span>
             <div class='img img-detectives'></div>
             <h2>Detectives</h2>
             <p>Grammar whiz or academic studying Linguists</p>
-            <div data-text="75%" data-amount='0.75' data-fill='#FFF' data-thickness='6' data-bg-color='#CCC' data-fg-color='#F00' class='progresscircle'></div>
+            <div data-text="{{town.games.detectives.completion|default(0)}}%" data-amount='{{(town.games.detectives.completion / 100)|default(0)}}' data-fill='#FFF' data-thickness='6' data-bg-color='#CCC' data-fg-color='#F00' class='progresscircle'></div>
           </label>
+          {% endif %}
         </div>
         <footer class='static'>
           <nav class="btn-panel tight">

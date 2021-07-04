@@ -1,7 +1,8 @@
 import {Vec2} from '../math/Vec2.js';
+import {PRNG} from '../algorithms/prng.js';
 
 // Based on https://www.jasondavies.com/poisson-disc/
-function poissonDiscSampler(width, height, radius) { //Bridson's
+function poissonDiscSampler(width, height, radius, seed) { //Bridson's
   var k = 30, // maximum number of samples before rejection
       radius2 = radius * radius,
       R = 3 * radius2,
@@ -11,20 +12,21 @@ function poissonDiscSampler(width, height, radius) { //Bridson's
       grid = new Array(gridWidth * gridHeight),
       queue = [],
       queueSize = 0,
+      prng = new PRNG(seed),
       sampleSize = 0;
 
   return function() {
-    if (!sampleSize) return sample(Math.random() * width, Math.random() * height);
+    if (!sampleSize) return sample(prng.random() * width, prng.random() * height);
 
     // Pick a random existing sample and remove it from the queue.
     while (queueSize) {
-      var i = Math.random() * queueSize | 0,
+      var i = prng.random() * queueSize | 0,
           s = queue[i];
 
       // Make a new candidate between [radius, 2 * radius] from the existing sample.
       for (var j = 0; j < k; ++j) {
-        var a = 2 * Math.PI * Math.random(),
-            r = Math.sqrt(Math.random() * R + radius2),
+        var a = 2 * Math.PI * prng.random(),
+            r = Math.sqrt(prng.random() * R + radius2),
             x = s[0] + r * Math.cos(a),
             y = s[1] + r * Math.sin(a);
 
@@ -72,11 +74,11 @@ function poissonDiscSampler(width, height, radius) { //Bridson's
 }
 
 export class PoissonDiscLayout {
-	constructor(startposition, zoneradius, spacex, spacey) {
+	constructor(startposition, zoneradius, spacex, spacey, seed) {
     this.startposition = startposition || new Vec2(0,0);
     this.spacex = spacex || 20;
     this.spacey = spacey || 20;
-		this.sampler = poissonDiscSampler(this.spacex, this.spacey, zoneradius);
+		this.sampler = poissonDiscSampler(this.spacex, this.spacey, zoneradius, seed);
 	}
 
 	getPlacements(distance, placements) {

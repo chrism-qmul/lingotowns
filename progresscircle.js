@@ -1,3 +1,18 @@
+function animate(updatefn, animationlength) {
+  let start;
+
+  function step(timestamp) {
+    if (start == undefined) start = timestamp;
+    const elapsed = timestamp - start;
+    const completion = elapsed/animationlength;
+    updatefn(completion); 
+    if (completion < 1.0) {
+      window.requestAnimationFrame(step);
+    }
+  }
+  window.requestAnimationFrame(step);
+}
+
 function progressradial() {
   const els = document.getElementsByClassName("progresscircle");
 
@@ -31,14 +46,21 @@ function progressradial() {
     circle1.setAttribute("fill", el.dataset.fill);
     circle1.setAttribute("stroke-width", thickness);
 
+    circle2.setAttribute("transform", "rotate(-90 " + radius + " " + radius + ")");
     circle2.setAttribute("cx", radius);
     circle2.setAttribute("cy", radius);
     circle2.setAttribute("stroke", el.dataset.fgColor);
     circle2.setAttribute("r", innerradius);
     circle2.setAttribute("fill", "none");
     circle2.setAttribute("stroke-width", thickness);
-    circle2.setAttribute("stroke-dashoffset", length);
+    //circle2.setAttribute("stroke-dashoffset", length);
+    circle2.setAttribute("stroke-dashoffset", 0);
     circle2.setAttribute("stroke-dasharray", circumference);
+
+    animate(function(pc)  {
+      circle2.setAttribute("stroke-dashoffset", pc*length);
+    }, 1000);
+
 
     text.setAttribute("text-anchor", "middle");
     text.setAttribute("x", radius);
@@ -48,6 +70,9 @@ function progressradial() {
   
     els[i].appendChild(svg);
   }
+
+  let start;
+
 }
 
 document.addEventListener('DOMContentLoaded', progressradial);

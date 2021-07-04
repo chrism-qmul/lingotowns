@@ -5,9 +5,10 @@
 </head>
 
 <body>
+<h1>LingoTowns Admin</h1>
 <ul>
 {% for user in users %}
-<li><a href='{{ prefix }}{{ user }}/add_level'>Add Docs for</a> {{client_info[user]}} <small>({{user}})</small></li>
+<li><a href='/admin/{{ user }}/add_level'>Add Docs for</a> {{client_info[user]}} <small>({{user}})</small></li>
 {% endfor %}
 </ul>
 </body>

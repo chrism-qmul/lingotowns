@@ -1,7 +1,8 @@
 import {Vec2} from '../math/Vec2.js';
 
 export class RadialPlacement {
-  constructor(startposition, zoneradius, random) {
+  constructor(startposition, zoneradius, random, seed) {
+    this.seed = seed;
     this.startposition = startposition || new Vec2(0,0);
     this.zoneradius = zoneradius || 20;
     //how much potential for random shift between layers in radians

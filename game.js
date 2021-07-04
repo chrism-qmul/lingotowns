@@ -1,6 +1,7 @@
 import {Vec2} from './math/Vec2.js';
 import {BoundingBox} from './collections/BoundingBox.js';
-import {World} from './world.js';
+import {World,RoadEast,RoadNorth,RoadSouth,RoadWest} from './world.js';
+import {PRNG} from './algorithms/PRNG.js';
 
 var canvas = document.getElementById('app');
 var minimapcanvas = document.getElementById('minimap');
@@ -9,6 +10,27 @@ minimapcanvas.width = Math.min(smallestdim, 200);
 minimapcanvas.height = Math.min(smallestdim, 200);
 var worldWidth = 20;
 var worldHeight = 20;
+
+var prng = new PRNG("test1a");
+console.log("random", prng.random(), prng.random());
+
+function animate(animationlength, updatefn, donefn) {
+  let start;
+
+  function step(timestamp) {
+    if (start == undefined) start = timestamp;
+    const elapsed = timestamp - start;
+    const completion = elapsed/animationlength;
+    updatefn(completion); 
+    if (completion < 1.0) {
+      window.requestAnimationFrame(step);
+    } else {
+      if (donefn) donefn();
+    }
+  }
+  window.requestAnimationFrame(step);
+}
+
 
 function drawLine(context, a, b) {
   context.beginPath(); 
@@ -322,6 +344,7 @@ class Game {
     this.mouseGridPosition = null;
     this.lastTS = null;
     this.tracking_elements = [];
+    this.on_update_data = [];
     this.canvas = canvas;
     this.context = canvas.getContext("2d");
     this.minimapcontext = minimapcanvas.getContext("2d");
@@ -337,8 +360,9 @@ class Game {
     this.moveStyle = litMovement;
     this.resources = {
       scroll: "images/scroll.png",
-      bakery: "images/bakery.small.png",
-      library: "images/library.small.png",
+      bakery: "images/new/bakery.png",
+      library: "images/new/library.png",
+      //library: "images/library.small.png",
       grass: "images/grass.small.png",
       field: "images/field.small.png",
       corn: "images/corn.small.png",
@@ -351,8 +375,15 @@ class Game {
       road: "images/road.png",
       stone: "images/stone.png",
       cloud: "images/cloud.png",
-      roadnorth: "images/road-north.png",
-      roadeast: "images/road-east.png",
+      //roadnorth: "images/road-north.png",
+      //roadeastnorth: "images/new/road-east-north.png",
+      roadeastwestnorth:"images/new/road-east-west-north.png",
+      roadsouthwestnorth:"images/new/road-south-west-north.png",
+      roadwestnorth:"images/new/road-west-north.png",
+      roadx:"images/new/road-x.png",
+      roadnorth: "images/new/road-lights.png",
+      //roadeast: "images/road-east.png",
+      roadeast: "images/new/road-lights-east.png",
       roadjunction: "images/road-junction.png",
       compass: "compass.png",
     };
@@ -363,8 +394,8 @@ class Game {
     this.loader = new Loader();
     var klass = this;
     this.locations = [];
-    this.world = new World();
-    this.world.addLevel(1);
+    this.world = new World("testa");
+    //this.world.addLevel(1);
     console.log(this.world.regions);
     //this.building_placement = 
     this.mousedrag = new MouseDrag(this.canvas, function(lastX, lastY, x, y) {
@@ -381,7 +412,7 @@ class Game {
 
   addLevel(docs) {
     this.world.addLevel(docs);
-    this.increaseFog();
+    //this.increaseFog();
   }
 
   messagedispatch(ev) {
@@ -396,7 +427,7 @@ class Game {
     console.log(ev);
   }
 
-  showframe(url) {
+  showframe(url, data) {
     const iframe = document.createElement("IFRAME");
     iframe.className = "gamewindow"; 
     iframe.src = url;
@@ -413,9 +444,12 @@ class Game {
         document.body.removeChild(iframe);
         document.body.removeChild(closebutton);
     }
-
+    if (data) {
+      console.log("sending town data", data);
+      iframe.contentWindow.postMessage(data, "*");
+    }
+    return iframe;
     //closebutton.addEventListener('click', closefn, {once: true});
-
   }
 
   closeframes() {
@@ -445,6 +479,11 @@ class Game {
   }
 
   selectobject() {
+    if (this.mouseGridPosition) {
+      const mousepos = this.mouseGridPosition.floor();
+      const tile = this.world.get(mousepos);
+      console.log("no action clicking on", this.mouseGridPosition, tile);
+    }
     /*
       if (this.mouseGridPosition) {
         const mousepos = this.mouseGridPosition.floor();
@@ -470,8 +509,8 @@ class Game {
       */
   }
 
-  townsummary() {
-     this.showframe("/town-summary.html");
+  townsummary(townInformation) {
+     this.showframe("/town-summary.html", townInformation);
   }
 
   resize() {
@@ -504,6 +543,10 @@ class Game {
       desert2: await this.loader.load(this.resources.desert2),
       volcano: await this.loader.load(this.resources.volcano),
       road: await this.loader.load(this.resources.road),
+      roadeastwestnorth: await this.loader.load(this.resources.roadeastwestnorth),
+      roadsouthwestnorth: await this.loader.load(this.resources.roadsouthwestnorth),
+      roadwestnorth: await this.loader.load(this.resources.roadwestnorth),
+      roadx: await this.loader.load(this.resources.roadx),
       stone: await this.loader.load(this.resources.stone),
       cloud: await this.loader.load(this.resources.cloud),
       roadnorth: await this.loader.load(this.resources.roadnorth),
@@ -608,6 +651,10 @@ class Game {
     }
   }
 
+  getCurrentTownInformation() {
+    return this.getTownInformation(this.lastregion);
+  }
+
   drawMap() {
     const worldDimensions = this.worldDimensions();
     let locations = this.screenWorldLocations();
@@ -620,13 +667,34 @@ class Game {
         this.drawImageToTiles(position, new Vec2(3, 3), this.resources.bakery);
           break;
         case "b1":
-        this.drawImageToTiles(position, new Vec2(4, 4), this.resources.library);
+        this.drawImageToTiles(position, new Vec2(3, 3), this.resources.library);
           break;
-        case "rh":
+        case ("r" + RoadWest):
+        case ("r" + RoadEast):
+        case ("r" + (RoadEast | RoadWest)):
           this.drawImageToTiles(position, new Vec2(1, 1), this.resources.roadeast);
           break;
-        case "rv":
+        case ("r" + (RoadSouth | RoadNorth)):
           this.drawImageToTiles(position, new Vec2(1, 1), this.resources.roadnorth);
+          break;
+/*
+        case ("r" + (RoadEast | RoadNorth)):
+          this.drawImageToTiles(position, new Vec2(1, 1), this.resources.roadeastnorth);
+          break;
+*/
+/*
+        case ("r" + (RoadEast | RoadWest | RoadNorth)):
+          this.drawImageToTiles(position, new Vec2(1, 1), this.resources.roadeastwestnorth);
+          break;
+*/
+        case ("r" + (RoadSouth | RoadWest | RoadNorth)):
+          this.drawImageToTiles(position, new Vec2(1, 1), this.resources.roadsouthwestnorth);
+          break;
+        case ("r" + (RoadWest | RoadNorth)):
+          this.drawImageToTiles(position, new Vec2(1, 1), this.resources.roadwestnorth);
+          break;
+        case ("r" + (RoadEast | RoadSouth | RoadWest | RoadNorth)):
+          this.drawImageToTiles(position, new Vec2(1, 1), this.resources.roadx);
           break;
         case "rj":
           this.drawImageToTiles(position, new Vec2(1, 1), this.resources.roadjunction);
@@ -634,7 +702,8 @@ class Game {
         case undefined:
           break;
         default:
-          console.log(tile);
+          //console.log("no tile defined for", tile);
+          break;
       }
       const regionIdx = this.world.regions.get(position_floored,0);
       const region = this.regions[regionIdx%this.regions.length];
@@ -651,6 +720,7 @@ class Game {
     const currentregion = this.world.regions.get(midpoint);
     if (this.lastregion != currentregion) {
       this.lastregion = currentregion;
+      console.log(this.lastregion);
       document.dispatchEvent(new CustomEvent('regionchange', {detail: {region: currentregion}}));
     }
     const region = this.regions[currentregion%this.regions.length];
@@ -712,21 +782,40 @@ class Game {
     //this.drawCircle(this.next_target);
   }
 
+  updateFogLevel(target_fog_level) {
+    const game = this;
+    const previous_fog_level = this.fog_radius;
+    animate(1500, function(pc) {
+      game.fog_radius = lerp(previous_fog_level, target_fog_level, pc);
+      game.requireDraw();
+    }, function() {});
+  }
+
+  onUpdateData(fn) {
+    this.on_update_data.push(fn);
+  }
+
   updateData(data) {
+    this.world = new World("testa");
     this.data = data;
+    console.log(data);
+    //for(var level_idx = this.world.levels()-1; level_idx < this.data.levels.length; level_idx++) {
     for(var level_idx = 0; level_idx < this.data.levels.length; level_idx++) {
       const towns = this.data.levels[level_idx].towns;
-      if (level_idx >= this.world.levels()) {
-        this.world.addLevel(towns.length);
-        this.increaseFog();
-      }
+      this.world.addLevel(towns.length);
     }
     this.updateTownOverlays();
+    this.updateFogLevel(10 + (22*(this.data.levels.length)));
+    for(var i = 0; i < this.on_update_data.length; i++) {
+      this.on_update_data[i](this.data);
+    }
     this.requireDraw();
   }
 
   connectToServer() {
-    const socket = io("wss://lingotowns.com/", {path: "/admin/socket.io"});
+    //const socket = io("wss://lingotowns.com/", {path: "/admin/socket.io"});
+    //const socket = io("wss://lingotowns.com/");
+    const socket = io();
     var on_data_loaded;
     const data_loaded = new Promise(function(resolve, reject) { 
       on_data_loaded = resolve;
@@ -739,7 +828,8 @@ class Game {
 //        socket.emit("salutations", "Hello!", { "mr": "john" }, Uint8Array.from([1, 2, 3, 4]));
       // handle the event sent with socket.send()
       socket.on("message", data => {
-          console.log(data);
+        console.log("loaded data", data);
+        //console.log(data);
           game.updateData(data);
           on_data_loaded(); 
 //          this.addLevel(2);
@@ -1078,6 +1168,7 @@ class Game {
   }
 
   addTownSummary(townInformation) {
+    const game = this;
     const gameoverlay = document.createElement("div");
 /*
                 {"document_id":"blah2",
@@ -1090,8 +1181,8 @@ class Game {
 */
     gameoverlay.className = "gameoverlay";
     gameoverlay.innerHTML = `
+      <button class='townsummary'>PLAY NOW</button>
       <div class='content'>
-        <button class='townsummary'>PLAY NOW</button>
         <h2>${townInformation.town_name}</h2>
         <table class='detail'>
           <tr>
@@ -1108,6 +1199,12 @@ class Game {
           </tr>
         </table>
       </div>`;
+    const townsummarybutton = gameoverlay.getElementsByClassName('townsummary');
+    for (var i = 0; i < townsummarybutton.length; i++) {
+      townsummarybutton[i].addEventListener('click', function() {
+        game.townsummary(townInformation);
+      });
+    }
     document.body.appendChild(gameoverlay);
     return gameoverlay;
   }
@@ -1125,15 +1222,19 @@ class Game {
     const towns = this.world.towns();
     for(var i = 0; i < towns.length; i++) {
       var townInformation = this.getTownInformation(i);
-      const townSummaryElement = this.addTownSummary(townInformation);
-      game.elementTracksWorld(townSummaryElement, towns[i].position);
+      if (townInformation) {
+        const townSummaryElement = this.addTownSummary(townInformation);
+        game.elementTracksWorld(townSummaryElement, towns[i].position);
+      }
       //game.elementTracksWorld(gameoverlays[i], towns[i].position);
     }
   }
 
   draw(ts) {
     const elapsed = ts - this.lastTS;
-    if (Math.abs(this.fog_radius - this.target_fog_radius) > 0.1) {
+/*
+    const eps = 0.2;
+    if (Math.abs(this.fog_radius - this.target_fog_radius) > eps) {
       this.fog_progress += (elapsed/1000)/4;
       this.fog_radius = lerp(this.fog_radius, this.target_fog_radius, this.fog_progress);
       this.requireDraw();
@@ -1141,6 +1242,7 @@ class Game {
       this.fog_radius = this.target_fog_radius;
       this.fog_progress = 0;
     }
+*/
     if (this.dirty) {
 	    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	    //this.drawDebugGrid(); 
@@ -1170,6 +1272,32 @@ game.preload().then(function(resources) {
   });
 });
 
+function update_progression() {
+  connect_to_server.then(function() {
+    const town_info = game.getCurrentTownInformation();
+    console.log(town_info);
+    const games = ['farms', 'food', 'library'];
+    let docs_completed = document.getElementById('documents-completed');
+    docs_completed.innerHTML = game.data.documents_completed;
+    let docs_points = document.getElementById('document-points');
+    docs_points.innerHTML = game.data.document_points;
+    let docs_level = document.getElementById('documents-level');
+    docs_level.innerHTML = game.data.levels.length;
+    for(var i = 0; i < games.length; i++) {
+      const el1 = document.getElementById("" + games[i] + "-progress");
+      const el2 = document.getElementById("" + games[i] + "-progress-width");
+      if (games[i] in town_info.games) {
+        const completion = town_info.games[games[i]].completion;
+        el1.innerHTML = "" + completion + "%";
+        el2.style.width = "" + completion + "%";
+      } else {
+        el1.innerHTML="Not available";
+        el2.style.width = "0%";
+      }
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   const townsummarybuttons = document.getElementsByClassName('townsummary');
   for(var i = 0; i < townsummarybuttons.length; i++) {
@@ -1179,25 +1307,8 @@ document.addEventListener('DOMContentLoaded', function() {
       game.townsummary();
     });
   }
-
+  game.onUpdateData(update_progression);
   document.addEventListener('regionchange', function(ev) {
-    //console.log("region change", ev.detail.region, );
-    connect_to_server.then(function() {
-      const town_info = game.getTownInformation(ev.detail.region);
-      const games = ['farms', 'food', 'library'];
-      let docs_completed = document.getElementById('documents-completed');
-      docs_completed.innerHTML = game.data.documents_completed;
-      let docs_points = document.getElementById('document-points');
-      docs_points.innerHTML = game.data.document_points;
-      let docs_level = document.getElementById('documents-level');
-      docs_level.innerHTML = game.data.levels.length;
-      for(var i = 0; i < games.length; i++) {
-        const completion = town_info.games[games[i]].completion
-        const el1 = document.getElementById("" + games[i] + "-progress");
-        el1.innerHTML = "" + completion + "%";
-        const el2 = document.getElementById("" + games[i] + "-progress-width");
-        el2.style.width = "" + completion + "%";
-      }
-    });
+    update_progression();
   });
 });
