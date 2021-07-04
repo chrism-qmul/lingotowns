@@ -3,12 +3,13 @@ version: '2'
 services:
   server:
     build: server
-    image: registry.phd.madg.es/lingtowns-server:0.0.1
+    image: registry.phd.madg.es/lingtowns-server:0.0.2
     restart: unless-stopped
     ports:
       - 8081:5000
     volumes:
       - ./server/:/app
+      - /Users/chrismadge/PhD/PhraseDetectivesCorpora/:/data
     environment:
       - FLASK_DEBUG:True
       - FLASK_ENV:development

@@ -13,15 +13,16 @@ import pprint
 
 pp = pprint.PrettyPrinter(indent=4)
 
-def create_town(*games, document_id, document_name, author, subject_type, available, town_name, total_completion):
+def create_town(*games, document_id, document_name, author, subject_type, available, town_id, town_name, total_completion):
     all_games = {}
     for game in games:
-        all_games.update(game) 
+        all_games.update(game)
     return {"document_id":document_id,
         "document_name":document_name,
         "author":author,
         "subject_type":subject_type,
         "available":available,
+        "town_id": town_id,
         "town_name": town_name,
         "total_completion": total_completion,
         "games": all_games}
@@ -39,7 +40,6 @@ def create_update(*levels, documents_completed, document_points):
     "documents_completed": documents_completed,
     "document_points": document_points,
     "levels": list(levels)}
-
 
 #engine = create_engine('sqlite:///:memory:', echo=True)
 engine = create_engine('sqlite:///file.db', 
@@ -156,7 +156,7 @@ def info():
     """
     return pd.read_sql_query(sql, engine).set_index("name")
 
-def load_data_for_user(username):
+def load_data_for_user(username, townid=None):
     s = create_session()
     sql = """
     select 
@@ -177,9 +177,13 @@ def load_data_for_user(username):
     game_name IS NOT NULL
     AND
     users.name=:username
-    ORDER BY level
     """
-    results = s.execute(sql, {'username': username})
+    params = {'username': username}
+    if townid:
+        params['townid'] = townid
+        sql += " AND town_id=:townid"
+    sql += " ORDER BY level"
+    results = s.execute(sql, params)
     unpacked_results = []
     for result in results:
         town_id, document_title, document_author, document_subject, level, town_name, pc, game_name = result
@@ -188,26 +192,21 @@ def load_data_for_user(username):
                 "document_author": document_author,
                 "document_subject": document_subject,
                 "level": level,
+                "town_id": town_id,
                 "town_name": town_name,
                 "pc": pc,
                 "game_name": game_name})
     unpacked_results.sort(key=lambda x: (x['level'], x['town_id']))
-    #pp.pprint(("unapcked results", unpacked_results))
     levels = []
     for level, towns_in_level in groupby(unpacked_results, key=lambda x: x['level']):
-        #pp.pprint(("towns_in_level", level, [x for x in towns_in_level]))
         towns = []
         for town_id, town_games in groupby(towns_in_level, key=lambda x: x['town_id']):
-            #print(level, town_id, list(towns))
             town_games = [x for x in town_games]
             pp.pprint((level, "town_games", town_games))
-            #print(town_games)
             games = [create_game(game['game_name'], game['pc']) for game in town_games]
-            #print(games)
-            #app.logger.info("games: %s", games)
             total_completion = sum([game['pc'] for game in town_games])/float(len([game['pc'] for game in town_games]))
             town = town_games[0]
-            towns.append(create_town(*games, document_id=0, document_name=town['document_title'], subject_type=town['document_subject'], author=town['document_author'], town_name=town['town_name'], total_completion=total_completion, available=True))
+            towns.append(create_town(*games, document_id=0, document_name=town['document_title'], subject_type=town['document_subject'], author=town['document_author'], town_id=town['town_id'], town_name=town['town_name'], total_completion=total_completion, available=True))
         levels.append(create_level(*towns))
     return create_update(*levels, documents_completed=0, document_points=0)
 
@@ -215,7 +214,8 @@ if __name__ == "__main__":
     #print(load_data())
     #print(latest_change(), type(latest_change()))
     #Base.metadata.create_all(engine)
-    pp.pprint(load_data_for_user("testusera"))
+    #pp.pprint(load_data_for_user("testusera",1))
+    pp.pprint(load_data_for_user("testusera",1))
     #print(load_data_for_user("004c4b62a098f68745337bce1e021b58"))
     #print(load_data_for_user("unknown"))
 #    session = Session()

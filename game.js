@@ -510,7 +510,8 @@ class Game {
   }
 
   townsummary(townInformation) {
-     this.showframe("/town-summary.html", townInformation);
+    var currentTown = this.getCurrentTownInformation();
+     this.showframe("/town-summary/" + currentTown.town_id, townInformation);
   }
 
   resize() {
@@ -1275,7 +1276,6 @@ game.preload().then(function(resources) {
 function update_progression() {
   connect_to_server.then(function() {
     const town_info = game.getCurrentTownInformation();
-    console.log(town_info);
     const games = ['farms', 'food', 'library'];
     let docs_completed = document.getElementById('documents-completed');
     docs_completed.innerHTML = game.data.documents_completed;

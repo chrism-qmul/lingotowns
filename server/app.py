@@ -83,17 +83,10 @@ def playgame():
     else:
         return "no such game", 500
 
-@app.route("/town-summary/<documentid>")
-def townsummary(documentid):
-    return render_template("town-summary.html", town=twain_village)
-
-@app.route("/admin/<sid>/add_level")
-def add_level(sid):
-    result = create_update(create_level(poe_woods),
-    create_level(wilde_city,twain_village),
-    documents_completed=5, document_points=5)
-    send_update(result, sid)
-    return redirect("/admin/")
+@app.route("/town-summary/<townid>")
+def townsummary(townid):
+    town = persistence.load_data_for_user("testusera", townid)['levels'][0]['towns'][0]
+    return render_template("town-summary.html", town=town)
 
 if __name__ == '__main__':
    #result = create_game("library", 40)
