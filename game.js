@@ -1,7 +1,7 @@
 import {Vec2} from './math/Vec2.js';
 import {BoundingBox} from './collections/BoundingBox.js';
 import {World,RoadEast,RoadNorth,RoadSouth,RoadWest} from './world.js';
-import {PRNG} from './algorithms/PRNG.js';
+import {PRNG} from './algorithms/prng.js';
 
 var canvas = document.getElementById('app');
 var minimapcanvas = document.getElementById('minimap');
@@ -1317,23 +1317,25 @@ game.preload().then(function(resources) {
 function update_progression() {
   connect_to_server.then(function() {
     const town_info = game.getCurrentTownInformation();
-    const games = ['farms', 'food', 'library'];
-    let docs_completed = document.getElementById('documents-completed');
-    docs_completed.innerHTML = game.data.documents_completed;
-    let docs_points = document.getElementById('document-points');
-    docs_points.innerHTML = game.data.document_points;
-    let docs_level = document.getElementById('documents-level');
-    docs_level.innerHTML = game.data.levels.length;
-    for(var i = 0; i < games.length; i++) {
-      const el1 = document.getElementById("" + games[i] + "-progress");
-      const el2 = document.getElementById("" + games[i] + "-progress-width");
-      if (games[i] in town_info.games) {
-        const completion = town_info.games[games[i]].completion;
-        el1.innerHTML = "" + completion + "%";
-        el2.style.width = "" + completion + "%";
-      } else {
-        el1.innerHTML="Not available";
-        el2.style.width = "0%";
+    if (town_info) {
+      const games = ['farms', 'food', 'library'];
+      let docs_completed = document.getElementById('documents-completed');
+      docs_completed.innerHTML = game.data.documents_completed;
+      let docs_points = document.getElementById('document-points');
+      docs_points.innerHTML = game.data.document_points;
+      let docs_level = document.getElementById('documents-level');
+      docs_level.innerHTML = game.data.levels.length;
+      for(var i = 0; i < games.length; i++) {
+        const el1 = document.getElementById("" + games[i] + "-progress");
+        const el2 = document.getElementById("" + games[i] + "-progress-width");
+        if (games[i] in town_info.games) {
+          const completion = town_info.games[games[i]].completion;
+          el1.innerHTML = "" + completion + "%";
+          el2.style.width = "" + completion + "%";
+        } else {
+          el1.innerHTML="Not available";
+          el2.style.width = "0%";
+        }
       }
     }
   });
