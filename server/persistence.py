@@ -10,6 +10,7 @@ from queue import Queue, Full
 import logging
 from itertools import groupby
 import pprint
+import hashlib
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -191,6 +192,7 @@ def load_data_for_user(username, townid=None):
                 "document_title": document_title,
                 "document_author": document_author,
                 "document_subject": document_subject,
+                "document_id": hashlib.sha256((document_author + ":" + document_title).encode()).hexdigest(),
                 "level": level,
                 "town_id": town_id,
                 "town_name": town_name,
@@ -206,7 +208,7 @@ def load_data_for_user(username, townid=None):
             games = [create_game(game['game_name'], game['pc']) for game in town_games]
             total_completion = sum([game['pc'] for game in town_games])/float(len([game['pc'] for game in town_games]))
             town = town_games[0]
-            towns.append(create_town(*games, document_id=0, document_name=town['document_title'], subject_type=town['document_subject'], author=town['document_author'], town_id=town['town_id'], town_name=town['town_name'], total_completion=total_completion, available=True))
+            towns.append(create_town(*games, document_id=town['document_id'], document_name=town['document_title'], subject_type=town['document_subject'], author=town['document_author'], town_id=town['town_id'], town_name=town['town_name'], total_completion=total_completion, available=True))
         levels.append(create_level(*towns))
     return create_update(*levels, documents_completed=0, document_points=0)
 

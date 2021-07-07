@@ -166,6 +166,24 @@ div#infopanel {
   box-shadow: 0px -0vh 1vh 1vh rgba(0,0,0,.6);
 }
 
+#edge_of_playarea {
+  position:absolute;
+  display:none;
+  z-index:10;
+  top:50vh;
+  left:50vw;
+  transform:translate(-50%,-50%);
+  text-align:center;
+  border-radius:5px;
+  border:1px solid white;
+  color:white;
+  background:rgba(0,0,0,.5);
+}
+
+#edge_of_playarea .content {
+  margin:5px;
+}
+
 @media (orientation: landscape) {
   #app {
     height:100vh;
@@ -183,6 +201,11 @@ div#infopanel {
 </style>
   <body>
     <canvas id='app' width='500' height='500'></canvas>
+    <div id='edge_of_playarea'>
+      <div class='content'>
+        <b>Warning:</b> You're nearing the edge of the play area, click here to go home!
+      </div>
+    </div>
     <div id='infopanel'>
       <div>
         <dl class='info'>

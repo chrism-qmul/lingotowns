@@ -390,6 +390,7 @@ class Game {
     this.target_fog_radius = 10;
     this.fog_progress = 0;
     this.fog_radius = 10;
+    this.near_edge_of_playarea = false;
     //this.visibleWorld =  
     this.loader = new Loader();
     var klass = this;
@@ -400,7 +401,8 @@ class Game {
     //this.building_placement = 
     this.mousedrag = new MouseDrag(this.canvas, function(lastX, lastY, x, y) {
       const movement = new Vec2(x-lastX, y-lastY).toCartesian();
-      klass.screenTranslate.add(movement);
+      //klass.screenTranslate.add(movement);
+      klass.screenMove(movement);
       klass.requireDraw();
     });
     window.addEventListener('resize', this.resize.bind(this));
@@ -413,6 +415,32 @@ class Game {
   addLevel(docs) {
     this.world.addLevel(docs);
     //this.increaseFog();
+  }
+
+  updateNearEdgeOfPlayArea(isNearEdge) {
+    this.near_edge_of_playarea = isNearEdge;
+    if (this.edgewarningel) {
+      if (isNearEdge) {
+         this.edgewarningel.style.display = "block";
+      } else {
+         this.edgewarningel.style.display = "none";
+      }
+    }
+  }
+
+  screenMove(vec) {
+    //move screen with constraint checking - e.g. won't move into fog
+    this.screenTranslate.add(vec);
+    const midpoint = this.worldPointAtScreenCenter();
+    if (midpoint.magnitude() > this.fog_radius) {
+      this.updateNearEdgeOfPlayArea(true);
+    } else {
+      this.updateNearEdgeOfPlayArea(false);
+    }
+    if (midpoint.magnitude() > this.fog_radius+15) {
+      this.screenTranslate.sub(vec);
+    }
+    this.requireDraw();
   }
 
   messagedispatch(ev) {
@@ -717,7 +745,8 @@ class Game {
         region.drawTile(position, noise);
       }
     }
-    const midpoint = this.toWorld(new Vec2(this.canvas.width/2, this.canvas.height/2)).floor();
+    //const midpoint = this.toWorld(new Vec2(this.canvas.width/2, this.canvas.height/2)).floor();
+    const midpoint = this.worldPointAtScreenCenter();
     const currentregion = this.world.regions.get(midpoint);
     if (this.lastregion != currentregion) {
       this.lastregion = currentregion;
@@ -744,8 +773,13 @@ class Game {
     //this.context.drawImage(this.resources.compass, this.canvas.width-this.resources.compass.width, this.canvas.height, this.resources.compass.width, this.resources.compass.height);
   }
 
+  worldPointAtScreenCenter() {
+    return this.toWorld(new Vec2(this.canvas.width/2, this.canvas.height/2)).floor();
+  }
+
   drawSign() {
-    const midpoint = this.toWorld(new Vec2(this.canvas.width/2, this.canvas.height/2)).floor();
+    const midpoint = this.worldPointAtScreenCenter();
+    //const midpoint = this.toWorld(new Vec2(this.canvas.width/2, this.canvas.height/2)).floor();
     const currentregion = this.world.regions.get(midpoint);
     const region = this.regions[currentregion%this.regions.length];
     this.context.save();
@@ -844,6 +878,16 @@ class Game {
     return data_loaded;
   }
 
+  setEdgeWarningElement(edgewarningel) {
+    this.edgewarningel = edgewarningel;
+    let game = this;
+    this.edgewarningel.addEventListener("click", function(ev) {
+      game.centerWorldPointOnScreen(new Vec2(0,0));
+      game.updateNearEdgeOfPlayArea(false);
+      game.requireDraw();
+    });
+  }
+
   drawMiniMap() {
     //this.minimapworker.postMessage(minimapcanvas, this);
     this.minimapcontext.clearRect(0, 0, minimapcanvas.width, minimapcanvas.height);
@@ -916,6 +960,7 @@ class Game {
   }
 
   centerWorldPointOnScreen(worldPoint) {
+    this.screenTranslate = new Vec2(0,0);
     let midpoint = this.toWorld(new Vec2(this.canvas.width/2, this.canvas.height/2)).floor();
     midpoint.sub(worldPoint);
     this.worldTranslate.add(midpoint);
@@ -1171,15 +1216,6 @@ class Game {
   addTownSummary(townInformation) {
     const game = this;
     const gameoverlay = document.createElement("div");
-/*
-                {"document_id":"blah2",
-                    "document_name":"blah2",
-                    "town_name": "something town2",
-                    "total_complettion": 35,
-                    "games": {"food": {"completion":5},
-                        "farms": {"completion":10},
-                        "library": {"completion":20}}}
-*/
     gameoverlay.className = "gameoverlay";
     gameoverlay.innerHTML = `
       <button class='townsummary'>PLAY NOW</button>
@@ -1207,15 +1243,19 @@ class Game {
       });
     }
     document.body.appendChild(gameoverlay);
+    //document.getElementById("overlays").appendChild(gameoverlay);
     return gameoverlay;
   }
 
   removeTownOverlays() {
     let overlays = document.getElementsByClassName("gameoverlay");
-    for (var i = 0; i < overlays.length; i++) {
-      this.stopElementTracksWorld(overlays[i]);
-      overlays[i].remove();
+    let len = overlays.length;
+    for (var i = 0; i < len; i++) {
+      let j = len - 1 - i;
+      this.stopElementTracksWorld(overlays[j]);
+      document.body.removeChild(overlays[j]);
     }
+    //document.getElementById("overlays")
   }
 
   updateTownOverlays() {
@@ -1224,6 +1264,7 @@ class Game {
     for(var i = 0; i < towns.length; i++) {
       var townInformation = this.getTownInformation(i);
       if (townInformation) {
+        console.log("town information: ", townInformation);
         const townSummaryElement = this.addTownSummary(townInformation);
         game.elementTracksWorld(townSummaryElement, towns[i].position);
       }
@@ -1299,6 +1340,8 @@ function update_progression() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+  let edge_of_playarea = document.getElementById("edge_of_playarea");
+  game.setEdgeWarningElement(edge_of_playarea);
   const townsummarybuttons = document.getElementsByClassName('townsummary');
   for(var i = 0; i < townsummarybuttons.length; i++) {
     console.log(townsummarybuttons);
