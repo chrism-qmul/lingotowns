@@ -83,6 +83,17 @@ def playgame():
     else:
         return "no such game", 500
 
+@app.route("/api/update-progress")
+def update_progress():
+    game = request.args.get("game")
+    document_id = request.args.get("doc")
+    user = request.args.get("user")
+    progress = request.args.get("progress")
+    if persistence.update_progress(game, document_id, user, progress):
+        return "updated", 200
+    else:
+        return "invalid request", 500
+
 @app.route("/town-summary/<townid>")
 def townsummary(townid):
     town = persistence.load_data_for_user("testusera", townid)['levels'][0]['towns'][0]

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Boolean, String, ForeignKey, DateTime, create_engine
+from sqlalchemy import Column, Integer, Boolean, String, ForeignKey, DateTime, create_engine, event
 import sqlite3
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.session import sessionmaker
@@ -11,6 +11,9 @@ import logging
 from itertools import groupby
 import pprint
 import hashlib
+
+def sha256(param_str):
+    return hashlib.sha256(param_str.encode()).hexdigest()
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -68,10 +71,26 @@ class Document(Base,IDd,Timestamped):
     title = Column(String, nullable=False)
     author = Column(String)
     subject = Column(String)
+    doc_hash = Column(String, index=True)
     #completions = relationship("Completion", back_populates="document")
+
+    def compute_doc_hash(self):
+        return sha256(self.author + ":" + self.title)
+
+    def update_doc_hash(self):
+        self.doc_hash = self.compute_doc_hash()
 
     def __str__(self):
         return "document: {title} by {author}".format(title=self.title, author=self.author)
+
+@event.listens_for(Document, 'before_insert')
+@event.listens_for(Document, 'before_update')
+def update_doc_hash(mapper, connect, target):
+    print("updating doc hash...")
+    target.update_doc_hash()
+
+#event.listens_for(Document, 'before_insert', update_doc_hash)
+#event.listens_for(Document, 'before_update', update_doc_hash)
 
 class User(Base,IDd,Timestamped):
     __tablename__ = 'users'
@@ -157,6 +176,25 @@ def info():
     """
     return pd.read_sql_query(sql, engine).set_index("name")
 
+def update_progress(user, dochash, game, progress):
+    s = create_session()
+    sql = """
+    update completion set pc=:progress
+    where completion.id IN (select completion.id from completion
+    LEFT JOIN towns ON completion.town_id=towns.id 
+    LEFT JOIN games ON completion.game_id=games.id 
+    LEFT JOIN users ON users.id=towns.user_id 
+    LEFT JOIN documents ON towns.document_id=documents.id 
+    where games.name = :game 
+        AND documents.doc_hash = :dochash
+        AND users.name = :user)
+    """
+    params = {'game':game, 'user':user, 'dochash': dochash, 'progress':progress}
+    resp = s.execute(sql, params)
+    #return resp
+    s.commit()
+    return resp.rowcount
+
 def load_data_for_user(username, townid=None):
     s = create_session()
     sql = """
@@ -192,7 +230,7 @@ def load_data_for_user(username, townid=None):
                 "document_title": document_title,
                 "document_author": document_author,
                 "document_subject": document_subject,
-                "document_id": hashlib.sha256((document_author + ":" + document_title).encode()).hexdigest(),
+                "document_id": sha256(document_author + ":" + document_title),
                 "level": level,
                 "town_id": town_id,
                 "town_name": town_name,
@@ -212,15 +250,25 @@ def load_data_for_user(username, townid=None):
         levels.append(create_level(*towns))
     return create_update(*levels, documents_completed=0, document_points=0)
 
+def create_database():
+    Base.metadata.create_all(engine)
+
 if __name__ == "__main__":
     #print(load_data())
     #print(latest_change(), type(latest_change()))
-    #Base.metadata.create_all(engine)
+    create_database()
     #pp.pprint(load_data_for_user("testusera",1))
-    pp.pprint(load_data_for_user("testusera",1))
+    #pp.pprint(load_data_for_user("testusera",1))
     #print(load_data_for_user("004c4b62a098f68745337bce1e021b58"))
     #print(load_data_for_user("unknown"))
-#    session = Session()
+    #session = Session()
+    #doc = Document(title="title", author="author", subject="subject")
+    #session.add(doc)
+    #session.commit()
+    #doc.title="titleb"
+    #session.add(doc)
+    #session.commit()
+    #session.flush()
 #    create_match(session, "tileattack", "alice", "item_a", "DN", "ne123")
 #    create_match(session, "tileattack", "alice", "item_b", "DN", "ne123")
 #    create_match(session, "tileattack", "bob", "item_a", "DO", "ne123")
