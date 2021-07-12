@@ -1,0 +1,135 @@
+body.staticfooter {
+  padding-bottom:40px;
+}
+body.staticheader {
+  padding-top:60px;
+}
+.options {
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  row-gap: 20px;
+  column-gap: 50px;
+}
+
+body {
+  background:#eee;
+}
+
+header.static {
+  position:fixed;
+  top:0px;
+  height:50px;
+  background:white;
+  width:100vw;
+}
+
+header.static h1 {
+  padding:0;
+  margin:0;
+  text-align:center;
+}
+
+footer.static {
+  position:fixed;
+  background:white;
+  width:100vw;
+  padding-top:10px;
+  bottom:0;
+}
+
+table.detail th {
+  text-align:left;
+  color:grey;
+}
+
+a.btn {
+  height:20px;
+}
+
+.options label {
+  margin-top:50px;
+  border-radius:10px;
+  box-shadow:0px 0px 10px 5px #00000022;
+  background:white;
+  padding:10px;
+  padding-top:20px;
+  position:relative;
+  margin-left:20px;
+  margin-right:30px;
+}
+
+.options span.number {
+  display:block;
+  position:absolute;
+  background:white;
+  text-align:center;
+  vertical-align:middle;
+  line-height:30px;
+  border-radius:15px;
+  top:-15px;
+  left:-15px;
+  width:30px;
+  height:30px;
+  box-shadow:0px 0px 2px 2px #00000022;
+}
+
+
+.options label:focus-within {
+  box-shadow:0px 0px 10px 5px #0000FF55;
+} 
+
+.options input[type=radio] {
+  width:0px;
+  height:0px;
+}
+
+.options .img {
+  background-size:contain;
+  background-repeat:no-repeat;
+  width:100px;
+  height:100px;
+  position:absolute;
+  left:50%;
+  top:-50px;
+  margin-left:-50px;
+}
+
+.img-learner {
+  background-image:url(images/difficulty/learner.svg);
+}
+
+.img-confident {
+  background-image:url(images/difficulty/confident.svg);
+}
+
+.img-fluent {
+  background-image:url(images/difficulty/fluent.svg);
+}
+
+.img-linguist {
+  background-image:url(images/difficulty/linguist.svg);
+}
+.img-food {
+  background-image:url(images/building-icon/food.png);
+}
+
+.img-farm {
+  background-image:url(images/building-icon/farm.png);
+}
+
+.img-library {
+  background-image:url(images/building-icon/library.png);
+}
+
+.img-detectives {
+  background-image:url(images/building-icon/detectives.png);
+}
+
+.options .progresscircle {
+  position:absolute;
+  width:60px;
+  height:60px;
+  bottom:10px;
+  right:-30px;
+}
