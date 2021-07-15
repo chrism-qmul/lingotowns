@@ -455,6 +455,11 @@ class Game {
     console.log(ev);
   }
 
+  login() {
+    //console.log("login?");
+    DALIAuth.login().then(function(data){this.user = data});
+  }
+
   showframe(url, data) {
     const iframe = document.createElement("IFRAME");
     iframe.className = "gamewindow"; 
@@ -1311,6 +1316,7 @@ game.preload().then(function(resources) {
     game.resize();
     game.centerWorldPointOnScreen(new Vec2(0,0));
     game.draw();
+    game.login();
   });
 });
 
