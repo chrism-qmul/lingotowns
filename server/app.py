@@ -5,7 +5,10 @@ from flask_socketio import send, emit, join_room, leave_room
 import persistence
 from flask_admin.contrib.sqla import ModelView
 from flask_sqlalchemy import SQLAlchemy
+import requests
 
+AUTH_SERVER = "http://localhost:5000"
+#AUTH_SERVER = "https://auth.tileattack.com"
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///file.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
@@ -45,6 +48,8 @@ sessions = set()
 
 client_info = {}
 
+session_uuid = {}
+
 #prefix = "/admin/"
 prefix = "/"
 
@@ -65,13 +70,25 @@ def connect(data):
 @socketio.on('disconnect')
 def disconnect():
     print("they left :( " + request.sid)
-    leave_room("testusera")
+    #leave_room("testusera")
     sessions.remove(request.sid)
-    del client_info[request.sid]
+    if request.sid in session_uuid:
+        del session_uuid[request.sid]
+
+@socketio.on('auth')
+def handle_auth(auth_token):
+    app.logger.info("auth mesg %s", auth_token)
+    resp = requests.get("https://auth.tileattack.com", {"auth_token":auth_token}).json()
+    uuid = resp.get('uuid')
+    session_uuid[request.sid] = uuid
+    if uuid:
+        join_room(uuid)
+        send_update_for_user(uuid)
 
 #@app.route("/admin/")
 #def index():
 #    return render_template("index.html", users=sessions, client_info=client_info, prefix=prefix)
+
 
 @app.route("/play-game")
 def playgame():

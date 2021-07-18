@@ -456,8 +456,7 @@ class Game {
   }
 
   login() {
-    //console.log("login?");
-    DALIAuth.login().then(function(data){this.user = data});
+    return DALIAuth.login();
   }
 
   showframe(url, data) {
@@ -862,7 +861,11 @@ class Game {
     });
     const game = this;
     socket.on("connect", () => {
-        socket.send("Hello!");
+      game.login().then(function(userdata) {
+        game.userdata = userdata;
+        socket.emit("auth", userdata.token);
+      });
+      //  socket.send("Hello!");
 
         // or with emit() and custom event names
 //        socket.emit("salutations", "Hello!", { "mr": "john" }, Uint8Array.from([1, 2, 3, 4]));
@@ -1316,7 +1319,6 @@ game.preload().then(function(resources) {
     game.resize();
     game.centerWorldPointOnScreen(new Vec2(0,0));
     game.draw();
-    game.login();
   });
 });
 
