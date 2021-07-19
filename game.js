@@ -861,12 +861,11 @@ class Game {
     });
     const game = this;
     socket.on("connect", () => {
-      game.login().then(function(userdata) {
+      /*game.login();
+        .then(function(userdata) {
         game.userdata = userdata;
         socket.emit("auth", userdata.token);
-      });
-      //  socket.send("Hello!");
-
+      });*/
         // or with emit() and custom event names
 //        socket.emit("salutations", "Hello!", { "mr": "john" }, Uint8Array.from([1, 2, 3, 4]));
       // handle the event sent with socket.send()

@@ -1,21 +1,34 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
 from flask_admin import Admin
 from flask_socketio import SocketIO
 from flask_socketio import send, emit, join_room, leave_room
 import persistence
 from flask_admin.contrib.sqla import ModelView
 from flask_sqlalchemy import SQLAlchemy
+from flask_session import Session
 import requests
+import sys
+import redis
 
-AUTH_SERVER = "http://localhost:5000"
-#AUTH_SERVER = "https://auth.tileattack.com"
+#AUTH_SERVER = "http://localhost:5000"
+#can't access localhost, it's this container
+HOSTNAME = "http://localhost:8080"
+AUTH_SERVER = "https://auth.tileattack.com"
+SECRET_KEY = "secret!"
 app = Flask(__name__)
+app.config['SESSION_REDIS'] = redis.Redis('redis')
+app.secret_key = SECRET_KEY
+#app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///file.db'
+app.config['SESSION_TYPE'] = 'redis'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
-app.config['SECRET_KEY'] = 'secret!'
+SESSION_SQLALCHEMY = db
+Session(app)
 admin = Admin(app, name='lingotowns', template_mode='bootstrap3')
 models = [persistence.Document, persistence.User, persistence.Town, persistence.Game, persistence.Completion]
+
+#db.create_all()
 
 def send_update(update, user):
     app.logger.info("[%s] %s", user, update)
@@ -59,13 +72,18 @@ game_url_builders = {"farm": lambda doc_id: "https://phrasefarm.org/#/game/{}".f
         "detectives": lambda _:  "https://anawiki.essex.ac.uk/phrasedetectives/"}
 
 @socketio.on('connect')
-def connect(data):
+def connect(auth=None):
     print("someone connected! " + request.sid)
     print("connect")
     sessions.add(request.sid)
     client_info[request.sid] = request.user_agent.platform
-    join_room("testusera")
-    send_update_for_user("testusera")
+    app.logger.info("***** do we have session?? %s",session.get("auth"))
+    auth = session['auth']
+    if auth:
+        uuid = auth['uuid']
+        if uuid:
+            join_room(uuid)
+            send_update_for_user(uuid)
 
 @socketio.on('disconnect')
 def disconnect():
@@ -75,20 +93,36 @@ def disconnect():
     if request.sid in session_uuid:
         del session_uuid[request.sid]
 
-@socketio.on('auth')
-def handle_auth(auth_token):
-    app.logger.info("auth mesg %s", auth_token)
-    resp = requests.get("https://auth.tileattack.com", {"auth_token":auth_token}).json()
-    uuid = resp.get('uuid')
-    session_uuid[request.sid] = uuid
-    if uuid:
-        join_room(uuid)
-        send_update_for_user(uuid)
+def auth_from_token(token):
+    url = AUTH_SERVER + "/api/verify"
+    return requests.get(url, {"auth_token":token}).json()
+#
+#@socketio.on('auth')
+#def handle_auth(auth_token):
+#    app.logger.info("auth mesg %s", auth_token)
+#    resp = auth_from_token(auth_token)
+#    app.logger.info("the always wrong response", str(resp))
+#    uuid = resp.get('uuid')
+#    session_uuid[request.sid] = uuid
+#    if uuid:
+#        join_room(uuid)
+#        send_update_for_user(uuid)
 
 #@app.route("/admin/")
 #def index():
 #    return render_template("index.html", users=sessions, client_info=client_info, prefix=prefix)
 
+@app.route("/")
+def lingotowns():
+    auth_token = request.args.get("auth_token")
+    session_auth = session.get('auth')
+    if auth_token:
+        session['auth'] = auth_from_token(auth_token)
+        return redirect("/")
+    elif session_auth:
+        return render_template("game.html", auth_server=AUTH_SERVER)
+    else:
+        return redirect(AUTH_SERVER + "/login?redirect=" + HOSTNAME)
 
 @app.route("/play-game")
 def playgame():

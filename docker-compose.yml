@@ -1,6 +1,8 @@
 version: '2' 
 
 services:
+  redis:
+    image: redis:6-alpine
   server:
     build: server
     image: registry.phd.madg.es/lingtowns-server:0.0.3
@@ -13,6 +15,8 @@ services:
     environment:
       - FLASK_DEBUG:True
       - FLASK_ENV:development
+    depends_on:
+      - redis
   http:
     image: nginx
     volumes:
