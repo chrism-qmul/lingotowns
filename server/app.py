@@ -9,11 +9,15 @@ from flask_session import Session
 import requests
 import sys
 import redis
+import json
+import random
 
 #AUTH_SERVER = "http://localhost:5000"
 #can't access localhost, it's this container
-HOSTNAME = "http://localhost:8080"
+#HOSTNAME = "http://localhost:8080"
+HOSTNAME = "https://lingotowns.com"
 AUTH_SERVER = "https://auth.tileattack.com"
+RECOMMENDER = "https://recommender.tileattack.com"
 SECRET_KEY = "secret!"
 app = Flask(__name__)
 app.config['SESSION_REDIS'] = redis.Redis('redis')
@@ -30,12 +34,36 @@ models = [persistence.Document, persistence.User, persistence.Town, persistence.
 
 #db.create_all()
 
+def is_ready_for_new_level(update):
+    # if any towns in the last level are over n % complete then add a new level
+    if not update:
+        return True
+    if not update.get("levels"):
+        return True
+    max_town_completion = max([town.get("total_completion", 0) for town in update.get("levels")[-1].get('towns', [])])
+    return max_town_completion > 70
+
+def next_level(update):
+    if not update:
+        return 0
+    return len(update.get("levels", []))
+
+def create_next_level_for(uuid, level):
+    # TODO: this calls the task recommender and updates the database
+    documents = list(persistence.unseen_documents_for_user(db.session, uuid))[:random.randint(1, 3)]
+    persistence.add_level(db.session, uuid, documents, ["farm", "food"], level)
+    db.session.commit()
+
 def send_update(update, user):
     app.logger.info("[%s] %s", user, update)
     socketio.send(update, to=str(user))
 
 def send_update_for_user(user_id):
-    send_update(persistence.load_data_for_user(user_id), user_id)
+    user_update = persistence.load_data_for_user(user_id)
+    if is_ready_for_new_level(user_update):
+        create_next_level_for(user_id, next_level(user_update))
+    user_update = persistence.load_data_for_user(user_id)
+    send_update(user_update, user_id)
 
 class ModelViewWatch(ModelView):
     def after_model_change(self, form, model, is_created):
@@ -66,10 +94,10 @@ session_uuid = {}
 #prefix = "/admin/"
 prefix = "/"
 
-game_url_builders = {"farm": lambda doc_id: "https://phrasefarm.org/#/game/{}".format(doc_id),
-        "library": lambda _: "https://wormingo.com/",
-        "food": lambda _:  "https://cafeclicker.com/",
-        "detectives": lambda _:  "https://anawiki.essex.ac.uk/phrasedetectives/"}
+game_url_builders = {"farm": lambda auth_token, doc_id: "https://phrasefarm.org/?auth_token={auth_token}#/game/{doc_id}".format(auth_token=auth_token, doc_id=doc_id),
+        "library": lambda a,b: "https://wormingo.com/",
+        "food": lambda a,b:  "https://cafeclicker.com/",
+        "detectives": lambda a,b:  "https://anawiki.essex.ac.uk/phrasedetectives/"}
 
 @socketio.on('connect')
 def connect(auth=None):
@@ -118,6 +146,7 @@ def lingotowns():
     session_auth = session.get('auth')
     if auth_token:
         session['auth'] = auth_from_token(auth_token)
+        session['auth_token'] = auth_token
         return redirect("/")
     elif session_auth:
         return render_template("game.html", auth_server=AUTH_SERVER)
@@ -129,25 +158,30 @@ def playgame():
     game = request.args.get("game")
     document_id = request.args.get("document_id")
     if game in game_url_builders:
-        url = game_url_builders[game](document_id)
+        url = game_url_builders[game](session['auth_token'], document_id)
         return redirect(url)
     else:
         return "no such game", 500
 
-@app.route("/api/update-progress")
-def update_progress():
-    game = request.args.get("game")
-    document_id = request.args.get("doc")
-    user = request.args.get("user")
-    progress = request.args.get("progress")
-    if persistence.update_progress(game, document_id, user, progress):
+@app.route("/api/update-progress", methods=["POST"])
+def update_progress(): #POST
+    print(str(request.data))
+    data = request.get_json(force=True)
+    #data = json.loads(request.data)
+    game = data.get("game")
+    document_hash = data.get("doc")
+    uuid = data.get("uuid")
+    progress = data.get("progress")
+    if persistence.update_progress(uuid, document_hash, game, progress):
+        send_update_for_user(uuid)
         return "updated", 200
     else:
-        return "invalid request", 500
+        return "invalid request " + str(data), 500
 
 @app.route("/town-summary/<townid>")
 def townsummary(townid):
-    town = persistence.load_data_for_user("testusera", townid)['levels'][0]['towns'][0]
+    uuid = session['auth']['uuid']
+    town = persistence.load_data_for_user(uuid, townid)['levels'][0]['towns'][0]
     return render_template("town-summary.html", town=town)
 
 if __name__ == '__main__':

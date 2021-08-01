@@ -56,14 +56,14 @@
       <form method='get' action='/play-game'>
         <input type='hidden' name='document_id' value='{{ town.document_id }}' />
         <div class='options progress'>
-          {% if town.games.farms is defined %}
+          {% if town.games.farm is defined %}
           <label>
             <input type='radio' name='game' value='farm' checked="checked" />
             <span class='number'>1</span>
             <div class='img img-farm'></div>
             <h2>Farm</h2>
             <p>Learning English as a second language</p>
-            <div data-text="{{town.games.farms.completion}}%" data-amount='{{town.games.farms.completion / 100}}' data-fill='#FFF' data-thickness='6' data-bg-color='#CCC' data-fg-color='#F00' class='progresscircle'></div>
+            <div data-text="{{town.games.farm.completion}}%" data-amount='{{town.games.farm.completion / 100}}' data-fill='#FFF' data-thickness='6' data-bg-color='#CCC' data-fg-color='#F00' class='progresscircle'></div>
           </label>
           {% endif %}
           {% if town.games.food is defined %}

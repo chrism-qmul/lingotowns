@@ -460,17 +460,12 @@ class Game {
   }
 
   showframe(url, data) {
+    /*
     const iframe = document.createElement("IFRAME");
     iframe.className = "gamewindow"; 
     iframe.src = url;
     document.body.appendChild(iframe);
     this.toclose.push(iframe);
-    /*
-    const closebutton = document.createElement("button");
-    closebutton.innerHTML = "Return to the town";
-    closebutton.className = "gameclosebutton";
-    document.body.appendChild(closebutton);
-    */
 
     let closefn = function() {
         document.body.removeChild(iframe);
@@ -481,7 +476,8 @@ class Game {
       iframe.contentWindow.postMessage(data, "*");
     }
     return iframe;
-    //closebutton.addEventListener('click', closefn, {once: true});
+    */
+    window.location.href = url;
   }
 
   closeframes() {

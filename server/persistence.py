@@ -11,6 +11,7 @@ import logging
 from itertools import groupby
 import pprint
 import hashlib
+import random
 
 def sha256(param_str):
     return hashlib.sha256(param_str.encode()).hexdigest()
@@ -132,12 +133,23 @@ class Completion(Base,IDd,Timestamped):
     town_id = Column(Integer, ForeignKey('towns.id'))
     town = relationship("Town")
 
-def get_or_create(session, model, **kwargs):
-    result = session.query(model).filter_by(**kwargs).first()
-    if not result:
-        result = model(**kwargs)
-        session.add(result)
+def get(session, model, **kwargs):
+    return session.query(model).filter_by(**kwargs).first()
+
+def create(session, model, **kwargs):
+    result = model(**kwargs)
+    session.add(result)
     return result
+
+#def get_or_create(session, model, **kwargs):
+#    result = session.query(model).filter_by(**kwargs).first()
+#    if not result:
+#        result = model(**kwargs)
+#        session.add(result)
+#    return result
+
+def get_or_create(session, model, **kwargs):
+    return get(session, model, **kwargs) or create(session, model, **kwargs)
 
 def latest_change():
     tables_to_watch = ['matches', 'games', 'users', 'item_group', 'items']
@@ -194,6 +206,28 @@ def update_progress(user, dochash, game, progress):
     #return resp
     s.commit()
     return resp.rowcount
+
+def unseen_documents_for_user(s, username):
+    sql = """
+    select documents.author as document_author, documents.title as document_title from documents where id NOT IN 
+        (select 
+            documents.id as id
+        from towns 
+        LEFT JOIN users ON users.id=towns.user_id 
+        LEFT JOIN documents ON towns.document_id=documents.id 
+        LEFT JOIN completion ON completion.town_id=towns.id 
+        LEFT JOIN games on completion.game_id=games.id 
+        WHERE 
+        games.name IS NOT NULL
+        AND
+        users.name=:username) ORDER BY RANDOM()
+    """
+    params = {'username': username}
+    results = s.execute(sql, params)
+    docs = set()
+    for result in results:
+        docs.add((result['document_author'], result['document_title']))
+    return docs
 
 def load_data_for_user(username, townid=None):
     s = create_session()
@@ -252,6 +286,20 @@ def load_data_for_user(username, townid=None):
 
 def create_database():
     Base.metadata.create_all(engine)
+
+def town_naming(document):
+    areas = ["City", "Town", "Village"]
+    area = random.choice(areas)
+    return document.author + " " + area
+
+def add_level(session, uuid, documents, games, level):
+    user = get_or_create(session, User, name=uuid)
+    for document in documents:
+        author, title = document
+        document = get_or_create(session, Document, author=author, title=title)
+        town = create(session, Town, document=document, name=town_naming(document), level=level, user=user)
+        for game in games:
+            create(session, Completion, game=get_or_create(session, Game, name=game), town=town, pc=0)
 
 if __name__ == "__main__":
     #print(load_data())
