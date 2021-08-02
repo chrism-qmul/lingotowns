@@ -94,7 +94,7 @@ session_uuid = {}
 #prefix = "/admin/"
 prefix = "/"
 
-game_url_builders = {"farm": lambda auth_token, doc_id: "https://phrasefarm.org/?auth_token={auth_token}#/game/{doc_id}".format(auth_token=auth_token, doc_id=doc_id),
+game_url_builders = {"farm": lambda auth_token, doc_id: "https://phrasefarm.org/?auth_token={auth_token}#/continuegame/{doc_id}".format(auth_token=auth_token, doc_id=doc_id),
         "library": lambda a,b: "https://wormingo.com/",
         "food": lambda a,b:  "https://cafeclicker.com/",
         "detectives": lambda a,b:  "https://anawiki.essex.ac.uk/phrasedetectives/"}
