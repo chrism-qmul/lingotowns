@@ -153,6 +153,13 @@ def lingotowns():
     else:
         return redirect(AUTH_SERVER + "/login?redirect=" + HOSTNAME)
 
+@app.route("/forcelevelup")
+def forcelevelup():
+    uuid = session['auth']['uuid']
+    user_update = persistence.load_data_for_user(uuid)
+    create_next_level_for(uuid, next_level(user_update))
+    return redirect("/")
+
 @app.route("/play-game")
 def playgame():
     game = request.args.get("game")
