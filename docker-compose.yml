@@ -5,7 +5,7 @@ services:
     image: redis:6-alpine
   server:
     build: server
-    image: registry.phd.madg.es/lingtowns-server:0.0.5
+    image: registry.phd.madg.es/lingtowns-server:0.0.6
     restart: unless-stopped
     ports:
       - 8081:5000
