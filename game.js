@@ -800,6 +800,32 @@ class Game {
 
   drawCompass() {
     const midscreen = new Vec2(this.canvas.width/2, this.canvas.height/2);
+
+    const towns = this.world.towns();
+    for(var i = 0; i < towns.length; i++) {
+      var townInformation = this.getTownInformation(i);
+      if (townInformation) {
+        const position = towns[i].position;
+        if (!this.onScreen(position)) {
+          const screenTarget = this.toScreen(position);
+          drawLine(this.context, midscreen, screenTarget);
+          const diff = screenTarget.sub(midscreen);
+          const rotation = Math.atan2(diff.y, diff.x) + Math.PI*.5;
+          console.log("compass", position, Math.atan2(diff.y, diff.x));
+          const xoffset = Math.sign(diff.y)*(this.canvas.height/2)*Math.tan(Math.atan2(diff.y, diff.x));
+          this.drawCircle(new Vec2(xoffset, diff.y < 0 ? 0 : this.canvas.height));
+          //this.context.drawLine()
+          this.context.save();
+          this.context.translate(this.canvas.width-this.resources.compass.width/2, this.resources.compass.height/2);
+          this.context.rotate(rotation);
+          this.context.drawImage(this.resources.compass, -this.resources.compass.width/2, -this.resources.compass.height/2, this.resources.compass.width, this.resources.compass.height);
+          this.context.restore();
+        }
+      }
+    }
+
+
+    /*
     this.context.drawImage(this.resources.compass, this.resources.compass.width, this.resources.compass.height, 5, 5);
     this.next_target = new Vec2(0,0);
     if (!this.onScreen(this.next_target)) {
@@ -807,12 +833,7 @@ class Game {
       const diff = next_target_on_screen.sub(midscreen);
       const rotation = Math.atan2(diff.y, diff.x) + Math.PI*.5;
       //console.log("mid screen", midscreen, "next target on screen", this.next_target, "difference", diff, "angle", rotation);
-      this.context.save();
-      this.context.translate(this.canvas.width-this.resources.compass.width/2, this.resources.compass.height/2);
-      this.context.rotate(rotation);
-      this.context.drawImage(this.resources.compass, -this.resources.compass.width/2, -this.resources.compass.height/2, this.resources.compass.width, this.resources.compass.height);
-      this.context.restore();
-    }
+    }*/
     //this.drawCircle(midscreen);
     //this.drawCircle(this.next_target);
   }
@@ -1321,7 +1342,7 @@ function update_progression() {
   connect_to_server.then(function() {
     const town_info = game.getCurrentTownInformation();
     if (town_info) {
-      const games = ['farms', 'food', 'library'];
+      const games = ['farm', 'food', 'library'];
       let docs_completed = document.getElementById('documents-completed');
       docs_completed.innerHTML = game.data.documents_completed;
       let docs_points = document.getElementById('document-points');
