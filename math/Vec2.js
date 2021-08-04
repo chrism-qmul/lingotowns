@@ -1,5 +1,9 @@
 export class Vec2 extends Array {
   constructor(x, y) {
+    if (x.hasOwnProperty("x") && x.hasOwnProperty("y")) {
+      y = x.y;
+      x = x.x;
+    }
     if (Array.isArray(x)) {
       [x, y] = x;
     }
@@ -171,4 +175,14 @@ export class Vec2 extends Array {
     const [bx,by] = vec;
     return (this.x == bx && this.y == by);
   }
+}
+
+export function lineIntersect(a,b,c,d) {
+  const denominator = (a.x-b.x)*(c.y-d.y)-(a.y-b.y)*(c.x-d.x);
+  if (denominator == 0) {
+    return null;
+  }
+  const x = ((a.x*b.y-a.y*b.x)*(c.x-d.x)-(a.x-b.x)*(c.x*d.y-c.y*d.x))/denominator;
+  const y = ((a.x*b.y-a.y*b.x)*(c.y-d.y)-(a.y-b.y)*(c.x*d.y-c.y*d.x))/denominator;
+  return new Vec2(x, y);
 }

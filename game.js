@@ -1,4 +1,4 @@
-import {Vec2} from './math/Vec2.js';
+import {Vec2,lineIntersect} from './math/Vec2.js';
 import {BoundingBox} from './collections/BoundingBox.js';
 import {World,RoadEast,RoadNorth,RoadSouth,RoadWest} from './world.js';
 import {PRNG} from './algorithms/prng.js';
@@ -778,6 +778,7 @@ class Game {
   }
 
   drawSign() {
+    /*
     const midpoint = this.worldPointAtScreenCenter();
     //const midpoint = this.toWorld(new Vec2(this.canvas.width/2, this.canvas.height/2)).floor();
     const currentregion = this.world.regions.get(midpoint);
@@ -790,6 +791,56 @@ class Game {
     this.context.textAlign = "center";
     this.context.fillText("The " + region.name(), this.canvas.width/2, 62, this.canvas.width/5);
     this.context.restore();
+    */
+  }
+
+  //pointOnEdge(rect, deg) {
+  pointOnEdge(rect, theta) {
+    var twoPI = Math.PI*2;
+    //var theta = deg * Math.PI / 180;
+
+    while (theta < -Math.PI) {
+      theta += twoPI;
+    }
+
+    while (theta > Math.PI) {
+      theta -= twoPI;
+    }
+
+    var rectAtan = Math.atan2(rect.height, rect.width);
+    var tanTheta = Math.tan(theta);
+    var region;
+
+    if ((theta > -rectAtan) && (theta <= rectAtan)) {
+      region = 1;
+    } else if ((theta > rectAtan) && (theta <= (Math.PI - rectAtan))) {
+      region = 2;
+    } else if ((theta > (Math.PI - rectAtan)) || (theta <= -(Math.PI - rectAtan))) {
+      region = 3;
+    } else {
+      region = 4;
+    }
+
+    var edgePoint = {x: rect.width/2, y: rect.height/2};
+    var xFactor = 1;
+    var yFactor = 1;
+
+    switch (region) {
+      case 1: yFactor = -1; break;
+      case 2: yFactor = -1; break;
+      case 3: xFactor = -1; break;
+      case 4: xFactor = -1; break;
+    }
+
+    if ((region === 1) || (region === 3)) {
+      edgePoint.x += xFactor * (rect.width / 2.); // "Z0"
+      edgePoint.y += yFactor * (rect.width / 2.) * tanTheta;
+    } else {
+      edgePoint.x += xFactor * (rect.height / (2. * tanTheta)); // "Z1"
+      edgePoint.y += yFactor * (rect.height /  2.);
+    }
+
+    return edgePoint;
   }
 
   onScreen(worldpoint) {
@@ -800,25 +851,52 @@ class Game {
 
   drawCompass() {
     const midscreen = new Vec2(this.canvas.width/2, this.canvas.height/2);
+/*
+    const bl = new Vec2(0+this.resources.compass.height/2, this.canvas.height-this.resources.compass.height/2);
+    const br = new Vec2(this.canvas.width-this.resources.compass.height/2, this.canvas.height-this.resources.compass.height/2);
+    const tl = new Vec2(0+this.resources.compass.height/2, this.resources.compass.height/2);
+    const tr = new Vec2(this.canvas.width-this.resources.compass.height/2, this.resources.compass.height/2);
+    const leftScreen = [tl, bl];
+    const topScreen = [tl, tr];
+    const bottomScreen = [bl, br];
+    const rightScreen = [tr, br];
+    const screenEdges = [leftScreen, topScreen, bottomScreen, rightScreen];
+    drawLine(this.context, topScreen[0], topScreen[1]);
+    */
+    //drawLine(this.context, tl, tr);
+    //drawLine(this.context, bl, br);
+    //drawLine(this.context, tr, br);
 
     const towns = this.world.towns();
     for(var i = 0; i < towns.length; i++) {
       var townInformation = this.getTownInformation(i);
       if (townInformation) {
         const position = towns[i].position;
+        const info = this.getTownInformation(i);
         if (!this.onScreen(position)) {
           const screenTarget = this.toScreen(position);
-          drawLine(this.context, midscreen, screenTarget);
+          //drawLine(this.context, midscreen, screenTarget);
           const diff = screenTarget.sub(midscreen);
           const rotation = Math.atan2(diff.y, diff.x) + Math.PI*.5;
-          console.log("compass", position, Math.atan2(diff.y, diff.x));
-          const xoffset = Math.sign(diff.y)*(this.canvas.height/2)*Math.tan(Math.atan2(diff.y, diff.x));
-          this.drawCircle(new Vec2(xoffset, diff.y < 0 ? 0 : this.canvas.height));
-          //this.context.drawLine()
+          var edgepoint = this.pointOnEdge({width:this.canvas.width, height:this.canvas.height}, Math.atan2(diff.y, diff.x));
+          edgepoint.y = this.canvas.height-edgepoint.y;
+          edgepoint = new Vec2(edgepoint);
+          //this.drawCircle(edgepoint);
+          edgepoint.sub(diff.clone().normalize().mult(this.resources.compass.height*.5));
+          //this.drawCircle(edgepoint);
           this.context.save();
-          this.context.translate(this.canvas.width-this.resources.compass.width/2, this.resources.compass.height/2);
+          this.context.translate(edgepoint.x, edgepoint.y);
           this.context.rotate(rotation);
           this.context.drawImage(this.resources.compass, -this.resources.compass.width/2, -this.resources.compass.height/2, this.resources.compass.width, this.resources.compass.height);
+          this.context.restore();
+          this.context.save();
+          this.context.translate(edgepoint.x, edgepoint.y);
+          this.context.textAlign="center";
+          this.context.fillStyle = "rgba(255,255,255,0.8)";
+          this.context.font = "12px sans-serif";
+          this.context.fillText("Level: " + info['level'], 0, -10, this.resources.compass.height);
+          this.context.font = "30px sans-serif";
+          this.context.fillText("" + info['total_completion'] + "%", 0, 20, this.resources.compass.height);
           this.context.restore();
         }
       }
