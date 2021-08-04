@@ -847,9 +847,10 @@ class Game {
     return edgePoint;
   }
 
-  onScreen(worldpoint) {
+  //onScreen(worldpoint) {
+  onScreen(point) {
     //check if a worldpoint is currently on the screen
-    const point = this.toScreen(worldpoint);
+    //const point = this.toScreen(worldpoint);
     return ((point.x > 0 && point.x < this.canvas.width) && (point.y > 0 && point.y < this.canvas.height));
   }
 
@@ -877,8 +878,8 @@ class Game {
       if (townInformation) {
         const position = towns[i].position;
         const info = this.getTownInformation(i);
-        if (!this.onScreen(position)) {
-          const screenTarget = this.toScreen(position);
+        const screenTarget = this.toScreen(position);
+        if (!this.onScreen(screenTarget)) {
           //drawLine(this.context, midscreen, screenTarget);
           const diff = screenTarget.sub(midscreen);
           const rotation = Math.atan2(diff.y, diff.x) + Math.PI*.5;
@@ -999,9 +1000,11 @@ class Game {
 //    this.minimapcontext.clearRect(0, 0, minimapcanvas.width, minimapcanvas.height);
     var imagedata = this.minimapcontext.createImageData(minimapcanvas.width, minimapcanvas.height);
     var data = imagedata.data;
-    for(var x = 0; x < minimapcanvas.width; x++) {
-      for(var y = 0; y < minimapcanvas.height; y++) {
-        const idx = (y*(minimapcanvas.width*4))+(x*4);
+    const minimapcanvaswidth = minimapcanvas.width;
+    const minimapcanvasheight = minimapcanvas.height;
+    for(var x = 0; x < minimapcanvaswidth; x++) {
+      for(var y = 0; y < minimapcanvasheight; y++) {
+        const idx = (y*(minimapcanvasheight*4))+(x*4);
         let worldpos = this.fromMiniMapToWorld(new Vec2(x, y)).floor();
         let mag = worldpos.magnitude();
         let tile = this.world.get(worldpos);
@@ -1294,9 +1297,14 @@ class Game {
     alpha = alpha || 1.0;
     var bl = this.toScreen(bottomlocation);
     //this.drawCircle(bl);
-    var left = this.toScreen(bottomlocation.clone().sub(new Vec2(footprint.x, 0)));
+    //
+    //var left = this.toScreen(bottomlocation.clone().sub(new Vec2(footprint.x, 0)));
+    var left = this.toScreen(new Vec2(-footprint.x, 0).add(bottomlocation));
     //this.drawCircle(left);
-    var right = this.toScreen(bottomlocation.clone().sub(new Vec2(0, footprint.y)));
+    //
+    //var right = this.toScreen(bottomlocation.clone().sub(new Vec2(0, footprint.y)));
+    var right = this.toScreen(new Vec2(0, -footprint.y).add(bottomlocation));
+    //
     //this.drawCircle(right);
     var desiredImageWidth = right.x - left.x;
     let imgScale = desiredImageWidth/img.width;
