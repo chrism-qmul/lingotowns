@@ -7,7 +7,8 @@ export class BoxedGrid extends Grid {
   }
 
   address(point) {
-    return super.address(this.boundingbox.zerobased(point.slice()));
+    return super.address(this.boundingbox.zerobased([point[0], point[1]]));
+//point.slice()
   }
 
   point(address) {

@@ -1,11 +1,13 @@
 export class Vec2 extends Array {
   constructor(x, y) {
-    if (x.hasOwnProperty("x") && x.hasOwnProperty("y")) {
-      y = x.y;
-      x = x.x;
-    }
-    if (Array.isArray(x)) {
-      [x, y] = x;
+    if (y === undefined) {
+      if (Array.isArray(x)) {
+        [x, y] = x;
+      }
+      else if (x.hasOwnProperty("x") && x.hasOwnProperty("y")) {
+        y = x.y;
+        x = x.x;
+      }
     }
     super(x, y);
   }

@@ -48,6 +48,10 @@ class Fog {
   }
 }
 
+function hexColorToRGB(hex) {
+  return hex.replace(/^#/,"").match(/.{1,2}/g).map((s) => parseInt(s,16));
+}
+
 class WoodlandRegion {
   constructor(game) {
     this.game = game;
@@ -350,7 +354,7 @@ class Game {
     this.minimapcontext = minimapcanvas.getContext("2d");
     this.context.font = "12px Arial";
     this.regions = [new WoodlandRegion(this), new LakesRegion(this), new DesertRegion(this), new FarmRegionA(this), new FarmRegionB(this)];
-    this.regions_colors = this.regions.map(function(r) {return r.color()});
+    this.regions_colors = this.regions.map(function(r) {return hexColorToRGB(r.color())});
     this.dragging = false;          
     this.worldbox = new BoundingBox();
     this.screenScale = new Vec2(this.canvas.width/worldWidth, this.canvas.height/worldHeight); //basic orthographic
@@ -992,59 +996,47 @@ class Game {
 
   drawMiniMap() {
     //this.minimapworker.postMessage(minimapcanvas, this);
-    this.minimapcontext.clearRect(0, 0, minimapcanvas.width, minimapcanvas.height);
-    let last_fill = undefined;
+//    this.minimapcontext.clearRect(0, 0, minimapcanvas.width, minimapcanvas.height);
+    var imagedata = this.minimapcontext.createImageData(minimapcanvas.width, minimapcanvas.height);
+    var data = imagedata.data;
     for(var x = 0; x < minimapcanvas.width; x++) {
       for(var y = 0; y < minimapcanvas.height; y++) {
+        const idx = (y*(minimapcanvas.width*4))+(x*4);
         let worldpos = this.fromMiniMapToWorld(new Vec2(x, y)).floor();
-	let tile = this.world.get(worldpos);
-	if (tile) {
-	  if (tile.startsWith("r")) {
-	    if (last_fill != "#000000") {
-	      this.minimapcontext.fillStyle = "#000000";
-	      last_fill = "#000000" ;
-	    }
-	    this.minimapcontext.fillRect(x, y, 1, 1);
-	  }
-	  if (tile == "b0") {
-	    if (last_fill != "#FFFF00") {
-	      this.minimapcontext.fillStyle = "#FFFF00";
-	      last_fill = "#FFFF00" ;
-	    }
-	    this.minimapcontext.fillRect(x, y, 1, 1);
-	  }
-	  if (tile == "b1") {
-	    if (last_fill != "#00FFFF") {
-	      this.minimapcontext.fillStyle = "#00FFFF";
-	      last_fill = "#00FFFF";
-	    }
-	    this.minimapcontext.fillRect(x, y, 1, 1);
-	  }
-	} else {
-	  const regionIdx = this.world.regions.get(worldpos,0);
-	  const region_color = this.regions_colors[regionIdx%this.regions.length];
-	  if (last_fill != region_color) {
-	    this.minimapcontext.fillStyle = region_color;
-	    last_fill = region_color;
-	  }
-	  this.minimapcontext.fillRect(x, y, 1, 1);
-	}
-
-      }
-    }
-    for(var x = 0; x < minimapcanvas.width; x++) {
-      for(var y = 0; y < minimapcanvas.height; y++) {
-        let worldpos = this.fromMiniMapToWorld(new Vec2(x, y));
         let mag = worldpos.magnitude();
-	if (mag > this.fog_radius) {
-		let fog_alpha = Math.min((mag - this.fog_radius)/8, 1.0);
-		this.minimapcontext.globalAlpha = fog_alpha;
-		this.minimapcontext.fillStyle = "#FFFFFF";
-		this.minimapcontext.fillRect(x, y, 1, 1);
-	}
+        let tile = this.world.get(worldpos);
+        var fog_alpha = 0;
+        if (mag > this.fog_radius) {
+          fog_alpha = Math.min((mag - this.fog_radius)/8, 1.0);
+        }
+        if (Math.abs(1.0-fog_alpha) > 0.01) {
+          data[idx+3] = 255-parseInt(fog_alpha*255);
+          if (tile) {
+            if (tile.startsWith("r")) {
+              data[idx+0] = 100;
+              data[idx+1] = 100;
+              data[idx+2] = 100;
+            }
+            if (tile == "b0") {
+              data[idx] = 255;
+              data[idx+1] = 255;
+            }
+            if (tile == "b1") {
+              data[idx] = 0;
+              data[idx+1] = 255;
+              data[idx+2] = 255;
+            }
+          } else {
+            const regionIdx = this.world.regions.get(worldpos,0);
+            const region_color = this.regions_colors[regionIdx%this.regions.length];
+            for(var i = 0; i < region_color.length; i++) {
+              data[idx+i] = region_color[i];
+            }
+          }
+        }
       }
     }
-    this.minimapcontext.globalAlpha = 1.0;
+    this.minimapcontext.putImageData(imagedata, 0, 0);
     const worldTopLeft = this.screenToMiniMap(new Vec2(0,0));
     const worldTopRight = this.screenToMiniMap(new Vec2(this.canvas.width, 0));
     const worldBottomRight = this.screenToMiniMap(new Vec2(this.canvas.width, this.canvas.height));
@@ -1060,6 +1052,7 @@ class Game {
     this.minimapcontext.stroke();
     this.minimapcontext.strokeStyle = "#000000";
   }
+
 
   centerWorldPointOnScreen(worldPoint) {
     this.screenTranslate = new Vec2(0,0);
@@ -1084,9 +1077,9 @@ class Game {
   }
 
   onMouseMove(ev) {
-    var a = new Vec2(ev.pageX - this.canvas.offsetLeft, ev.pageY - this.canvas.offsetTop);
-    this.mouseGridPosition = this.toWorld(a);
-    this.requireDraw();
+  //  var a = new Vec2(ev.pageX - this.canvas.offsetLeft, ev.pageY - this.canvas.offsetTop);
+    //this.mouseGridPosition = this.toWorld(a);
+  //  this.requireDraw();
   }
 
   zoomIn() {
@@ -1121,7 +1114,7 @@ class Game {
   */
 
   fromMiniMapToWorld(vec) {
-    return vec.clone().sub(this.minimapcenter).mult(this.minimapscale).add(this.canvascenter).sub(this.screenTranslate).div(this.screenScale).sub(this.worldTranslate);
+    return vec.sub(this.minimapcenter).mult(this.minimapscale).add(this.canvascenter).sub(this.screenTranslate).div(this.screenScale).sub(this.worldTranslate);
   }
 
   moveUp() {
@@ -1388,19 +1381,23 @@ class Game {
     }
 */
     if (this.dirty) {
+      this.dirty = false;
 	    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	    //this.drawDebugGrid(); 
 	    this.drawMap();
 	    this.drawMiniMap();
 	    this.drawFog();// RENABLE FOG HERE
 	    this.drawCompass();
-	    this.drawSign();
+      if (this.dirty) {
+        console.log("error - dirty set in draw function");
+      }
     }
+    /*
     if (this.debug) {
       this.drawDebugInfo(elapsed); 
     }
+    */
     this.lastTS = ts;
-    this.dirty = false;
     window.requestAnimationFrame(this.draw.bind(this));
   }
 }
