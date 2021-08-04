@@ -1,4 +1,4 @@
-import {Vec2,lineIntersect} from './math/Vec2.js';
+import {Vec2} from './math/Vec2.js';
 import {BoundingBox} from './collections/BoundingBox.js';
 import {World,RoadEast,RoadNorth,RoadSouth,RoadWest} from './world.js';
 import {PRNG} from './algorithms/prng.js';
