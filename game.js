@@ -277,7 +277,7 @@ function perlin(vec) {
   return result;
 }
 
-const memoized_perlin = memoize(perlin, function(vec) {return vec.hash();}, 2000);
+const memoized_perlin = memoize(perlin, function(vec) {return vec.hash();}, 500);
 //const memoized_perlin = perlin;
 
 class Loader {
@@ -297,6 +297,22 @@ class Loader {
   }
   done() {
     return Promise.all(this.promises);
+  }
+}
+
+class AtlasLoader {
+  constructor(image) {
+    this.promise = new Promise(function(resolve, reject) {
+      const img = new Image();
+      img.onload = function() {
+        resolve(img);
+      }
+      img.src = image;
+    });
+  }
+
+  load() {
+    return this.promise;
   }
 }
 
@@ -344,6 +360,7 @@ class Game {
     this.debug = false;
     this.dirty = true;
     this.lastregion = null;
+    this.atlas = {"grass.small": {"xy": [860, 239], "size": [100, 59]}, "volcano.small": {"xy": [860, 300], "size": [100, 69]}, "library": {"xy": [2, 348], "size": [200, 152]}, "road-east-west-north": {"xy": [204, 382], "size": [200, 118]}, "cloud": {"xy": [810, 429], "size": [137, 71]}, "desert1.small": {"xy": [204, 85], "size": [100, 56]}, "road-south-west-north": {"xy": [406, 382], "size": [200, 118]}, "corn.small": {"xy": [406, 129], "size": [100, 64]}, "tree1.small": {"xy": [174, 2], "size": [100, 81]}, "road-lights": {"xy": [2, 100], "size": [200, 118]}, "road-lights-east": {"xy": [204, 262], "size": [200, 118]}, "compass": {"xy": [608, 242], "size": [148, 148]}, "stone": {"xy": [406, 267], "size": [200, 113]}, "tree2.small": {"xy": [758, 288], "size": [100, 81]}, "desert2.small": {"xy": [810, 371], "size": [100, 56]}, "field.small": {"xy": [758, 228], "size": [100, 58]}, "bakery": {"xy": [2, 220], "size": [200, 126]}, "road-west-north": {"xy": [608, 392], "size": [200, 108]}, "road-junction": {"xy": [2, 12], "size": [170, 86]}, "road-x": {"xy": [204, 143], "size": [200, 117]}, "water.small": {"xy": [860, 179], "size": [100, 58]}, "road": {"xy": [406, 195], "size": [111, 70]}};
     this.minimapscale = 10;
     this.mouseGridPosition = null;
     this.lastTS = null;
@@ -362,8 +379,8 @@ class Game {
     this.screenTranslate = new Vec2(0,0);
     //replace above with transformation matrix?
     this.moveStyle = litMovement;
+    /*
     this.resources = {
-      scroll: "images/scroll.png",
       bakery: "images/new/bakery.png",
       library: "images/new/library.png",
       //library: "images/library.small.png",
@@ -391,13 +408,42 @@ class Game {
       roadjunction: "images/road-junction.png",
       compass: "compass.png",
     };
+    */
+    this.resources = {
+      bakery: "bakery",
+      library: "library",
+      grass: "grass.small",
+      field: "field.small",
+      corn: "corn.small",
+      water: "water.small",
+      desert1: "desert1.small",
+      desert2: "desert2.small",
+      tree1: "tree1.small",
+      tree2: "tree2.small",
+      volcano: "volcano.small",
+      road: "road",
+      stone: "stone",
+      cloud: "cloud",
+      roadeastwestnorth:"road-east-west-north",
+      roadsouthwestnorth:"road-south-west-north",
+      roadwestnorth:"road-west-north",
+      roadx:"road-x",
+      roadnorth: "road-lights",
+      roadeast: "road-lights-east",
+      roadjunction: "road-junction",
+      compass: "compass",
+    };
     this.target_fog_radius = 10;
     this.fog_progress = 0;
     this.fog_radius = 10;
     this.near_edge_of_playarea = false;
     //this.visibleWorld =  
     this.loader = new Loader();
+    this.atlasloader = new AtlasLoader("images/pack.png");
     var klass = this;
+    this.atlasloader.load().then(function(img) {
+      klass.atlasimg = img;
+    });
     this.locations = [];
     this.world = new World("testa");
     //this.world.addLevel(1);
@@ -562,8 +608,9 @@ class Game {
   }
 
   async preload() {
+    await this.atlasloader.load();
+    /*
     const loaded_resources = {
-      scroll: await this.loader.load(this.resources.scroll),
       bakery: await this.loader.load(this.resources.bakery),
       library: await this.loader.load(this.resources.library),
       tree1: await this.loader.load(this.resources.tree1),
@@ -589,6 +636,7 @@ class Game {
     }
     this.resources = loaded_resources;
     return this.resources;
+    */
   }
 
   drawDecoration(noise, position) {
@@ -694,6 +742,9 @@ class Game {
     for(var i = 0; i < locations.length; i++) {
       let position = locations[i];
       let position_floored = position.clone().floor();
+      const mag = position_floored.magnitude();
+      var fog_alpha = Math.min((mag - this.fog_radius)/8, 1.0);
+      if (Math.abs(fog_alpha-1) < 0.01) continue;
       let tile = this.world.get(position_floored)
       switch(tile) {
         case "b0":
@@ -775,6 +826,7 @@ class Game {
     }
     */
     //this.context.drawImage(this.resources.compass, this.canvas.width-this.resources.compass.width, this.canvas.height, this.resources.compass.width, this.resources.compass.height);
+    this.drawFog(locations);
   }
 
   worldPointAtScreenCenter() {
@@ -856,6 +908,9 @@ class Game {
 
   drawCompass() {
     const midscreen = new Vec2(this.canvas.width/2, this.canvas.height/2);
+    const atlas_compass = this.atlas["compass"];
+    const [width, height] = atlas_compass["size"];
+    const [x, y] = atlas_compass["xy"];
 /*
     const bl = new Vec2(0+this.resources.compass.height/2, this.canvas.height-this.resources.compass.height/2);
     const br = new Vec2(this.canvas.width-this.resources.compass.height/2, this.canvas.height-this.resources.compass.height/2);
@@ -887,12 +942,13 @@ class Game {
           edgepoint.y = this.canvas.height-edgepoint.y;
           edgepoint = new Vec2(edgepoint);
           //this.drawCircle(edgepoint);
-          edgepoint.sub(diff.clone().normalize().mult(this.resources.compass.height*.5));
+          edgepoint.sub(diff.clone().normalize().mult(height*.5));
           //this.drawCircle(edgepoint);
           this.context.save();
           this.context.translate(edgepoint.x, edgepoint.y);
           this.context.rotate(rotation);
-          this.context.drawImage(this.resources.compass, -this.resources.compass.width/2, -this.resources.compass.height/2, this.resources.compass.width, this.resources.compass.height);
+          this.context.drawImage(this.atlasimg, x, y, width, height, -width/2, -height/2, width, height);
+          //this.context.drawImage(this.resources.compass, -this.resources.compass.width/2, -this.resources.compass.height/2, this.resources.compass.width, this.resources.compass.height);
           this.context.restore();
           this.context.save();
           this.context.translate(edgepoint.x, edgepoint.y);
@@ -1064,8 +1120,8 @@ class Game {
     this.worldTranslate.add(midpoint);
   }
 
-  drawFog() {
-    let locations = this.screenWorldLocations();
+  drawFog(screenWorldLocations) {
+    let locations = screenWorldLocations;//this.screenWorldLocations();
     for(var i = 0; i < locations.length; i++) {
       let position = locations[i];
       let position_floored = position.clone().floor();
@@ -1306,13 +1362,20 @@ class Game {
     var right = this.toScreen(new Vec2(0, -footprint.y).add(bottomlocation));
     //
     //this.drawCircle(right);
+    const imageprops = this.atlas[img];
+    const [img_width, img_height] = imageprops["size"];
+    const [x, y] = imageprops["xy"];
     var desiredImageWidth = right.x - left.x;
-    let imgScale = desiredImageWidth/img.width;
-    this.context.save();
-    this.context.globalAlpha = alpha;
+    let imgScale = desiredImageWidth/img_width;
+    if (alpha != 1.0) {
+      this.context.save();
+      this.context.globalAlpha = alpha;
+    }
+    this.context.drawImage(this.atlasimg, x, y, img_width, img_height, left.x-1, bl.y-(img_height*imgScale)-1, ((img_width+2)*imgScale), ((img_height+2)*imgScale));
     //this.context.drawImage(img, left.x, bl.y-(img.height*imgScale), img.width*imgScale, img.height*imgScale);
-    this.context.drawImage(img, left.x-1, bl.y-(img.height*imgScale)-1, ((img.width+2)*imgScale), ((img.height+2)*imgScale));
-    this.context.restore();
+    if (alpha != 1.0) {
+      this.context.restore();
+    }
     //this.context.strokeRect(this.toScreen(leftGrid).x, this.toScreen(leftGrid).y, 50, 50);
   }
 
@@ -1394,11 +1457,7 @@ class Game {
 	    //this.drawDebugGrid(); 
 	    this.drawMap();
 	    this.drawMiniMap();
-	    this.drawFog();// RENABLE FOG HERE
 	    this.drawCompass();
-      if (this.dirty) {
-        console.log("error - dirty set in draw function");
-      }
     }
     /*
     if (this.debug) {
