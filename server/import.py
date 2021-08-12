@@ -1,5 +1,6 @@
 import persistence
 import xml.etree.ElementTree as ET
+import csv
 import argparse
 
 def masxml_metadata(fh):
@@ -13,14 +14,23 @@ def masxml_metadata(fh):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='import metadata')
     parser.add_argument('infile', 
-      help="masxml file", 
+      help="input file", 
       type=argparse.FileType('r'))
+    parser.add_argument("type", choices=['masxml', 'csv'],
+      default="csv")
     parser.add_argument('subjecttype', 
       help="subject type", 
       default="subject_type",
       type=str)
     args = parser.parse_args()
-    title, author = masxml_metadata(args.infile)
     session = persistence.create_session()
-    persistence.get_or_create(session, persistence.Document, title=title, author=author, subject=args.subjecttype)
+    if args.type == "masxml":
+        title, author = masxml_metadata(args.infile)
+        persistence.get_or_create(session, persistence.Document, title=title, author=author, subject=args.subjecttype)
+    if args.type == "csv":
+        csv_reader = csv.DictReader(args.infile)
+        for row in csv_reader:
+            title = row['title']
+            author = row['author']
+            persistence.get_or_create(session, persistence.Document, title=title, author=author, subject=args.subjecttype)
     session.commit()
