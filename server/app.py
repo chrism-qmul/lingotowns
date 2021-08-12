@@ -48,10 +48,19 @@ def next_level(update):
         return 0
     return len(update.get("levels", []))
 
-def create_next_level_for(uuid, level):
+def create_random_next_level_for(uuid, level):
     # TODO: this calls the task recommender and updates the database
     documents = list(persistence.unseen_documents_for_user(db.session, uuid))[:random.randint(1, 3)]
     persistence.add_level(db.session, uuid, documents, ["farm", "food"], level)
+    db.session.commit()
+
+def create_mpa_next_level_for(uuid, level):
+    doc_hash = requests.get("https://recommender.tileattack.com/task/" + uuid).text
+    #persiste
+    doc = persistence.get(db.session, persistence.Document, doc_hash=doc_hash)
+    if not doc:
+        return create_random_nextLlevel_for(uuid, level)
+    persistence.add_level(db.session, uuid, [(doc.author, doc.title)], ["farm"], level)
     db.session.commit()
 
 def send_update(update, user):
@@ -61,7 +70,7 @@ def send_update(update, user):
 def send_update_for_user(user_id):
     user_update = persistence.load_data_for_user(user_id)
     if is_ready_for_new_level(user_update):
-        create_next_level_for(user_id, next_level(user_update))
+        create_mpa_next_level_for(user_id, next_level(user_update))
     user_update = persistence.load_data_for_user(user_id)
     send_update(user_update, user_id)
 
@@ -157,7 +166,7 @@ def lingotowns():
 def forcelevelup():
     uuid = session['auth']['uuid']
     user_update = persistence.load_data_for_user(uuid)
-    create_next_level_for(uuid, next_level(user_update))
+    create_mpa_next_level_for(uuid, next_level(user_update))
     return redirect("/")
 
 @app.route("/play-game")

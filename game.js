@@ -11,7 +11,7 @@ minimapcanvas.height = Math.min(smallestdim, 200);
 var worldWidth = 20;
 var worldHeight = 20;
 
-var prng = new PRNG("test1a");
+var prng = new PRNG("test1ab");
 console.log("random", prng.random(), prng.random());
 
 function animate(animationlength, updatefn, donefn) {
