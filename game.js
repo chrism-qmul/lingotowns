@@ -445,7 +445,7 @@ class Game {
       klass.atlasimg = img;
     });
     this.locations = [];
-    this.world = new World("testa");
+    this.world = new World("uuid?");
     //this.world.addLevel(1);
     console.log(this.world.regions);
     //this.building_placement = 
@@ -1379,11 +1379,18 @@ class Game {
     //this.context.strokeRect(this.toScreen(leftGrid).x, this.toScreen(leftGrid).y, 50, 50);
   }
 
-  addTownSummary(townInformation) {
+  addTownSummary(townInformation, townposition) {
     const game = this;
     const gameoverlay = document.createElement("div");
+    console.log(townInformation);
+    const regionIdx = this.world.regions.get(townposition,0);
+    const region = this.regions[regionIdx%this.regions.length];
+    const regionname = region.name()
     gameoverlay.className = "gameoverlay";
     gameoverlay.innerHTML = `
+      <div class='townicon'>
+         <img src='images/towns/${regionname}.png' />
+      </div>
       <button class='townsummary'>PLAY NOW</button>
       <div class='content'>
         <h2>${townInformation.town_name}</h2>
@@ -1431,7 +1438,7 @@ class Game {
       var townInformation = this.getTownInformation(i);
       if (townInformation) {
         console.log("town information: ", townInformation);
-        const townSummaryElement = this.addTownSummary(townInformation);
+        const townSummaryElement = this.addTownSummary(townInformation, towns[i].position);
         game.elementTracksWorld(townSummaryElement, towns[i].position);
       }
       //game.elementTracksWorld(gameoverlays[i], towns[i].position);
