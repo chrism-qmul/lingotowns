@@ -11,6 +11,7 @@ import sys
 import redis
 import json
 import random
+from namegen.sample import sample
 
 #AUTH_SERVER = "http://localhost:5000"
 #can't access localhost, it's this container
@@ -178,6 +179,16 @@ def playgame():
         return redirect(url)
     else:
         return "no such game", 500
+
+#?towntype=???&startletter=???
+@app.route("/api/town-name", methods=["GET"])
+def town_name():
+    print(str(request.data))
+    upper_letters = [chr(x) for x in range(65, 65+26)]
+    towntype = request.args.get("towntype", "Desert")
+    startletter = request.args.get("startletter", random.choice(upper_letters))
+    townname = sample(towntype, startletter)
+    return townname
 
 @app.route("/api/update-progress", methods=["POST"])
 def update_progress(): #POST
