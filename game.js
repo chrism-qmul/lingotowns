@@ -359,6 +359,7 @@ class Game {
     //this.minimapworker = new Worker("minimap.js");
     this.debug = false;
     this.dirty = true;
+    this.isLoaded = false;
     this.lastregion = null;
     this.atlas = {"grass.small": {"xy": [860, 239], "size": [100, 59]}, "volcano.small": {"xy": [860, 300], "size": [100, 69]}, "library": {"xy": [2, 348], "size": [200, 152]}, "road-east-west-north": {"xy": [204, 382], "size": [200, 118]}, "cloud": {"xy": [810, 429], "size": [137, 71]}, "desert1.small": {"xy": [204, 85], "size": [100, 56]}, "road-south-west-north": {"xy": [406, 382], "size": [200, 118]}, "corn.small": {"xy": [406, 129], "size": [100, 64]}, "tree1.small": {"xy": [174, 2], "size": [100, 81]}, "road-lights": {"xy": [2, 100], "size": [200, 118]}, "road-lights-east": {"xy": [204, 262], "size": [200, 118]}, "compass": {"xy": [608, 242], "size": [148, 148]}, "stone": {"xy": [406, 267], "size": [200, 113]}, "tree2.small": {"xy": [758, 288], "size": [100, 81]}, "desert2.small": {"xy": [810, 371], "size": [100, 56]}, "field.small": {"xy": [758, 228], "size": [100, 58]}, "bakery": {"xy": [2, 220], "size": [200, 126]}, "road-west-north": {"xy": [608, 392], "size": [200, 108]}, "road-junction": {"xy": [2, 12], "size": [170, 86]}, "road-x": {"xy": [204, 143], "size": [200, 117]}, "water.small": {"xy": [860, 179], "size": [100, 58]}, "road": {"xy": [406, 195], "size": [111, 70]}};
     this.minimapscale = 10;
@@ -371,6 +372,7 @@ class Game {
     this.minimapcontext = minimapcanvas.getContext("2d");
     this.context.font = "12px Arial";
     this.regions = [new WoodlandRegion(this), new LakesRegion(this), new DesertRegion(this), new FarmRegionA(this), new FarmRegionB(this)];
+    this.region_by_name = {"Desert": new DesertRegion(this), "Lakes": new LakesRegion(this), "Farms": new FarmRegionA(this), "Woods":new WoodlandRegion(this)};
     this.regions_colors = this.regions.map(function(r) {return hexColorToRGB(r.color())});
     this.dragging = false;          
     this.worldbox = new BoundingBox();
@@ -790,7 +792,12 @@ class Game {
           break;
       }
       const regionIdx = this.world.regions.get(position_floored,0);
-      const region = this.regions[regionIdx%this.regions.length];
+      //const region = this.regions[regionIdx%this.regions.length];
+      const town = this.getTownInformation(regionIdx);
+      var region = this.regions[regionIdx%this.regions.length];
+      if (town && town.region) {
+        region = this.region_by_name[town.region];
+      }
       if (tile === undefined) {
         var position_scaled = position_floored.clone().div(10.0);
         var noise = (memoized_perlin(position_scaled)+1)/2;
@@ -808,7 +815,7 @@ class Game {
       console.log(this.lastregion);
       document.dispatchEvent(new CustomEvent('regionchange', {detail: {region: currentregion}}));
     }
-    const region = this.regions[currentregion%this.regions.length];
+    region = this.regions[currentregion%this.regions.length];
     this.updateTrackingElements();
     /*
     const towns = this.world.towns();
@@ -1384,8 +1391,11 @@ class Game {
     const gameoverlay = document.createElement("div");
     console.log(townInformation);
     const regionIdx = this.world.regions.get(townposition,0);
+    const regionname = townInformation.region;
+    /*
     const region = this.regions[regionIdx%this.regions.length];
     const regionname = region.name()
+    */
     gameoverlay.className = "gameoverlay";
     gameoverlay.innerHTML = `
       <div class='townicon'>
@@ -1445,6 +1455,13 @@ class Game {
     }
   }
 
+  loaded() {
+    if (!this.isLoaded) {
+      document.body.classList.add("loaded");
+      this.isLoaded = true;
+    }
+  }
+
   draw(ts) {
     const elapsed = ts - this.lastTS;
 /*
@@ -1484,6 +1501,7 @@ game.preload().then(function(resources) {
     game.resize();
     game.centerWorldPointOnScreen(new Vec2(0,0));
     game.draw();
+    game.loaded();
   });
 });
 

@@ -38,7 +38,7 @@ class RNN(nn.Module):
         self.i2h = nn.Linear(n_categories + input_size + hidden_size, hidden_size)
         self.i2o = nn.Linear(n_categories + input_size + hidden_size, output_size)
         self.o2o = nn.Linear(hidden_size + output_size, output_size)
-        self.dropout = nn.Dropout(0.1)
+        self.dropout = nn.Dropout(0.05)
         #self.softmax = nn.LogSoftmax(dim=1)
         #self.softmax = nn.LogSoftmax(dim=1)
         #self.softmax = nn.CrossEntropyLoss(dim=1)

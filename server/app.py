@@ -61,7 +61,7 @@ def create_mpa_next_level_for(uuid, level):
     doc = persistence.get(db.session, persistence.Document, doc_hash=doc_hash)
     if not doc:
         return create_random_nextLlevel_for(uuid, level)
-    persistence.add_level(db.session, uuid, [(doc.author, doc.title)], ["farm"], level)
+    persistence.add_level(db.session, uuid, [(doc.author, doc.title)], ["farm", "library", "food"], level)
     db.session.commit()
 
 def send_update(update, user):
@@ -105,7 +105,7 @@ session_uuid = {}
 prefix = "/"
 
 game_url_builders = {"farm": lambda auth_token, doc_id: "https://phrasefarm.org/?auth_token={auth_token}#/continuegame/{doc_id}".format(auth_token=auth_token, doc_id=doc_id),
-        "library": lambda a,b: "https://wormingo.com/",
+        "library": lambda auth_token, doc_id: "https://lingotorium.com/?auth_token={auth_token}".format(auth_token=auth_token),
         "food": lambda a,b:  "https://cafeclicker.com/",
         "detectives": lambda a,b:  "https://anawiki.essex.ac.uk/phrasedetectives/"}
 

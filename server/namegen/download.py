@@ -23,7 +23,7 @@ def build_query(placetype):
 
 categories = {"Desert":["Beach", "Dune", "Desert"],
         "Lakes":["Lake", "Loch", "Pond", "Reservoir"],
-        "Forest":["Forest", "Woodland"]}
+        "Woods":["Forest", "Woodland"]}
 
 if __name__ == "__main__":
     for category, types in categories.items():

@@ -12,18 +12,27 @@ from itertools import groupby
 import pprint
 import hashlib
 import random
+from namegen.sample import sample
+
+
+def rnn_town_namer(region, startletter):
+    # can't do farms just yet, need a plan for that
+    if region == "Farms":
+        return "Farm"
+    return sample(region, startletter)
 
 def sha256(param_str):
     return hashlib.sha256(param_str.encode()).hexdigest()
 
 pp = pprint.PrettyPrinter(indent=4)
 
-def create_town(*games, document_id, document_name, author, subject_type, available, town_id, town_name, total_completion):
+def create_town(*games, document_id, document_name, region, author, subject_type, available, town_id, town_name, total_completion):
     all_games = {}
     for game in games:
         all_games.update(game)
     return {"document_id":document_id,
         "document_name":document_name,
+        "region":region,
         "author":author,
         "subject_type":subject_type,
         "available":available,
@@ -106,6 +115,7 @@ class User(Base,IDd,Timestamped):
 class Town(Base,IDd,Timestamped):
     __tablename__ = 'towns'
     name = Column(String, nullable=False)
+    region = Column(String)
     level = Column(Integer)
     document_id = Column(Integer, ForeignKey('documents.id'))
     document = relationship("Document")
@@ -237,6 +247,7 @@ def load_data_for_user(username, townid=None):
         documents.title as document_title, 
         documents.author as document_author, 
         documents.subject as document_subject, 
+        towns.region as region,
         towns.level as level, 
         towns.name as town_name,
         completion.pc as pc, 
@@ -259,7 +270,7 @@ def load_data_for_user(username, townid=None):
     results = s.execute(sql, params)
     unpacked_results = []
     for result in results:
-        town_id, document_title, document_author, document_subject, level, town_name, pc, game_name = result
+        town_id, document_title, document_author, document_subject, region, level, town_name, pc, game_name = result
         unpacked_results.append({"town_id": town_id,
                 "document_title": document_title,
                 "document_author": document_author,
@@ -267,6 +278,7 @@ def load_data_for_user(username, townid=None):
                 "document_id": sha256(document_author + ":" + document_title),
                 "level": level,
                 "town_id": town_id,
+                "region": region,
                 "town_name": town_name,
                 "pc": pc,
                 "game_name": game_name})
@@ -280,7 +292,7 @@ def load_data_for_user(username, townid=None):
             games = [create_game(game['game_name'], game['pc']) for game in town_games]
             total_completion = sum([game['pc'] for game in town_games])/float(len([game['pc'] for game in town_games]))
             town = town_games[0]
-            towns.append(create_town(*games, document_id=town['document_id'], document_name=town['document_title'], subject_type=town['document_subject'], author=town['document_author'], town_id=town['town_id'], town_name=town['town_name'], total_completion=total_completion, available=True))
+            towns.append(create_town(*games, region=town['region'], document_id=town['document_id'], document_name=town['document_title'], subject_type=town['document_subject'], author=town['document_author'], town_id=town['town_id'], town_name=town['town_name'], total_completion=total_completion, available=True))
         levels.append(create_level(*towns))
     return create_update(*levels, documents_completed=0, document_points=0)
 
@@ -294,10 +306,11 @@ def town_naming(document):
 
 def add_level(session, uuid, documents, games, level):
     user = get_or_create(session, User, name=uuid)
+    region = random.choice(["Desert", "Farms", "Lakes", "Woods"])
     for document in documents:
         author, title = document
         document = get_or_create(session, Document, author=author, title=title)
-        town = create(session, Town, document=document, name=town_naming(document), level=level, user=user)
+        town = create(session, Town, document=document, name=rnn_town_namer(region, title[0]), region=region, level=level, user=user)
         for game in games:
             create(session, Completion, game=get_or_create(session, Game, name=game), town=town, pc=0)
 

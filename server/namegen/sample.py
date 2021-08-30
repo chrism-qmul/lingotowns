@@ -30,7 +30,7 @@ from namegen.data import all_letters, n_letters, category_lines, all_categories,
 #
 
 rnn = torch.load("namegen/model.pt")
-rnn.eval()
+#rnn.eval()
 
 max_length = 20
 
@@ -62,6 +62,8 @@ def samples(category, start_letters='ABC'):
         print(sample(category, start_letter))
 
 if __name__ == "__main__":
-    samples('Desert', 'M')
-    samples('Lakes', 'D')
-    samples('Forest', 'S')
+    samples('Desert', 'E')
+    samples('Desert', 'F')
+    samples('Desert', 'G')
+    samples('Lakes', 'J')
+    samples('Woods', 'U')

@@ -3,9 +3,13 @@
   <head>
     <link rel="stylesheet" src="style.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mouse+Memoirs&display=swap" rel="stylesheet">
     <title>Lingotowns</title>
   </head>
 <style>
+
 html,
 body {
     position: fixed;
@@ -218,15 +222,50 @@ div#infopanel {
   }
 }
 
+#maintitle {
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  font-size:20vw;
+  margin-top:-10vw;
+  z-index:999;
+  filter:drop-shadow(0px 0px 13px black);
+  font-family: 'Mouse Memoirs';
+  background-image:linear-gradient(0deg, #ffa006, #ffd156);
+  -webkit-text-fill-color:transparent;
+  -moz-text-fill-color:transparent;
+  -webkit-background-clip:text;
+  -moz-background-clip:text;
+  pointer-events:none;
+}
+
+.afterload {
+  opacity:0;
+  transition:opacity 2s linear;
+}
+.beforeload {
+  opacity:1;
+  transition:opacity 2s linear;
+}
+
+.loaded .afterload {
+  opacity:1;
+}
+.loaded .beforeload {
+  opacity:0;
+}
+
 </style>
   <body>
+    <h1 id='maintitle' class='beforeload'>LingoTowns</h1>
     <canvas id='app' width='500' height='500'></canvas>
     <div id='edge_of_playarea'>
       <div class='content'>
         <i class="bi bi-exclamation-triangle"></i>&nbsp;<b>Warning:</b> You're nearing the edge of the play area, click here to go home!
       </div>
     </div>
-    <div id='infopanel'>
+    <div id='infopanel' class='afterload'>
       <div>
         <dl class='info'>
           <dt>Document Points</dt>

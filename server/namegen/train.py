@@ -105,7 +105,7 @@ def timeSince(since):
 
 rnn = RNN(n_categories, n_letters, 128, n_letters)
 
-n_iters = 100000
+n_iters = 500000
 print_every = 5000
 plot_every = 500
 all_losses = []
