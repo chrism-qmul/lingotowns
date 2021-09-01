@@ -159,9 +159,17 @@ def lingotowns():
         session['auth_token'] = auth_token
         return redirect("/")
     elif session_auth:
-        return render_template("game.html", auth_server=AUTH_SERVER)
+        if True:#session.get('seen_intro'):
+            return render_template("game.html", auth_server=AUTH_SERVER)
+        else:
+            return redirect("/intro")
     else:
         return redirect(AUTH_SERVER + "/login?redirect=" + HOSTNAME)
+
+@app.route("/intro")
+def intro():
+    session['seen_intro'] = True
+    return render_template("story/index.html")
 
 @app.route("/forcelevelup")
 def forcelevelup():

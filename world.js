@@ -12,9 +12,10 @@ export const RoadEast = 1 << 2;
 export const RoadSouth = 1 << 3;
 
 export class World {
-  constructor(seed) {
+  constructor(seed, includeBuildings) {
     //level indexed
     this.seed = seed;
+    this.includeBuildings = includeBuildings;
     this.number_of_towns = [1];
     this.locations = [];
     this.roads = [];
@@ -100,8 +101,10 @@ export class World {
     const buildings = this.buildings();
     const road = this.road();
     this.grid = new BoxedGrid(this.worldbox);
-    for(var b = 0; b < buildings.length; b++) {
-      this.grid.set(buildings[b].position,"b" + buildings[b].building);
+    if (this.includeBuildings) {
+      for(var b = 0; b < buildings.length; b++) {
+        this.grid.set(buildings[b].position,"b" + buildings[b].building);
+      }
     }
     for(var r = 0; r < road.length; r++) {
       this.grid.set(road[r], "r");

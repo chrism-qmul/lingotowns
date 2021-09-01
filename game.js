@@ -963,8 +963,8 @@ class Game {
           this.context.fillStyle = "rgba(255,255,255,0.8)";
           this.context.font = "12px sans-serif";
           this.context.fillText("Level: " + info['level'], 0, -10, this.resources.compass.height);
-          this.context.font = "30px sans-serif";
-          this.context.fillText("" + info['total_completion'] + "%", 0, 20, this.resources.compass.height);
+          this.context.font = "20px sans-serif";
+          this.context.fillText("" + info['total_completion'].toFixed(0) + "%", 0, 20, this.resources.compass.height);
           this.context.restore();
         }
       }
@@ -1396,7 +1396,7 @@ class Game {
     const region = this.regions[regionIdx%this.regions.length];
     const regionname = region.name()
     */
-    gameoverlay.className = "gameoverlay";
+    gameoverlay.className = "gameoverlay towninformation";
     gameoverlay.innerHTML = `
       <div class='townicon'>
          <img src='images/towns/${regionname}.png' />
@@ -1409,13 +1409,13 @@ class Game {
             <th>Subject</th><td>${townInformation.subject_type}</td>
           </tr>
           <tr>
-            <th>Doc</th><td>${townInformation.document_name}</td>
+            <th>Doc</th><td class='truncate'>${townInformation.document_name}</td>
           </tr>
           <tr>
             <th>Level</th><td>${townInformation.level}</td>
           </tr>
           <tr>
-            <th>Completion</th><td>${townInformation.total_completion}%</td>
+            <th>Completion</th><td>${townInformation.total_completion.toFixed(2)}%</td>
           </tr>
         </table>
       </div>`;
