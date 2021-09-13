@@ -65,17 +65,27 @@ iframe.gamewindow {
 div#infopanel > div {
   margin:1%;
   display:grid;
-  background:grey;
   grid-gap:1px;
   grid-template-rows:1fr 5fr;
   grid-template-columns:1.62fr 1fr;
   height:90%;
 }
 
+div#infopanel {
+  transition:background 1s linear;
+}
 
 div#infopanel > div > * {
-  background:white;
+  /*background:white;*/
   margin:0px;
+}
+
+.dragging #infopanel {
+  background:rgba(255,255,255,0.4);
+}
+
+.dragging #minimap {
+  transform:translate(50vw 0vh) translate(-50% 0%);
 }
 
 #infopanel dl.info {
@@ -334,7 +344,7 @@ div#infopanel {
         <div class='worldmap'>
           <p>World Map</p>
           <div style='height:80%;'>
-          <canvas style='border:1px solid black;' id='minimap' width='100%' height='100%'></canvas>
+            <canvas style='border:1px solid black;' id='minimap' width='100%' height='100%'></canvas>
           </div>
         </div>
       </div>

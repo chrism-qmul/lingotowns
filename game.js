@@ -205,6 +205,7 @@ class MouseDrag {
   startdrag(ev) {
     this.dragging = true;
     this.sendupdate(ev.pageX, ev.pageY);
+    document.body.classList.add("dragging");
   }
 
   drag(ev) {
@@ -218,6 +219,7 @@ class MouseDrag {
     this.sendupdate(ev.pageX, ev.pageY);
     this.lastX = null;
     this.lastY = null;
+    document.body.classList.remove("dragging");
   }
 
   sendupdate(x, y) {
@@ -1216,10 +1218,13 @@ class Game {
     addEventListener('mousedown', function(ev){
       //klass.onMouseMove(ev);
       this.dragging = true;
+      console.log("mouse down!");
+      document.body.classList.add('dragging');
     });
     addEventListener('mouseup', function(ev){
       //klass.onMouseMove(ev);
       this.dragging = false;
+      document.body.classList.remove('dragging');
     });
     addEventListener('wheel', function(ev) {
       game.worldTranslate.sub(new Vec2(Math.ceil(ev.deltaX/3), Math.ceil(ev.deltaY/3)));
