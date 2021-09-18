@@ -12,16 +12,19 @@ import redis
 import json
 import random
 from namegen.sample import sample
+import os
 
 #AUTH_SERVER = "http://localhost:5000"
 #can't access localhost, it's this container
-#HOSTNAME = "http://localhost:8080"
-HOSTNAME = "https://lingotowns.com"
+print(os.environ)
+HOSTNAME = os.getenv("EXT_URL", "http://localhost:5000")
 AUTH_SERVER = "https://auth.tileattack.com"
 RECOMMENDER = "https://recommender.tileattack.com"
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 SECRET_KEY = "secret!"
-app = Flask(__name__)
-app.config['SESSION_REDIS'] = redis.Redis('redis')
+app = Flask(__name__, static_url_path='', static_folder='static')
+app.config['SESSION_REDIS'] = redis.Redis(REDIS_HOST)
+#app.config['SESSION_REDIS'] = redis.Redis('localhost')
 app.secret_key = SECRET_KEY
 #app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///file.db'
@@ -31,7 +34,7 @@ db = SQLAlchemy(app)
 SESSION_SQLALCHEMY = db
 Session(app)
 admin = Admin(app, name='lingotowns', template_mode='bootstrap3')
-models = [persistence.Document, persistence.User, persistence.Town, persistence.Game, persistence.Completion]
+models = [persistence.Document, persistence.User, persistence.Town, persistence.Game, persistence.Completion, persistence.TownName, persistence.CollectionAvailability, persistence.Experiment]
 
 #db.create_all()
 
@@ -60,7 +63,7 @@ def create_mpa_next_level_for(uuid, level):
     #persiste
     doc = persistence.get(db.session, persistence.Document, doc_hash=doc_hash)
     if not doc:
-        return create_random_nextLlevel_for(uuid, level)
+        return create_random_next_level_for(uuid, level)
     persistence.add_level(db.session, uuid, [(doc.author, doc.title)], ["farm", "library", "food"], level)
     db.session.commit()
 
@@ -207,7 +210,7 @@ def update_progress(): #POST
     document_hash = data.get("doc")
     uuid = data.get("uuid")
     progress = data.get("progress")
-    if persistence.update_progress(uuid, document_hash, game, progress):
+    if persistence.update_progress(uuid, document_hash, game, progress, session=db.session):
         send_update_for_user(uuid)
         return "updated", 200
     else:
@@ -216,7 +219,7 @@ def update_progress(): #POST
 @app.route("/town-summary/<townid>")
 def townsummary(townid):
     uuid = session['auth']['uuid']
-    town = persistence.load_data_for_user(uuid, townid)['levels'][0]['towns'][0]
+    town = persistence.load_data_for_user(uuid, townid, session=db.session)['levels'][0]['towns'][0]
     return render_template("town-summary.html", town=town)
 
 if __name__ == '__main__':

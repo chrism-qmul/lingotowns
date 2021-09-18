@@ -76,12 +76,21 @@ class Timestamped:
 class IDd:
     id = Column(Integer, primary_key=True)
 
+class Collection(Base,IDd,Timestamped):
+    __tablename__ = 'collections'
+    name = Column(String, nullable=False)
+
+    def __str__(self):
+        return self.name
+
 class Document(Base,IDd,Timestamped):
     __tablename__ = 'documents'
     title = Column(String, nullable=False)
     author = Column(String)
     subject = Column(String)
     doc_hash = Column(String, index=True)
+    collection_id = Column(Integer, ForeignKey('collections.id'))
+    collection = relationship("Collection")
     #completions = relationship("Completion", back_populates="document")
 
     def compute_doc_hash(self):
@@ -92,6 +101,14 @@ class Document(Base,IDd,Timestamped):
 
     def __str__(self):
         return "document: {title} by {author}".format(title=self.title, author=self.author)
+
+class TownName(Base,IDd,Timestamped):
+    __tablename__ = 'town_names'
+    name = Column(String)
+    region = Column(String)
+
+    document_id = Column(Integer, ForeignKey('documents.id'))
+    document = relationship("Document")
 
 @event.listens_for(Document, 'before_insert')
 @event.listens_for(Document, 'before_update')
@@ -112,10 +129,25 @@ class User(Base,IDd,Timestamped):
     def __str__(self):
         return "user: {}".format(self.name)
 
+class CollectionAvailability(Base,IDd):
+    __tablename__ = 'collection_availability'
+
+    collection_id = Column(Integer, ForeignKey('collections.id'))
+    collection = relationship("Collection")
+
+    game_id = Column(Integer, ForeignKey('games.id'))
+    game = relationship("Game")
+
+class Experiment(Base,IDd,Timestamped):
+    __tablename__ = 'experiments'
+
+    collection_id = Column(Integer, ForeignKey('collections.id'))
+    collection = relationship("Collection")
+
 class Town(Base,IDd,Timestamped):
     __tablename__ = 'towns'
-    name = Column(String, nullable=False)
-    region = Column(String)
+    #name = Column(String, nullable=False)
+    #region = Column(String)
     level = Column(Integer)
     document_id = Column(Integer, ForeignKey('documents.id'))
     document = relationship("Document")
@@ -198,8 +230,8 @@ def info():
     """
     return pd.read_sql_query(sql, engine).set_index("name")
 
-def update_progress(user, dochash, game, progress):
-    s = create_session()
+def update_progress(user, dochash, game, progress, session=None):
+    s = session or create_session()
     sql = """
     update completion set pc=:progress
     where completion.id IN (select completion.id from completion
@@ -239,22 +271,23 @@ def unseen_documents_for_user(s, username):
         docs.add((result['document_author'], result['document_title']))
     return docs
 
-def load_data_for_user(username, townid=None):
-    s = create_session()
+def load_data_for_user(username, townid=None, session=None):
+    s = session or create_session()
     sql = """
     select 
         towns.id as town_id,
         documents.title as document_title, 
         documents.author as document_author, 
         documents.subject as document_subject, 
-        towns.region as region,
+        town_names.region as region,
         towns.level as level, 
-        towns.name as town_name,
+        town_names.name as town_name,
         completion.pc as pc, 
         games.name as game_name 
     from towns 
     LEFT JOIN users ON users.id=towns.user_id 
     LEFT JOIN documents ON towns.document_id=documents.id 
+    LEFT JOIN town_names ON documents.id=town_names.document_id 
     LEFT JOIN completion ON completion.town_id=towns.id 
     LEFT JOIN games on completion.game_id=games.id 
     WHERE 
@@ -262,6 +295,8 @@ def load_data_for_user(username, townid=None):
     AND
     users.name=:username
     """
+    #LEFT JOIN collections ON documents.collection_id=collections.id
+    #LEFT JOIN collection_availability ON games.id=collection_availability.game_id AND collections.id=collection_availability.collection_id
     params = {'username': username}
     if townid:
         params['townid'] = townid
@@ -310,7 +345,11 @@ def add_level(session, uuid, documents, games, level):
     for document in documents:
         author, title = document
         document = get_or_create(session, Document, author=author, title=title)
-        town = create(session, Town, document=document, name=rnn_town_namer(region, title[0]), region=region, level=level, user=user)
+        town = create(session, Town, document=document, level=level, user=user)
+        town_name = get_or_create(session, TownName, document=document)
+        if not town_name.name:
+            town_name.name = rnn_town_namer(region, title[0])
+            town_name.region = region
         for game in games:
             create(session, Completion, game=get_or_create(session, Game, name=game), town=town, pc=0)
 
