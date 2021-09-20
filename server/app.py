@@ -109,7 +109,7 @@ prefix = "/"
 
 game_url_builders = {"farm": lambda auth_token, doc_id: "https://phrasefarm.org/?auth_token={auth_token}#/continuegame/{doc_id}".format(auth_token=auth_token, doc_id=doc_id),
         "library": lambda auth_token, doc_id: "https://lingotorium.com/?auth_token={auth_token}".format(auth_token=auth_token),
-        "food": lambda a,b:  "https://cafeclicker.com/",
+        "food": lambda auth_token, doc_id:  "https://cafeclicker.com/?auth_token={auth_token}#/game/{doc_id}".format(auth_token=auth_token, doc_id=doc_id),
         "detectives": lambda a,b:  "https://anawiki.essex.ac.uk/phrasedetectives/"}
 
 @socketio.on('connect')
@@ -167,7 +167,7 @@ def lingotowns():
         else:
             return redirect("/intro")
     else:
-        return redirect(AUTH_SERVER + "/login?redirect=" + HOSTNAME)
+        return redirect(AUTH_SERVER + "/login-as-guest?redirect=" + HOSTNAME)
 
 @app.route("/intro")
 def intro():
