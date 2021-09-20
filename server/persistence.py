@@ -155,7 +155,7 @@ class Town(Base,IDd,Timestamped):
     user = relationship("User")
 
     def __str__(self):
-        return "town: {}".format(self.name)
+        return "town: {}".format(self.id)
 
 class Game(Base,IDd,Timestamped):
     __tablename__ = 'games'
