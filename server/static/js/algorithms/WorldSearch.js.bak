@@ -1,0 +1,25 @@
+import {Vec2} from '../math/Vec2.js';
+import {AStarBox} from './astarbox.js';
+
+//Decorates AStarBox to provide world search that avoids a set 
+//of given coordinates with a certain radius
+export class WorldSearch {
+  constructor(width, height, locations, radius) {
+    super(width, height);
+    this.locations = locations;
+    this.radius = radius;
+  }
+
+  insideLocationArea(point) {
+    for(var i = 0; i < this.locations.length; i++) {
+      if (Vec2.chebyshevDistance(point,this.locations[i]) < this.radius) {
+        return true
+      }
+    }
+    return false;
+  }
+
+  available(point) {
+    return super.available(point) && !this.insideLocationArea(point);
+  }
+}
