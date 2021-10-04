@@ -611,7 +611,7 @@ class Game {
     }
     const townPosition = this.nearCompass(this.mouseScreenPosition);
     if (townPosition) {
-      this.updateFocus(townPosition, 2);
+      this.updateFocus(townPosition, 1.5);
     }
   }
 
