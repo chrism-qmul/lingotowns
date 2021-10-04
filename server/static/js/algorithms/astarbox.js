@@ -21,12 +21,16 @@ export class AStarBox {
     var result = this.astar.search(this.box(start), this.box(goal));
     if (Array.isArray(result)) {
       return result.map(this.unbox.bind(this));
+    } else {
+      //console.warn("no route to goal", this.box(start), this.box(goal));
+      console.warn("no route to goal", start, goal);
     }
   }
 
-  available(point) {
+  available(point, moreinfo) {
     if (this.checkAvailability instanceof Function) {
-      return this.checkAvailability(this.unbox(point));
+      const isAvailable = this.checkAvailability(this.unbox(point), moreinfo);
+      return isAvailable;
     } else {
       return true;
     }

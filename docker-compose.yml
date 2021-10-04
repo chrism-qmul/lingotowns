@@ -16,7 +16,7 @@ services:
      #- /Users/chrismadge/PhD/PhraseDetectivesCorpora/:/data
     environment:
       #- EXT_URL:https://lingotowns.com
-      - EXT_URL=http://localhost:8080
+      - EXT_URL=http://localhost:8081
       - REDIS_HOST=redis
       - FLASK_DEBUG=True
       - FLASK_ENV=development

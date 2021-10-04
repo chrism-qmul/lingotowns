@@ -1,6 +1,8 @@
 import {Vec2} from './math/Vec2.js';
 import {AStarGrid} from './algorithms/astar.js';
+import {AStarBox} from './algorithms/astarbox.js';
 import {Grid} from './collections/Grid.js';
+import {BoundingBox} from './collections/BoundingBox.js';
 import {BinaryHeap} from './collections/BinaryHeap.js';
 
 var canvas = document.getElementById('app');
@@ -14,7 +16,36 @@ function drawLine(context, a, b) {
   context.stroke();
 }
 
-class WorldSearch extends AStarGrid {
+class WorldSearch extends AStarBox {
+  constructor(bounding_box, locations, radius) {
+    super(bounding_box);
+    this.bounding_box = bounding_box;
+    this.locations = locations;
+    this.radius = radius;
+  }
+
+  insideLocationArea(point) {
+    point = this.unbox(point);
+    for(var i = 0; i < this.locations.length; i++) {
+      var [x, y] = point;
+      var [locationx, locationy] = this.locations[i];
+      var a = new Vec2(x, y);
+      var b = new Vec2(locationx, locationy);
+      //console.log(a, b, a.distance(b), this.radius);
+      if (a.distance(b) < this.radius) {
+        return true
+      }
+    }
+    return false;
+  }
+
+  available(point) {
+    return /*super.available(point) &&*/ !this.insideLocationArea(point);
+  }
+}
+
+/*
+class WorldSearch extends AStarBox {
   constructor(width, height, locations, radius) {
     super(width, height);
     this.locations = locations;
@@ -38,6 +69,7 @@ class WorldSearch extends AStarGrid {
     return super.available(point) && !this.insideLocationArea(point);
   }
 }
+*/
 
 var mouseposition = document.getElementById('mouseposition');
 
@@ -53,18 +85,28 @@ function drawCircleToContext(context, x, y, r) {
 
 
 class Game {
-  constructor(canvas, start, goal, worldwidth, worldheight) {
+  constructor(canvas, start, goal/*, worldwidth, worldheight*/) {
     this.canvas = canvas;
     this.context = canvas.getContext("2d");
-    this.worldWidth = worldwidth;
-    this.worldHeight = worldheight;
+    //this.worldWidth = worldwidth;
+    //this.worldHeight = worldheight;
     this.start = start;
     this.goal = goal;
-    this.grid = new Grid(worldwidth);
     this.dirty = true;
-    this.obstacles = [[0,5],[7,6],[11,5],[3,11],[7,12],[6,16],[8,16]];
+    //this.obstacles = [[0,5],[7,6],[11,5],[3,11],[7,12],[6,16],[8,16]];
+    this.bounding_box = new BoundingBox();
+    this.obstacles = [[0,-5],[7,-5],[-5,5],[5,3],[8,10]];
+    //this.obstacles = [[-5,5]];
+    for(var i = 0; i < this.obstacles.length; i++) {
+      this.bounding_box.add(this.obstacles[i]);
+    }
+    this.bounding_box.add(start);
+    this.bounding_box.add(goal);
+    this.grid = new Grid(this.bounding_box.width());
     this.obstacle_radius = 2;
-    this.search = new WorldSearch(this.worldWidth, this.worldHeight, this.obstacles, this.obstacle_radius);
+    //this.search = new WorldSearch(this.worldWidth, this.worldHeight, this.obstacles, this.obstacle_radius);
+    this.search = new WorldSearch(this.bounding_box, this.obstacles, this.obstacle_radius);
+    console.log("unbox 0,0",this.search.box([-5,-5]));
     console.log("start", start);
     const t1 = performance.now();
     this.path = this.search.search(start, goal);
@@ -93,6 +135,14 @@ class Game {
     }
   }
 
+  get worldWidth() {
+      return this.bounding_box.width()+1;
+  }
+
+  get worldHeight() {
+      return this.bounding_box.height()+1;
+  }
+
   get tileHeight() {
       return this.canvas.height/this.worldHeight;
   }
@@ -102,6 +152,8 @@ class Game {
   }
 
   fillTile(point, color) {
+    this.bounding_box.zerobased(point);
+    //console.log(point);
     var [x, y] = point;
     this.context.save();
     this.context.fillStyle = color;
@@ -125,8 +177,10 @@ class Game {
 
       for(var x = 0; x < this.worldWidth; x++) {
         for(var y = 0; y < this.worldHeight; y++) {
-          if (!this.search.available([x,y])) {
-            this.fillTile([x,y], "#555555");
+          const point = this.search.unbox([x,y]);
+          //console.log(point);
+          if (!this.search.available([x, y])) {
+            this.fillTile(point, "#555555");
           }
         }
       }
@@ -147,5 +201,6 @@ class Game {
   }
 }
 
-let game = new Game(canvas, [1,1], [19,18], 20, 20);
+//let game = new Game(canvas, [1,1], [1,19], 20, 20);
+let game = new Game(canvas, [-5,-5], [5,5]);
 game.draw();

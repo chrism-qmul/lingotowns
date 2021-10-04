@@ -14,13 +14,17 @@ var worldHeight = 20;
 var prng = new PRNG("test1ab");
 console.log("random", prng.random(), prng.random());
 
+function easeInEaseOut(t) {
+  return (t*t)/(2.0 * (t*t - t) + 1.0);
+}
+
 function animate(animationlength, updatefn, donefn) {
   let start;
 
   function step(timestamp) {
     if (start == undefined) start = timestamp;
     const elapsed = timestamp - start;
-    const completion = elapsed/animationlength;
+    const completion = Math.min(elapsed/animationlength,1.0);
     updatefn(completion); 
     if (completion < 1.0) {
       window.requestAnimationFrame(step);
@@ -363,13 +367,17 @@ class Game {
     this.dirty = true;
     this.isLoaded = false;
     this.lastregion = null;
-    this.atlas = {"grass.small": {"xy": [860, 239], "size": [100, 59]}, "volcano.small": {"xy": [860, 300], "size": [100, 69]}, "library": {"xy": [2, 348], "size": [200, 152]}, "road-east-west-north": {"xy": [204, 382], "size": [200, 118]}, "cloud": {"xy": [810, 429], "size": [137, 71]}, "desert1.small": {"xy": [204, 85], "size": [100, 56]}, "road-south-west-north": {"xy": [406, 382], "size": [200, 118]}, "corn.small": {"xy": [406, 129], "size": [100, 64]}, "tree1.small": {"xy": [174, 2], "size": [100, 81]}, "road-lights": {"xy": [2, 100], "size": [200, 118]}, "road-lights-east": {"xy": [204, 262], "size": [200, 118]}, "compass": {"xy": [608, 242], "size": [148, 148]}, "stone": {"xy": [406, 267], "size": [200, 113]}, "tree2.small": {"xy": [758, 288], "size": [100, 81]}, "desert2.small": {"xy": [810, 371], "size": [100, 56]}, "field.small": {"xy": [758, 228], "size": [100, 58]}, "bakery": {"xy": [2, 220], "size": [200, 126]}, "road-west-north": {"xy": [608, 392], "size": [200, 108]}, "road-junction": {"xy": [2, 12], "size": [170, 86]}, "road-x": {"xy": [204, 143], "size": [200, 117]}, "water.small": {"xy": [860, 179], "size": [100, 58]}, "road": {"xy": [406, 195], "size": [111, 70]}};
+    this.atlas = {"bakery": {"xy": [204, 374], "size": [200, 126]}, "cloud": {"xy": [810, 429], "size": [137, 71]}, "compass": {"xy": [608, 237], "size": [148, 148]}, "corn.small": {"xy": [204, 68], "size": [100, 64]}, "desert1.small": {"xy": [810, 371], "size": [100, 56]}, "desert2.small": {"xy": [612, 46], "size": [100, 56]}, "farm": {"xy": [2, 210], "size": [200, 136]}, "field.small": {"xy": [174, 8], "size": [100, 58]}, "grass.small": {"xy": [612, 104], "size": [100, 59]}, "library": {"xy": [2, 348], "size": [200, 152]}, "road": {"xy": [608, 165], "size": [111, 70]}, "road-east-west-north": {"xy": [2, 90], "size": [200, 118]}, "road-junction": {"xy": [2, 2], "size": [170, 86]}, "road-lights": {"xy": [204, 254], "size": [200, 118]}, "road-lights-east": {"xy": [406, 382], "size": [200, 118]}, "road-south-west-north": {"xy": [204, 134], "size": [200, 118]}, "road-west-north": {"xy": [406, 153], "size": [200, 108]}, "road-x": {"xy": [406, 263], "size": [200, 117]}, "stone": {"xy": [608, 387], "size": [200, 113]}, "tree1.small": {"xy": [306, 51], "size": [100, 81]}, "tree2.small": {"xy": [408, 70], "size": [100, 81]}, "volcano.small": {"xy": [510, 82], "size": [100, 69]}, "water.small": {"xy": [510, 22], "size": [100, 58]}};
+
+    //this.atlas = {"grass.small": {"xy": [860, 239], "size": [100, 59]}, "volcano.small": {"xy": [860, 300], "size": [100, 69]}, "library": {"xy": [2, 348], "size": [200, 152]}, "road-east-west-north": {"xy": [204, 382], "size": [200, 118]}, "cloud": {"xy": [810, 429], "size": [137, 71]}, "desert1.small": {"xy": [204, 85], "size": [100, 56]}, "road-south-west-north": {"xy": [406, 382], "size": [200, 118]}, "corn.small": {"xy": [406, 129], "size": [100, 64]}, "tree1.small": {"xy": [174, 2], "size": [100, 81]}, "road-lights": {"xy": [2, 100], "size": [200, 118]}, "road-lights-east": {"xy": [204, 262], "size": [200, 118]}, "compass": {"xy": [608, 242], "size": [148, 148]}, "stone": {"xy": [406, 267], "size": [200, 113]}, "tree2.small": {"xy": [758, 288], "size": [100, 81]}, "desert2.small": {"xy": [810, 371], "size": [100, 56]}, "field.small": {"xy": [758, 228], "size": [100, 58]}, "bakery": {"xy": [2, 220], "size": [200, 126]}, "road-west-north": {"xy": [608, 392], "size": [200, 108]}, "road-junction": {"xy": [2, 12], "size": [170, 86]}, "road-x": {"xy": [204, 143], "size": [200, 117]}, "water.small": {"xy": [860, 179], "size": [100, 58]}, "road": {"xy": [406, 195], "size": [111, 70]}};
     this.minimapscale = 10;
     this.mouseGridPosition = null;
     this.lastTS = null;
     this.tracking_elements = [];
     this.on_update_data = [];
     this.canvas = canvas;
+    this.wasNearBuilding = false;
+    this.wasNearCompass = false;
     this.context = canvas.getContext("2d");
     this.minimapcontext = minimapcanvas.getContext("2d");
     this.context.font = "12px Arial";
@@ -378,7 +386,9 @@ class Game {
     this.regions_colors = this.regions.map(function(r) {return hexColorToRGB(r.color())});
     this.dragging = false;          
     this.worldbox = new BoundingBox();
-    this.screenScale = new Vec2(this.canvas.width/worldWidth, this.canvas.height/worldHeight); //basic orthographic
+    //this.screenScale = new Vec2(this.canvas.width/worldWidth, this.canvas.height/worldHeight); //basic orthographic
+    this.screenScale = this.zoomLevel(1);//new Vec2(this.canvas.width/worldWidth, this.canvas.height/worldHeight); //basic orthographic
+    console.log("screen scale on startup", this.screenScale, this.zoomLevel(1), [this.canvas.width, this.canvas.height]);
     this.worldTranslate = new Vec2(0,0);
     this.screenTranslate = new Vec2(0,0);
     //replace above with transformation matrix?
@@ -436,6 +446,7 @@ class Game {
       roadeast: "road-lights-east",
       roadjunction: "road-junction",
       compass: "compass",
+      farm: "farm",
     };
     this.target_fog_radius = 10;
     this.fog_progress = 0;
@@ -560,35 +571,48 @@ class Game {
     }
   }
 
+  isNearBuilding(worldPosition) {
+      for(var x = 0; x < 5; x++) {
+        for(var y = 0; y < 5; y++) {
+          let search = worldPosition.clone().add(new Vec2(x, y));
+          const tile = this.world.get(search);
+          if (tile && tile.startsWith("b")) {
+            return {"tile": tile,
+              "position": search};
+          }
+        }
+      }
+  }
+
   selectobject() {
     if (this.mouseGridPosition) {
       const mousepos = this.mouseGridPosition.floor();
       const tile = this.world.get(mousepos);
       console.log("no action clicking on", this.mouseGridPosition, tile);
     }
-    /*
-      if (this.mouseGridPosition) {
-        const mousepos = this.mouseGridPosition.floor();
-        for(var x = 0; x < 5; x++) {
-          for(var y = 0; y < 5; y++) {
-            let search = mousepos.clone().floor().add(new Vec2(x, y));
-            const tile = this.world.get(search);
-            if (tile && tile.startsWith("b")) {
-               switch(tile) {
-                case "b0":
-                  let randomtask = Math.floor(Math.random() * (5000 - 1000 + 1)) + 500;
-                   this.showgame("https://phrasefarm.org/#/game/" + randomtask);
-                break;
-                case "b1":
-                   this.showgame("https://wormingo.com/");
-                break;
-               }
-               return;
-            }
-          }
+    if (this.mouseGridPosition) {
+      const building = this.isNearBuilding(this.mouseGridPosition);
+      if(building) {
+        const town = this.findTownForBuildingPosition(building.position);
+        let game = null;
+        switch(building.tile) {
+          case "b0":
+            game = "food"
+            break;
+          case "b1":
+            game = "farm"
+            break;
+          case "b2":
+            game = "library"
+            break;
         }
+        window.location.assign("/play-game?game=" + game + "&document_id=" + town.document_id)
       }
-      */
+    }
+    const townPosition = this.nearCompass(this.mouseScreenPosition);
+    if (townPosition) {
+      this.updateFocus(townPosition, 2);
+    }
   }
 
   townsummary(townInformation) {
@@ -750,12 +774,19 @@ class Game {
       var fog_alpha = Math.min((mag - this.fog_radius)/8, 1.0);
       if (Math.abs(fog_alpha-1) < 0.01) continue;
       let tile = this.world.get(position_floored)
+      let highlight = false;
+      if (tile && tile.startsWith("b") && this.mouseGridPosition) {
+        highlight = this.mouseGridPosition.distance(position) < 4;
+      }
       switch(tile) {
         case "b0":
-        this.drawImageToTiles(position, new Vec2(3, 3), this.resources.bakery);
+        this.drawImageToTiles(position, new Vec2(3, 3), this.resources.bakery, 1.0, highlight);
           break;
         case "b1":
-        this.drawImageToTiles(position, new Vec2(3, 3), this.resources.library);
+        this.drawImageToTiles(position, new Vec2(3, 3), this.resources.farm, 1.0, highlight);
+          break;
+        case "b2":
+        this.drawImageToTiles(position, new Vec2(3, 3), this.resources.library, 1.0, highlight);
           break;
         case ("r" + RoadWest):
         case ("r" + RoadEast):
@@ -915,6 +946,32 @@ class Game {
     return ((point.x > 0 && point.x < this.canvas.width) && (point.y > 0 && point.y < this.canvas.height));
   }
 
+  nearCompass(mousePosition) {
+    const midscreen = new Vec2(this.canvas.width/2, this.canvas.height/2);
+    const towns = this.world.towns();
+    const atlas_compass = this.atlas["compass"];
+    const [width, height] = atlas_compass["size"];
+    const [x, y] = atlas_compass["xy"];
+    for(var i = 0; i < towns.length; i++) {
+      var townInformation = this.getTownInformation(i);
+      if (townInformation) {
+        const position = towns[i].position;
+        const screenTarget = this.toScreen(position);
+        if (!this.onScreen(screenTarget)) {
+          //drawLine(this.context, midscreen, screenTarget);
+          const diff = screenTarget.sub(midscreen);
+          var edgepoint = this.pointOnEdge({width:this.canvas.width, height:this.canvas.height}, Math.atan2(diff.y, diff.x));
+          edgepoint.y = this.canvas.height-edgepoint.y;
+          edgepoint = new Vec2(edgepoint);
+          edgepoint.sub(diff.clone().normalize().mult(height*.5));
+          if (edgepoint.distance(mousePosition) < 30) {
+            return towns[i].position;
+          }
+        }
+      }
+    }
+  }
+
   drawCompass() {
     const midscreen = new Vec2(this.canvas.width/2, this.canvas.height/2);
     const atlas_compass = this.atlas["compass"];
@@ -954,6 +1011,13 @@ class Game {
           edgepoint.sub(diff.clone().normalize().mult(height*.5));
           //this.drawCircle(edgepoint);
           this.context.save();
+          const mouseOver = this.mouseScreenPosition && (edgepoint.distance(this.mouseScreenPosition) < 30)
+          if (mouseOver) {
+            this.context.shadowColor = 'rgba(255, 0, 0, .8)';
+            this.context.shadowBlur = 20;
+            this.context.shadowOffsetX = 0;
+            this.context.shadowOffsetY = 0;
+          }
           this.context.translate(edgepoint.x, edgepoint.y);
           this.context.rotate(rotation);
           this.context.drawImage(this.atlasimg, x, y, width, height, -width/2, -height/2, width, height);
@@ -995,12 +1059,39 @@ class Game {
     }, function() {});
   }
 
+  updateFocus(worldTarget, targetZoom) {
+    const game = this
+    const previous_scale = this.screenScale;
+
+    let previous_world_position = this.worldPointAtScreenCenter();
+    const currentWorldPosition = new Vec2(game.worldTranslate);
+
+    console.log("", previous_world_position,"->",worldTarget);
+ //   this.dragging = true;
+    document.body.classList.add('dragging');
+    animate(1000, function(pc) {
+      game.screenScale = previous_scale.lerp(game.zoomLevel(0.75), pc);
+    }, function() {
+      animate(1000, function(pc) {
+        game.screenScale =  game.zoomLevel(0.75).lerp(game.zoomLevel(targetZoom), pc);
+      });
+    });
+    animate(2000, function(pc) {
+      let pcEased = easeInEaseOut(pc);
+      game.centerWorldPointOnScreen(previous_world_position.lerp(new Vec2(worldTarget), pcEased));
+      game.requireDraw();
+    }, function() {
+//    this.dragging = false;
+    document.body.classList.remove('dragging');
+    game.requireDraw();}); //show buildings when zoomed in
+  }
+
   onUpdateData(fn) {
     this.on_update_data.push(fn);
   }
 
   updateData(data) {
-    this.world = new World("testa");
+    this.world = new World("testa", true);
     this.data = data;
     console.log(data);
     //for(var level_idx = this.world.levels()-1; level_idx < this.data.levels.length; level_idx++) {
@@ -1123,9 +1214,11 @@ class Game {
 
 
   centerWorldPointOnScreen(worldPoint) {
-    this.screenTranslate = new Vec2(0,0);
-    let midpoint = this.toWorld(new Vec2(this.canvas.width/2, this.canvas.height/2)).floor();
+    //console.log(worldPoint);
+    let midpoint = this.toWorld(new Vec2(this.canvas.width/2, this.canvas.height/2));//.floor();
+    //this.toWorld(this.screenTranslate);// = new Vec2(0,0);
     midpoint.sub(worldPoint);
+    //this.screenTranslate.sub(this.toScreen(midpoint));
     this.worldTranslate.add(midpoint);
   }
 
@@ -1145,13 +1238,46 @@ class Game {
   }
 
   onMouseMove(ev) {
-  //  var a = new Vec2(ev.pageX - this.canvas.offsetLeft, ev.pageY - this.canvas.offsetTop);
-    //this.mouseGridPosition = this.toWorld(a);
-  //  this.requireDraw();
+    var a = new Vec2(ev.pageX - this.canvas.offsetLeft, ev.pageY - this.canvas.offsetTop);
+    this.mouseScreenPosition = a;
+    this.mouseGridPosition = this.toWorld(a).floor();
+    if(this.isNearBuilding(this.mouseGridPosition)) {
+      this.wasNearBuilding = true;
+      this.requireDraw();
+    } else {
+      if (this.wasNearBuilding) {
+        this.wasNearBuilding = false;
+        this.requireDraw();
+      }
+    }
+    if(this.nearCompass(this.mouseScreenPosition)) {
+      this.wasNearCompass = true;
+      this.requireDraw();
+    } else {
+      if (this.wasNearCompass) {
+        this.wasNearCompass = false;
+        this.requireDraw();
+      }
+    }
+    /*
+    console.log(this.mouseGridPosition);
+    this.drawCircle(this.toScreen(this.mouseGridPosition));
+    */
   }
 
   zoomIn() {
     this.screenScale.mult(2);
+    this.requireDraw();
+  }
+
+  setZoom(n) {
+    const screenMiddle = new Vec2(this.canvas.width/2, this.canvas.height/2);
+    let oldWorldCenter = this.toWorld(screenMiddle);
+    this.screenScale = this.zoomLevel(n);
+    //this.screenTranslate = new Vec2(0,0);
+    let newWorldCenter = this.toWorld(screenMiddle);
+    newWorldCenter.sub(oldWorldCenter);
+    this.worldTranslate.add(newWorldCenter);
     this.requireDraw();
   }
 
@@ -1204,9 +1330,14 @@ class Game {
     this.worldTranslate.sub(this.moveStyle.east);
     this.requireDraw();
   }
+    
+  zoomLevel(z) {
+    return new Vec2(25, 25).mult(z);
+    //return new Vec2(this.canvas.width/worldWidth, this.canvas.height/worldHeight).mult(z);
+  }
 
   resetView() {
-    this.screenScale = new Vec2(this.canvas.width/worldWidth, this.canvas.height/worldHeight); //basic orthographic
+    this.screenScale = this.zoomLevel(1);//new Vec2(this.canvas.width/worldWidth, this.canvas.height/worldHeight); //basic orthographic
     this.worldTranslate = new Vec2(0,0);
   }
 
@@ -1217,13 +1348,17 @@ class Game {
     });
     addEventListener('mousedown', function(ev){
       //klass.onMouseMove(ev);
-      this.dragging = true;
+      klass.dragging = true;
       console.log("mouse down!");
       document.body.classList.add('dragging');
     });
+    addEventListener('click', function(ev){
+      //klass.onMouseMove(ev);
+      //klass.onMouseClick(ev.clientX, ev.clientY);
+    });
     addEventListener('mouseup', function(ev){
       //klass.onMouseMove(ev);
-      this.dragging = false;
+      klass.dragging = false;
       document.body.classList.remove('dragging');
     });
     addEventListener('wheel', function(ev) {
@@ -1354,7 +1489,7 @@ class Game {
     }
   }
 
-  drawImageToTiles(bottomlocation, footprint, img, alpha/*, flipped*/) {
+  drawImageToTiles(bottomlocation, footprint, img, alpha, highlight/*, flipped*/) {
     //image.width 
     /*
               this.context.save();
@@ -1363,6 +1498,7 @@ class Game {
               }
               */
     alpha = alpha || 1.0;
+    highlight = highlight || false;
     var bl = this.toScreen(bottomlocation);
     //this.drawCircle(bl);
     //
@@ -1383,9 +1519,19 @@ class Game {
       this.context.save();
       this.context.globalAlpha = alpha;
     }
+    if (highlight) {
+      this.context.save();
+      this.context.shadowColor = "rgba(0,255,0,1)";
+      this.context.shadowBlur = 50;
+      this.context.shadowOffsetX = 1;
+      this.context.shadowOffsetY = 1;
+    }
     this.context.drawImage(this.atlasimg, x, y, img_width, img_height, left.x-1, bl.y-(img_height*imgScale)-1, ((img_width+2)*imgScale), ((img_height+2)*imgScale));
     //this.context.drawImage(img, left.x, bl.y-(img.height*imgScale), img.width*imgScale, img.height*imgScale);
     if (alpha != 1.0) {
+      this.context.restore();
+    }
+    if (highlight) {
       this.context.restore();
     }
     //this.context.strokeRect(this.toScreen(leftGrid).x, this.toScreen(leftGrid).y, 50, 50);
@@ -1427,7 +1573,8 @@ class Game {
     const townsummarybutton = gameoverlay.getElementsByClassName('townsummary');
     for (var i = 0; i < townsummarybutton.length; i++) {
       townsummarybutton[i].addEventListener('click', function() {
-        game.townsummary(townInformation);
+        game.updateFocus(townposition, 1.8);
+        //game.townsummary(townInformation);
       });
     }
     document.body.appendChild(gameoverlay);
@@ -1444,6 +1591,18 @@ class Game {
       document.body.removeChild(overlays[j]);
     }
     //document.getElementById("overlays")
+  }
+
+  findTownForBuildingPosition(position) {
+    for(var level = 0; level < this.world.locations.length; level++) {
+      for(var town = 0; town < this.world.locations[level].towns.length; town++) {
+        for(var building = 0; building < this.world.locations[level].towns[town].buildings.length; building++) {
+          if (position.equals(this.world.locations[level].towns[town].buildings[building].position)) {
+            return this.data.levels[level].towns[town];
+          }
+        }
+      }
+    }
   }
 
   updateTownOverlays() {
@@ -1487,6 +1646,17 @@ class Game {
 	    this.drawMap();
 	    this.drawMiniMap();
 	    this.drawCompass();
+
+      //debugging
+      /*
+      this.drawCircle(this.toScreen(new Vec2(-5, 11)));
+      this.drawCircle(this.toScreen(new Vec2(-21, 30)));
+      this.drawCircle(this.toScreen(new Vec2(-19, 29)));
+
+      this.drawCircle(this.toScreen(new Vec2(-6, -6)));
+      this.drawCircle(this.toScreen(new Vec2(-9, -1)));
+      this.drawCircle(this.toScreen(new Vec2(-16, 22)));
+      */
     }
     /*
     if (this.debug) {
@@ -1549,6 +1719,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   game.onUpdateData(update_progression);
+  window.game = game;
   document.addEventListener('regionchange', function(ev) {
     update_progression();
   });

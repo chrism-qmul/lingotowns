@@ -22,7 +22,9 @@ export class AStarGrid {
       return;
     }
     if (!this.available(goal)) {
-      console.log("goal point not accessible:", goal);
+      console.log("goal point not accessible:", goal, this.onGrid(goal));
+      this.available(goal, true);
+      console.log("____");
       return;
     }
     var gScore = new Grid(this.width);
@@ -36,7 +38,9 @@ export class AStarGrid {
     //var i = 0;
     while(!openSet.isEmpty()) {
       current = cameFrom.point(openSet.remove());
+      //console.log(start, goal, current);
       if (equal_points(current, goal)) {
+        //console.log("gScore", gScore);
         return this.reconstruct_path(cameFrom, goal)
       }
 
@@ -77,8 +81,8 @@ export class AStarGrid {
   }
 
   // can the algorithm travel through this point?
-  available(point) {
-    return this.onGrid(point) && this.availabilityCheck(point);
+  available(point, moreinfo) {
+    return this.onGrid(point) && this.availabilityCheck(point, moreinfo);
   }
 
   onGrid(point) {

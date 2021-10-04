@@ -14,13 +14,15 @@ export class WorldSearch {
     return this.astar.search(start, goal);
   }
 
-  available(point) {
-    return !this.insideLocationArea(point);
+  available(point, moreinfo) {
+    return !this.insideLocationArea(point, moreinfo);
   }
 
-  insideLocationArea(point) {
+  insideLocationArea(point, moreinfo) {
     for(var i = 0; i < this.locations.length; i++) {
       if (Vec2.chebyshevDistance(point,this.locations[i]) < this.radius) {
+        //console.log(point, "inside", this.locations[i], "with radius", this.radius);
+      //if (Vec2.manhattenDistance(point,this.locations[i]) < this.radius) {
         return true
       }
     }

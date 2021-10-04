@@ -50,7 +50,7 @@ class Game {
     this.locations = [];
     this.dirty = true;
     this.worldbox = new BoundingBox();
-    this.world = new World();
+    this.world = new World("testa", true);
     this.world.addLevel(2);
     this.world.calculate();
     console.log(this.world.grid);

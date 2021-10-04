@@ -20,6 +20,7 @@ export class PRNG {
         this.seed = seed;
         break;
       default:
+        console.trace("wrong seed type", seed);
         throw "Can't use this type for seed";
         break;
     }

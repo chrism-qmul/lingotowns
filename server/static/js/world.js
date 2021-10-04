@@ -52,7 +52,7 @@ export class World {
   calculateBuildingLocations(town_location) {
     var results = [];
     const building_placement = new PoissonDiscLayout(town_location, 5, 20, 20, this.seed); //new RadialPlacement(town_locations[j], 5);
-    const building_locations = building_placement.getPlacements(1, 2); //2 buildings - 1 dist away
+    const building_locations = building_placement.getPlacements(1, 3); //2 buildings - 1 dist away
     for(var b = 0; b < building_locations.length; b++) {
         const building_location = building_locations[b].floor();
         results.push({building: b, position: building_location});
@@ -87,10 +87,12 @@ export class World {
 
   updateBoundingBox() {
     var locations = this.townLocations();
+    this.worldbox = new BoundingBox();
     locations = locations.concat(this.buildingLocations());
     for(var i = 0; i < locations.length; i++) {
       this.worldbox.add(locations[i]);
     }
+    this.worldbox.grow(5);
   }
 
   road() {
@@ -155,25 +157,43 @@ export class World {
         if (!town_position.isZero()) {
          edgeoftown = this.home.clone().closestEdge(town_position, 17).floor();
         }
+        let townsExCurrent = [];
+        for(var x = 0; x < townLocations.length; x++) {
+          if(!townLocations[x].equals(town_position)) {
+            townsExCurrent.push(townLocations[x]);
+          }
+        }
         var search = new WorldSearch(this.worldbox, townLocations, 12);
         var result = undefined;
         if (!edgeoftown.isZero()) {
           result = search.search(this.home,edgeoftown);
+          if (!Array.isArray(result)) {
+            console.log("unable to get path to town", this.home, edgeoftown);
+          }
         }
         if (Array.isArray(result)) {
           this.roads[i] = this.roads[i].concat(result);
         }
         const buildings = this.locations[i].towns[t].buildings;
         const buildingLocations = buildings.map(function(building) {return building.position;});
+        //const buildingLocations = buildings.map(function(building) {return (new Vec2(1,0).sub(building.position.clone()));});
         search = new WorldSearch(this.worldbox, buildingLocations, 1);
         var result = undefined;
         for(var b = 0; b < buildings.length; b++) {
           const building = buildings[b].position;
-          result = search.search(edgeoftown, new Vec2(building).add(buildingOffset));
+          const frontOfBuilding = new Vec2(building).add(buildingOffset)
+          /*
+          if (search.insideLocationArea(frontOfBuilding)) {
+            console.log("inside Location Area", frontOfBuilding);
+          } else {
+            console.log("not inside Location Area", frontOfBuilding);
+          }
+          */
+          result = search.search(edgeoftown, frontOfBuilding);
           if (Array.isArray(result)) {
             this.roads[i] = this.roads[i].concat(result);
           } else {
-            console.log("unable to get path");
+            console.log("unable to get path to building", edgeoftown, frontOfBuilding, "building", building);
           }
         }
       }

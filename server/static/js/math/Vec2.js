@@ -1,3 +1,7 @@
+function lerpScalar(v0, v1, t) {
+  return (1 - t) * v0 + t * v1;
+}
+
 export class Vec2 extends Array {
   constructor(x, y) {
     if (y === undefined) {
@@ -14,6 +18,10 @@ export class Vec2 extends Array {
 
   isZero() {
     return this.x == 0 && this.y == 0;
+  }
+
+  lerp(b, t) {
+    return new Vec2(lerpScalar(this.x, b.x, t), lerpScalar(this.y, b.y, t));
   }
 
   get x() {

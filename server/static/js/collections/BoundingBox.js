@@ -4,6 +4,7 @@ export class BoundingBox {
     this.maxx = -Infinity;
     this.miny = Infinity;
     this.maxy = -Infinity;
+    this.addressed = false;
   }
 
   grow(p) {
@@ -22,6 +23,11 @@ export class BoundingBox {
   }
 
   add(point) {
+    if (this.addressed) {
+      //if something has referenced this, adding new points will break the referencing
+      console.trace('Bounding Box already used for addressing');
+      throw 'Bounding Box already used for addressing';
+    }
     const [x, y] = point;
     if (x > this.maxx) {
       this.maxx = x;  
@@ -41,6 +47,7 @@ export class BoundingBox {
   //to appeal to certain algorithms that work best this way
   //i.e. no negative values
   zerobased(point) {
+    this.addressed = true;
     point[0] -= this.minx;
     point[1] -= this.miny;
     return point;
@@ -48,6 +55,7 @@ export class BoundingBox {
 
   //return to original coordinate system from zero based
   unzerobased(point) {
+    this.addressed = true;
     point[0] += this.minx;
     point[1] += this.miny;
     return point;
