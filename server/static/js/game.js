@@ -5,7 +5,7 @@ import {PRNG} from './algorithms/prng.js';
 
 var canvas = document.getElementById('app');
 var minimapcanvas = document.getElementById('minimap');
-let smallestdim = Math.min(minimapcanvas.parentNode.offsetWidth,minimapcanvas.parentNode.offsetHeight)
+let smallestdim = Math.min(window.innerWidth/5,window.innerHeight/5);
 minimapcanvas.width = Math.min(smallestdim, 200);
 minimapcanvas.height = Math.min(smallestdim, 200);
 var worldWidth = 20;
@@ -625,7 +625,7 @@ class Game {
       this.canvas.height = this.canvas.offsetHeight;//Math.ceil(window.innerHeight * 0.618);
       this.minimapcenter = new Vec2(minimapcanvas.width/2,minimapcanvas.height/2);
       this.canvascenter = new Vec2(canvas.width/2,canvas.height/2).toCartesian();
-      let smallestdim = Math.min(minimapcanvas.parentNode.offsetWidth,minimapcanvas.parentNode.offsetHeight)
+      let smallestdim = Math.min(window.innerWidth/5,window.innerHeight/5);
       minimapcanvas.width = smallestdim;//Math.min(smallestdim, 200);
       minimapcanvas.height = smallestdim;//Math.min(smallestdim, 200);
       this.requireDraw();
@@ -867,6 +867,7 @@ class Game {
     */
     //this.context.drawImage(this.resources.compass, this.canvas.width-this.resources.compass.width, this.canvas.height, this.resources.compass.width, this.resources.compass.height);
     this.drawFog(locations);
+    this.drawCompletion(locations);
   }
 
   worldPointAtScreenCenter() {
@@ -1028,9 +1029,11 @@ class Game {
           this.context.textAlign="center";
           this.context.fillStyle = "rgba(255,255,255,0.8)";
           this.context.font = "12px sans-serif";
-          this.context.fillText("Level: " + info['level'], 0, -10, this.resources.compass.height);
+          //this.context.fillText("Level: " + info['level'], 0, -10, this.resources.compass.height);
+          this.context.fillText("Level: ", 0, -10, this.resources.compass.height);
           this.context.font = "20px sans-serif";
-          this.context.fillText("" + info['total_completion'].toFixed(0) + "%", 0, 20, this.resources.compass.height);
+          this.context.fillText(info['level'], 0, 20, this.resources.compass.height);
+          //this.context.fillText("" + info['total_completion'].toFixed(0) + "%", 0, 20, this.resources.compass.height);
           this.context.restore();
         }
       }
@@ -1233,6 +1236,38 @@ class Game {
       let fog_alpha = Math.min(((mag - this.fog_radius)/8), 1);
       if (fog) {
         this.drawFogTile(position, fog_alpha);
+      }
+    }
+  }
+
+  drawCompletion(screenWorldLocations) {
+    let locations = screenWorldLocations;
+    for(var i = 0; i < locations.length; i++) {
+      const position = locations[i].clone().floor();
+      const tile = this.world.get(position);
+      if (tile && tile.startsWith("b")) {
+        let completion = 0;
+        const town = this.findTownForBuildingPosition(position);
+        if (town) {
+          switch(tile) {
+            case "b0":
+              completion = town.games.food.completion;
+              break;
+            case "b1":
+              completion = town.games.farm.completion;
+              break;
+            case "b2":
+              completion = town.games.library.completion;
+              break;
+          }
+          const textLocation = this.toScreen(locations[i]);
+          this.context.save();
+          this.context.fillStyle = "white";
+          this.context.font = "30px sans-serif";
+          this.context.fillText("" + completion + "%", textLocation.x, textLocation.y);
+          this.context.restore();
+          //this.context.fillText 
+        }
       }
     }
   }
@@ -1442,6 +1477,19 @@ class Game {
     this.context.fillStyle = fs;
   }
 
+  drawInfo() {
+    this.context.save()
+    this.context.textAlign = "right";
+    this.context.shadowColor = "rgba(0,0,0,1)";
+    this.context.shadowBlur = 10;
+    this.context.shadowOffsetX = 0;
+    this.context.shadowOffsetY = 0;
+    this.context.font = "30px sans-serif";
+    this.context.fillStyle = "#FFFFFF";
+    this.context.fillText("Level: " + this.data.levels.length, this.canvas.width-20, 50);
+    this.context.restore();
+  }
+
   drawDebugInfo(elapsed) {
     var lines = [];
     this.context.save()
@@ -1555,12 +1603,14 @@ class Game {
       <button class='townsummary'>PLAY NOW</button>
       <div class='content'>
         <h2>${townInformation.town_name}</h2>
+        <p><b>Document: </b>${townInformation.document_name}</p>
+      </div>`;
+    /*
         <table class='detail'>
           <tr>
             <th>Subject</th><td>${townInformation.subject_type}</td>
           </tr>
           <tr>
-            <th>Doc</th><td class='truncate'>${townInformation.document_name}</td>
           </tr>
           <tr>
             <th>Level</th><td>${townInformation.level}</td>
@@ -1569,7 +1619,7 @@ class Game {
             <th>Completion</th><td>${townInformation.total_completion.toFixed(2)}%</td>
           </tr>
         </table>
-      </div>`;
+        */
     const townsummarybutton = gameoverlay.getElementsByClassName('townsummary');
     for (var i = 0; i < townsummarybutton.length; i++) {
       townsummarybutton[i].addEventListener('click', function() {
@@ -1595,10 +1645,15 @@ class Game {
 
   findTownForBuildingPosition(position) {
     for(var level = 0; level < this.world.locations.length; level++) {
-      for(var town = 0; town < this.world.locations[level].towns.length; town++) {
-        for(var building = 0; building < this.world.locations[level].towns[town].buildings.length; building++) {
-          if (position.equals(this.world.locations[level].towns[town].buildings[building].position)) {
-            return this.data.levels[level].towns[town];
+      if (this.world.locations[level].towns) {
+        for(var town = 0; town < this.world.locations[level].towns.length; town++) {
+          if(this.world.locations[level].towns[town].buildings) {
+            for(var building = 0; building < this.world.locations[level].towns[town].buildings.length; building++) {
+              if (level > 0 && position.equals(this.world.locations[level].towns[town].buildings[building].position)) {
+                //console.log("the data", this.world, this.data, level, town);
+                return this.data.levels[level-1].towns[town];
+              }
+            }
           }
         }
       }
@@ -1644,6 +1699,7 @@ class Game {
 	    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	    //this.drawDebugGrid(); 
 	    this.drawMap();
+	    this.drawInfo();
 	    this.drawMiniMap();
 	    this.drawCompass();
 
@@ -1682,6 +1738,7 @@ game.preload().then(function(resources) {
 
 function update_progression() {
   connect_to_server.then(function() {
+    /*
     const town_info = game.getCurrentTownInformation();
     if (town_info) {
       const games = ['farm', 'food', 'library'];
@@ -1703,7 +1760,7 @@ function update_progression() {
           el2.style.width = "0%";
         }
       }
-    }
+    }*/
   });
 }
 

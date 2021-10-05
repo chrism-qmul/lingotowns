@@ -12,6 +12,12 @@ body.staticheader {
   column-gap: 50px;
 }
 
+#minimap {
+  position:absolute;
+  top:0px;
+  left:0px;
+}
+
 body {
   background:#eee;
 }

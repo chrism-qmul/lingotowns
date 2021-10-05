@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" src="style.css" />
+    <link rel="stylesheet" src="/css/style.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -209,7 +209,7 @@ dl.table dd {
 
 #app {
   width:100vw;
-  height:61.8vh;
+  height:100vh;
 }
 
 div#infopanel {
@@ -309,53 +309,10 @@ div#infopanel {
   <body>
     <h1 id='maintitle' class='beforeload'>LingoTowns</h1>
     <canvas id='app' width='500' height='500'></canvas>
+    <canvas style='border:1px solid black;position:absolute;bottom:2vh;right:2vh;background:white;z-index:100;' id='minimap' width='200' height='200'></canvas>
     <div id='edge_of_playarea'>
       <div class='content'>
         <i class="bi bi-exclamation-triangle"></i>&nbsp;<b>Warning:</b> You're nearing the edge of the play area, click here to go home!
-      </div>
-    </div>
-    <div id='infopanel' class='afterload'>
-      <div>
-        <dl class='info'>
-          <dt>Document Points</dt>
-          <dd id='document-points'>0</dd>
-          <dt>Documents Completed</dt>
-          <dd id='documents-completed'>0</dd>
-          <dt>Level</dt>
-          <dd id='documents-level'>1</dd>
-        </dl>
-        <div class='progress' style='padding-right:20px;'>
-          <p>World productivity</p>
-          <dl class='table' style='width:100%;'>
-            <dt>Farms</dt>
-            <dd style='width:100%;'>
-              <div class='progress-bar'>
-                <span id='farm-progress'>0%</span>
-                <div id='farm-progress-width' style='width:0%;' class='bar'></div>
-              </div>
-            </dd>
-            <dt>Food</dt>
-            <dd>
-              <div class='progress-bar'>
-                <span id='food-progress'>0%</span>
-                <div id='food-progress-width' style='width:0%;' class='bar'></div>
-              </div>
-            </dd>
-            <dt>Library</dt>
-            <dd>
-              <div class='progress-bar'>
-                <span id='library-progress'>0%</span>
-                <div  id='library-progress-width' style='width:0%;' class='bar'></div>
-              </div>
-            </dd>
-          </dl>
-        </div>
-        <div class='worldmap'>
-          <p>World Map</p>
-          <div style='height:80%;'>
-            <canvas style='border:1px solid black;' id='minimap' width='100%' height='100%'></canvas>
-          </div>
-        </div>
       </div>
     </div>
     <script src="{{auth_server}}/auth.js"></script>
