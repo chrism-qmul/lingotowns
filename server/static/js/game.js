@@ -606,7 +606,11 @@ class Game {
             game = "library"
             break;
         }
-        window.location.assign("/play-game?game=" + game + "&document_id=" + town.document_id)
+        if (town.document_id == "tutorial") {
+          window.location.assign("/play-tutorial?game=" + game)
+        } else {
+          window.location.assign("/play-game?game=" + game + "&document_id=" + town.document_id)
+        }
       }
     }
     const townPosition = this.nearCompass(this.mouseScreenPosition);
@@ -1603,7 +1607,7 @@ class Game {
       <button class='townsummary'>PLAY NOW</button>
       <div class='content'>
         <h2>${townInformation.town_name}</h2>
-        <p><b>Document: </b>${townInformation.document_name}</p>
+        ${townInformation.document_name ? `<p><b>Document: </b>${townInformation.document_name}</p>` : ''}
       </div>`;
     /*
         <table class='detail'>
@@ -1643,6 +1647,20 @@ class Game {
     //document.getElementById("overlays")
   }
 
+  tutorialTownInfo() {
+    return {author: "LingoTowns Citizens",
+      available:true,
+      document_id:"tutorial",
+      games: {farm:{completion: 0}, food:{completion:0}, library:{completion:0}},
+      level: 0,
+      region: "Lakes",
+      subject_type: "tutorial",
+      total_completed: 0,
+      town_id: 0,
+      town_name: "Tutorial Town"};
+  }
+
+
   findTownForBuildingPosition(position) {
     for(var level = 0; level < this.world.locations.length; level++) {
       if (this.world.locations[level].towns) {
@@ -1658,13 +1676,17 @@ class Game {
         }
       }
     }
+    return this.tutorialTownInfo();
   }
 
   updateTownOverlays() {
     this.removeTownOverlays();
     const towns = this.world.towns();
     for(var i = 0; i < towns.length; i++) {
-      var townInformation = this.getTownInformation(i);
+      var townInformation = this.tutorialTownInfo();
+      if (i  > 0) {
+        townInformation = this.getTownInformation(i-1);
+      }
       if (townInformation) {
         console.log("town information: ", townInformation);
         const townSummaryElement = this.addTownSummary(townInformation, towns[i].position);

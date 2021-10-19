@@ -107,6 +107,11 @@ session_uuid = {}
 #prefix = "/admin/"
 prefix = "/"
 
+game_tutorial_url_builders = {"farm": lambda auth_token: "https://phrasefarm.org/?auth_token={auth_token}#/tutorial".format(auth_token=auth_token),
+        "library": lambda auth_token: "https://lingotorium.com/tutorial?auth_token={auth_token}".format(auth_token=auth_token),
+        "food": lambda auth_token:  "https://cafeclicker.com/?auth_token={auth_token}".format(auth_token=auth_token),
+        "detectives": lambda a:  "https://anawiki.essex.ac.uk/phrasedetectives/"}
+
 game_url_builders = {"farm": lambda auth_token, doc_id: "https://phrasefarm.org/?auth_token={auth_token}#/continuegame/{doc_id}".format(auth_token=auth_token, doc_id=doc_id),
         "library": lambda auth_token, doc_id: "https://lingotorium.com/?auth_token={auth_token}".format(auth_token=auth_token),
         "food": lambda auth_token, doc_id:  "https://cafeclicker.com/?auth_token={auth_token}#/game/{doc_id}".format(auth_token=auth_token, doc_id=doc_id),
@@ -187,6 +192,15 @@ def playgame():
     document_id = request.args.get("document_id")
     if game in game_url_builders:
         url = game_url_builders[game](session['auth_token'], document_id)
+        return redirect(url)
+    else:
+        return "no such game", 500
+
+@app.route("/play-tutorial")
+def playtutorial():
+    game = request.args.get("game")
+    if game in game_tutorial_url_builders:
+        url = game_tutorial_url_builders[game](session['auth_token'])
         return redirect(url)
     else:
         return "no such game", 500
