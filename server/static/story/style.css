@@ -33,7 +33,7 @@ body {
 
 .flickity-page-dots {
   display: flex;
-  bottom: 650px;
+  bottom: 750px;
 }
 .flickity-page-dots .dot {
   background-color: #000 !important;
