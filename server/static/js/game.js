@@ -831,7 +831,7 @@ class Game {
       const regionIdx = this.world.regions.get(position_floored,0);
       //const region = this.regions[regionIdx%this.regions.length];
       const town = this.getTownInformation(regionIdx);
-      var region = this.regions[regionIdx%this.regions.length];
+      var region = this.regions[(regionIdx-1)%this.regions.length];
       if (town && town.region) {
         region = this.region_by_name[town.region];
       }
