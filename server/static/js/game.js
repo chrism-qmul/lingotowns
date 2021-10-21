@@ -482,7 +482,9 @@ class Game {
     //this.increaseFog();
   }
 
-  updateNearEdgeOfPlayArea(isNearEdge) {
+  updateNearEdgeOfPlayArea(worldPointAtScreenCenter) {
+    const midpoint = worldPointAtScreenCenter || this.worldPointAtScreenCenter();
+    const isNearEdge = (midpoint.magnitude() > this.fog_radius);
     this.near_edge_of_playarea = isNearEdge;
     if (this.edgewarningel) {
       if (isNearEdge) {
@@ -497,11 +499,7 @@ class Game {
     //move screen with constraint checking - e.g. won't move into fog
     this.screenTranslate.add(vec);
     const midpoint = this.worldPointAtScreenCenter();
-    if (midpoint.magnitude() > this.fog_radius) {
-      this.updateNearEdgeOfPlayArea(true);
-    } else {
-      this.updateNearEdgeOfPlayArea(false);
-    }
+    this.updateNearEdgeOfPlayArea(midpoint);
     if (midpoint.magnitude() > this.fog_radius+15) {
       this.screenTranslate.sub(vec);
     }
@@ -1091,6 +1089,7 @@ class Game {
     }, function() {
 //    this.dragging = false;
     document.body.classList.remove('dragging');
+      game.updateNearEdgeOfPlayArea();
     game.requireDraw();}); //show buildings when zoomed in
   }
 
@@ -1153,8 +1152,9 @@ class Game {
     this.edgewarningel = edgewarningel;
     let game = this;
     this.edgewarningel.addEventListener("click", function(ev) {
-      game.centerWorldPointOnScreen(new Vec2(0,0));
-      game.updateNearEdgeOfPlayArea(false);
+      //game.centerWorldPointOnScreen(new Vec2(0,0));
+      game.updateFocus(new Vec2(0,0), 1.2);
+      game.updateNearEdgeOfPlayArea();
       game.requireDraw();
     });
   }
