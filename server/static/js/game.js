@@ -751,7 +751,8 @@ class Game {
   }
 
   getTownInformation(regionIdx) {
-    let idx = regionIdx;
+    if (regionIdx == 0) return this.tutorialTownInfo();
+    let idx = regionIdx-1;
     for(var level_idx = 0; level_idx < this.data.levels.length; level_idx++) {
       const towns = this.data.levels[level_idx].towns;
       for(var town_idx = 0; town_idx < towns.length; town_idx++) {
@@ -1593,6 +1594,7 @@ class Game {
     const game = this;
     const gameoverlay = document.createElement("div");
     console.log(townInformation);
+    //this.region_by_name[townInformation.region]
     const regionIdx = this.world.regions.get(townposition,0);
     const regionname = townInformation.region;
     /*
@@ -1683,10 +1685,7 @@ class Game {
     this.removeTownOverlays();
     const towns = this.world.towns();
     for(var i = 0; i < towns.length; i++) {
-      var townInformation = this.tutorialTownInfo();
-      if (i  > 0) {
-        townInformation = this.getTownInformation(i-1);
-      }
+      var townInformation = this.getTownInformation(i);
       if (townInformation) {
         console.log("town information: ", townInformation);
         const townSummaryElement = this.addTownSummary(townInformation, towns[i].position);
