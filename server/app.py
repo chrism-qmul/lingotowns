@@ -107,14 +107,14 @@ session_uuid = {}
 #prefix = "/admin/"
 prefix = "/"
 
-game_tutorial_url_builders = {"farm": lambda auth_token: "https://phrasefarm.org/?auth_token={auth_token}#/tutorial".format(auth_token=auth_token),
-        "library": lambda auth_token: "https://lingotorium.com/tutorial?auth_token={auth_token}".format(auth_token=auth_token),
-        "food": lambda auth_token:  "https://cafeclicker.com/?auth_token={auth_token}".format(auth_token=auth_token),
+game_tutorial_url_builders = {"farm": lambda auth_token: "https://phrasefarm.org/?auth_token={auth_token}&from=lingotowns#/tutorial".format(auth_token=auth_token),
+        "library": lambda auth_token: "https://lingotorium.com/tutorial?auth_token={auth_token}&from=lingotowns".format(auth_token=auth_token),
+        "food": lambda auth_token:  "https://cafeclicker.com/?auth_token={auth_token}&from=lingotowns".format(auth_token=auth_token),
         "detectives": lambda a:  "https://anawiki.essex.ac.uk/phrasedetectives/"}
 
-game_url_builders = {"farm": lambda auth_token, doc_id: "https://phrasefarm.org/?auth_token={auth_token}#/continuegame/{doc_id}".format(auth_token=auth_token, doc_id=doc_id),
-        "library": lambda auth_token, doc_id: "https://lingotorium.com/?auth_token={auth_token}".format(auth_token=auth_token),
-        "food": lambda auth_token, doc_id:  "https://cafeclicker.com/?auth_token={auth_token}#/game/{doc_id}".format(auth_token=auth_token, doc_id=doc_id),
+game_url_builders = {"farm": lambda auth_token, doc_id: "https://phrasefarm.org/?auth_token={auth_token}&from=lingotowns#/continuegame/{doc_id}".format(auth_token=auth_token, doc_id=doc_id),
+        "library": lambda auth_token, doc_id: "https://lingotorium.com/?auth_token={auth_token}&from=lingotowns".format(auth_token=auth_token),
+        "food": lambda auth_token, doc_id:  "https://cafeclicker.com/?auth_token={auth_token}&from=lingotowns#/game/{doc_id}".format(auth_token=auth_token, doc_id=doc_id),
         "detectives": lambda a,b:  "https://anawiki.essex.ac.uk/phrasedetectives/"}
 
 @socketio.on('connect')
