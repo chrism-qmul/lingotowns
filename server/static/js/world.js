@@ -103,11 +103,6 @@ export class World {
     const buildings = this.buildings();
     const road = this.road();
     this.grid = new BoxedGrid(this.worldbox);
-    if (this.includeBuildings) {
-      for(var b = 0; b < buildings.length; b++) {
-        this.grid.set(buildings[b].position,"b" + buildings[b].building);
-      }
-    }
     for(var r = 0; r < road.length; r++) {
       this.grid.set(road[r], "r");
     }
@@ -134,6 +129,11 @@ export class World {
         this.grid.set([x,y], "rv");
       }
 */
+    }
+    if (this.includeBuildings) {
+      for(var b = 0; b < buildings.length; b++) {
+        this.grid.set(buildings[b].position,"b" + buildings[b].building);
+      }
     }
     //take another pass of road to look at neighbours and see which way road
     //is going - or create junction
@@ -175,9 +175,10 @@ export class World {
           this.roads[i] = this.roads[i].concat(result);
         }
         const buildings = this.locations[i].towns[t].buildings;
-        const buildingLocations = buildings.map(function(building) {return building.position;});
+        //const buildingLocations = buildings.map(function(building) {return building.position;});
         //const buildingLocations = buildings.map(function(building) {return (new Vec2(1,0).sub(building.position.clone()));});
-        search = new WorldSearch(this.worldbox, buildingLocations, 1);
+        const buildingLocations = buildings.map(function(building) {return building.position.clone().add(new Vec2(-1,-1));});
+        search = new WorldSearch(this.worldbox, buildingLocations, 2);
         var result = undefined;
         for(var b = 0; b < buildings.length; b++) {
           const building = buildings[b].position;
