@@ -179,6 +179,11 @@ def intro():
     session['seen_intro'] = True
     return render_template("story/index.html")
 
+@app.route("/intro-text")
+def intro_text():
+    session['seen_intro'] = True
+    return render_template("story-text/index.html")
+
 @app.route("/forcelevelup")
 def forcelevelup():
     uuid = session['auth']['uuid']
