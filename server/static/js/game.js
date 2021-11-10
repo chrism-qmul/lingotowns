@@ -10,7 +10,6 @@ minimapcanvas.width = Math.min(smallestdim, 200);
 minimapcanvas.height = Math.min(smallestdim, 200);
 var worldWidth = 20;
 var worldHeight = 20;
-
 var prng = new PRNG("test1ab");
 console.log("random", prng.random(), prng.random());
 
@@ -205,22 +204,44 @@ class MouseDrag {
     document.addEventListener('touchmove', this.drag.bind(this));
 
   }
+  
+  getXYFromEv(ev) {
+    var pos = ev;
+    if (ev.touches && ev.touches.length && ev.touches.length > 0) {
+      pos = ev.touches[ev.touches.length-1];
+    }
+    if (pos.pageX || pos.pageY) {
+      var result = new Vec2(pos.pageX, pos.pageY);
+      console.log("result", result);
+      result.floor();
+      return result;
+    }
+  }
 
   startdrag(ev) {
     this.dragging = true;
-    this.sendupdate(ev.pageX, ev.pageY);
+    var pos = this.getXYFromEv(ev);
+    if (pos) {
+      this.sendupdate(pos.x, pos.y);
+    }
     document.body.classList.add("dragging");
   }
 
   drag(ev) {
     if (this.dragging) {
-      this.sendupdate(ev.pageX, ev.pageY);
+      var pos = this.getXYFromEv(ev);
+      if (pos) {
+        this.sendupdate(pos.x, pos.y);
+      }
     }
   }
 
   enddrag(ev) {
     this.dragging = false;
-    this.sendupdate(ev.pageX, ev.pageY);
+    var pos = this.getXYFromEv(ev);
+    if (pos) {
+      this.sendupdate(pos.x, pos.y);
+    }
     this.lastX = null;
     this.lastY = null;
     document.body.classList.remove("dragging");
@@ -440,6 +461,7 @@ class Game {
       cloud: "cloud",
       roadeastwestnorth:"road-east-west-north",
       roadsouthwestnorth:"road-south-west-north",
+      //roadsoutheastnorth:"road-south-east-north",
       roadwestnorth:"road-west-north",
       roadx:"road-x",
       roadnorth: "road-lights",
@@ -804,11 +826,9 @@ class Game {
           this.drawImageToTiles(position, new Vec2(1, 1), this.resources.roadeastnorth);
           break;
 */
-/*
         case ("r" + (RoadEast | RoadWest | RoadNorth)):
           this.drawImageToTiles(position, new Vec2(1, 1), this.resources.roadeastwestnorth);
           break;
-*/
         case ("r" + (RoadSouth | RoadWest | RoadNorth)):
           this.drawImageToTiles(position, new Vec2(1, 1), this.resources.roadsouthwestnorth);
           break;
@@ -1154,7 +1174,7 @@ class Game {
     this.edgewarningel.addEventListener("click", function(ev) {
       //game.centerWorldPointOnScreen(new Vec2(0,0));
       game.updateFocus(new Vec2(0,0), 1.2);
-      game.updateNearEdgeOfPlayArea();
+      //game.updateNearEdgeOfPlayArea();
       game.requireDraw();
     });
   }
