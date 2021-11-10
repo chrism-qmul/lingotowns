@@ -212,7 +212,6 @@ class MouseDrag {
     }
     if (pos.pageX || pos.pageY) {
       var result = new Vec2(pos.pageX, pos.pageY);
-      console.log("result", result);
       result.floor();
       return result;
     }
