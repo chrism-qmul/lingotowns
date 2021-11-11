@@ -614,21 +614,27 @@ class Game {
       if(building) {
         const town = this.findTownForBuildingPosition(building.position);
         let game = null;
+        var completion = false;
         switch(building.tile) {
           case "b0":
+            complete = (town.games.food.completion == 100);
             game = "food"
             break;
           case "b1":
+            complete = (town.games.farm.completion == 100);
             game = "farm"
             break;
           case "b2":
+            complete = (town.games.library.completion == 100);
             game = "library"
             break;
         }
         if (town.document_id == "tutorial") {
           window.location.assign("/play-tutorial?game=" + game)
         } else {
-          window.location.assign("/play-game?game=" + game + "&document_id=" + town.document_id)
+          if (!complete) {
+            window.location.assign("/play-game?game=" + game + "&document_id=" + town.document_id)
+          }
         }
       }
     }
@@ -799,18 +805,25 @@ class Game {
       if (Math.abs(fog_alpha-1) < 0.01) continue;
       let tile = this.world.get(position_floored)
       let highlight = false;
+      const regionIdx = this.world.regions.get(position_floored,0);
+      //const region = this.regions[regionIdx%this.regions.length];
+      const town = this.getTownInformation(regionIdx);
       if (tile && tile.startsWith("b") && this.mouseGridPosition) {
         highlight = this.mouseGridPosition.distance(position) < 4;
       }
+      var complete = false;
       switch(tile) {
         case "b0":
-        this.drawImageToTiles(position, new Vec2(3, 3), this.resources.bakery, 1.0, highlight);
+          complete = (town.games.food.completion == 100);
+          this.drawImageToTiles(position, new Vec2(3, 3), this.resources.bakery, 1.0, !complete && highlight);
           break;
         case "b1":
-        this.drawImageToTiles(position, new Vec2(3, 3), this.resources.farm, 1.0, highlight);
+          complete = (town.games.farm.completion == 100);
+          this.drawImageToTiles(position, new Vec2(3, 3), this.resources.farm, 1.0, !complete && highlight);
           break;
         case "b2":
-        this.drawImageToTiles(position, new Vec2(3, 3), this.resources.library, 1.0, highlight);
+          complete = (town.games.library.completion == 100);
+          this.drawImageToTiles(position, new Vec2(3, 3), this.resources.library, 1.0, !complete && highlight);
           break;
         case ("r" + RoadWest):
         case ("r" + RoadEast):
@@ -846,9 +859,6 @@ class Game {
           //console.log("no tile defined for", tile);
           break;
       }
-      const regionIdx = this.world.regions.get(position_floored,0);
-      //const region = this.regions[regionIdx%this.regions.length];
-      const town = this.getTownInformation(regionIdx);
       var region = this.regions[(regionIdx-1)%this.regions.length];
       if (town && town.region) {
         region = this.region_by_name[town.region];
@@ -1285,12 +1295,17 @@ class Game {
               break;
           }
           const textLocation = this.toScreen(locations[i]);
-          this.context.save();
-          this.context.fillStyle = "white";
-          this.context.font = "30px sans-serif";
-          this.context.fillText("" + completion + "%", textLocation.x, textLocation.y);
-          this.context.restore();
-          //this.context.fillText 
+          if (town.subject_type != "tutorial") {
+            this.context.save();
+            this.context.fillStyle = "white";
+            this.context.font = "30px sans-serif";
+            this.context.shadowColor = "rgba(0,0,0,1)";
+            this.context.shadowBlur = 10;
+            this.context.shadowOffsetX = 0;
+            this.context.shadowOffsetY = 0;
+            this.context.fillText("" + completion + "%", textLocation.x, textLocation.y);
+            this.context.restore();
+          }
         }
       }
     }
