@@ -72,10 +72,10 @@ def send_update(update, user):
     socketio.send(update, to=str(user))
 
 def send_update_for_user(user_id):
-    user_update = persistence.load_data_for_user(user_id)
+    user_update = persistence.load_data_for_user(user_id, session=db.session)
     if is_ready_for_new_level(user_update):
         create_mpa_next_level_for(user_id, next_level(user_update))
-    user_update = persistence.load_data_for_user(user_id)
+    user_update = persistence.load_data_for_user(user_id, session=db.session)
     send_update(user_update, user_id)
 
 class ModelViewWatch(ModelView):
@@ -187,7 +187,7 @@ def intro_text():
 @app.route("/forcelevelup")
 def forcelevelup():
     uuid = session['auth']['uuid']
-    user_update = persistence.load_data_for_user(uuid)
+    user_update = persistence.load_data_for_user(uuid, session=db.session)
     create_mpa_next_level_for(uuid, next_level(user_update))
     return redirect("/")
 
