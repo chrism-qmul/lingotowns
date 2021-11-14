@@ -614,7 +614,7 @@ class Game {
       if(building) {
         const town = this.findTownForBuildingPosition(building.position);
         let game = null;
-        var completion = false;
+        var complete = false;
         switch(building.tile) {
           case "b0":
             complete = (town.games.food.completion == 100);
