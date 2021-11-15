@@ -1436,8 +1436,8 @@ class Game {
       document.body.classList.remove('dragging');
     });
     addEventListener('wheel', function(ev) {
-      game.worldTranslate.sub(new Vec2(Math.ceil(ev.deltaX/3), Math.ceil(ev.deltaY/3)));
-      game.requireDraw();
+      const movement = new Vec2(ev.deltaX, ev.deltaY).toCartesian().mult(-1);
+      game.screenMove(movement);
       ev.preventDefault();
     });
     addEventListener('keydown', function(ev)  {
