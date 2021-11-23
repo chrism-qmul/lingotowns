@@ -6,6 +6,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Mouse+Memoirs&display=swap" rel="stylesheet">
+    <script src="/js/array.polyfill.js"></script>
     <title>Lingotowns</title>
   </head>
 <style>
@@ -185,6 +186,23 @@ dl.table dd {
   margin:0px;
 }
 
+.btn {
+  border-radius:5px;
+  background:black;
+  color:white;
+  padding:5px;
+  border:1px solid black;
+  display:inline-block;
+  padding-right:5px;
+  padding-left:5px;
+  text-decoration:none;
+}
+
+.btn.secondary {
+  background:none;
+  color:black;
+}
+
 .gameoverlay .content {
   margin:5px;
 }
@@ -305,6 +323,26 @@ div#infopanel {
   opacity:0;
 }
 
+#loginreminder {
+  transform:translate(0%, 0);
+  color:#222;
+  box-shadow:5px 0px #000;
+  position:fixed;
+  bottom:0px;
+  left:0px;
+  width:100vw;
+  background:rgba(255,255,255,0.9);
+  z-index:9999;
+  transition:transform 1s;
+}
+
+#loginreminder p {
+  line-height:2em;
+  margin:10px;
+}
+#loginreminder.close {
+  transform:translate(0%, 100%);
+}
 </style>
   <body>
     <h1 id='maintitle' class='beforeload'>LingoTowns</h1>
@@ -315,8 +353,13 @@ div#infopanel {
         <i class="bi bi-exclamation-triangle"></i>&nbsp;<b>Warning:</b> You're nearing the edge of the play area, click here to go home!
       </div>
     </div>
+    {% if is_guest %}
+    <div id='loginreminder' class='close'>
+      <p>Hey there, you're currently playing as a guest - Would you like to register so we can keep track of your scores? <a class='btn' href='https://auth.tileattack.com/create-account?redirect=https://lingotowns.com'>Yes</a>&nbsp;<a id='loginreminderclose' href='#' class='btn secondary'>No thanks</a></p>
+    </div>
+    {% endif %}
     <script src="{{auth_server}}/auth.js"></script>
     <script src="https://cdn.socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
-    <script type='module' src="/js/game.js"></script>
+    <script type="module" src="/js/game.js"></script>
   </body>
 </html>

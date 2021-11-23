@@ -158,6 +158,10 @@ def auth_from_token(token):
 #def index():
 #    return render_template("index.html", users=sessions, client_info=client_info, prefix=prefix)
 
+@app.route("/info")
+def info():
+    return str(session['auth'])
+
 @app.route("/")
 def lingotowns():
     auth_token = request.args.get("auth_token")
@@ -168,7 +172,7 @@ def lingotowns():
         return redirect("/")
     elif session_auth:
         if True:#session.get('seen_intro'):
-            return render_template("game.html", auth_server=AUTH_SERVER)
+            return render_template("game.html", auth_server=AUTH_SERVER, is_guest=(session_auth['username'] == "Guest"))
         else:
             return redirect("/intro")
     else:

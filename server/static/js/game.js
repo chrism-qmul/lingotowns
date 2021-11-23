@@ -389,7 +389,6 @@ class Game {
     this.lastregion = null;
     this.atlas = {"bakery": {"xy": [204, 374], "size": [200, 126]}, "cloud": {"xy": [810, 429], "size": [137, 71]}, "compass": {"xy": [608, 237], "size": [148, 148]}, "corn.small": {"xy": [204, 68], "size": [100, 64]}, "desert1.small": {"xy": [810, 371], "size": [100, 56]}, "desert2.small": {"xy": [612, 46], "size": [100, 56]}, "farm": {"xy": [2, 210], "size": [200, 136]}, "field.small": {"xy": [174, 8], "size": [100, 58]}, "grass.small": {"xy": [612, 104], "size": [100, 59]}, "library": {"xy": [2, 348], "size": [200, 152]}, "road": {"xy": [608, 165], "size": [111, 70]}, "road-east-west-north": {"xy": [2, 90], "size": [200, 118]}, "road-junction": {"xy": [2, 2], "size": [170, 86]}, "road-lights": {"xy": [204, 254], "size": [200, 118]}, "road-lights-east": {"xy": [406, 382], "size": [200, 118]}, "road-south-west-north": {"xy": [204, 134], "size": [200, 118]}, "road-west-north": {"xy": [406, 153], "size": [200, 108]}, "road-x": {"xy": [406, 263], "size": [200, 117]}, "stone": {"xy": [608, 387], "size": [200, 113]}, "tree1.small": {"xy": [306, 51], "size": [100, 81]}, "tree2.small": {"xy": [408, 70], "size": [100, 81]}, "volcano.small": {"xy": [510, 82], "size": [100, 69]}, "water.small": {"xy": [510, 22], "size": [100, 58]}};
 
-    //this.atlas = {"grass.small": {"xy": [860, 239], "size": [100, 59]}, "volcano.small": {"xy": [860, 300], "size": [100, 69]}, "library": {"xy": [2, 348], "size": [200, 152]}, "road-east-west-north": {"xy": [204, 382], "size": [200, 118]}, "cloud": {"xy": [810, 429], "size": [137, 71]}, "desert1.small": {"xy": [204, 85], "size": [100, 56]}, "road-south-west-north": {"xy": [406, 382], "size": [200, 118]}, "corn.small": {"xy": [406, 129], "size": [100, 64]}, "tree1.small": {"xy": [174, 2], "size": [100, 81]}, "road-lights": {"xy": [2, 100], "size": [200, 118]}, "road-lights-east": {"xy": [204, 262], "size": [200, 118]}, "compass": {"xy": [608, 242], "size": [148, 148]}, "stone": {"xy": [406, 267], "size": [200, 113]}, "tree2.small": {"xy": [758, 288], "size": [100, 81]}, "desert2.small": {"xy": [810, 371], "size": [100, 56]}, "field.small": {"xy": [758, 228], "size": [100, 58]}, "bakery": {"xy": [2, 220], "size": [200, 126]}, "road-west-north": {"xy": [608, 392], "size": [200, 108]}, "road-junction": {"xy": [2, 12], "size": [170, 86]}, "road-x": {"xy": [204, 143], "size": [200, 117]}, "water.small": {"xy": [860, 179], "size": [100, 58]}, "road": {"xy": [406, 195], "size": [111, 70]}};
     this.minimapscale = 10;
     this.mouseGridPosition = null;
     this.lastTS = null;
@@ -413,36 +412,6 @@ class Game {
     this.screenTranslate = new Vec2(0,0);
     //replace above with transformation matrix?
     this.moveStyle = litMovement;
-    /*
-    this.resources = {
-      bakery: "images/new/bakery.png",
-      library: "images/new/library.png",
-      //library: "images/library.small.png",
-      grass: "images/grass.small.png",
-      field: "images/field.small.png",
-      corn: "images/corn.small.png",
-      water: "images/water.small.png",
-      desert1: "images/desert1.small.png",
-      desert2: "images/desert2.small.png",
-      tree1: "images/tree1.small.png",
-      tree2: "images/tree2.small.png",
-      volcano: "images/volcano.small.png",
-      road: "images/road.png",
-      stone: "images/stone.png",
-      cloud: "images/cloud.png",
-      //roadnorth: "images/road-north.png",
-      //roadeastnorth: "images/new/road-east-north.png",
-      roadeastwestnorth:"images/new/road-east-west-north.png",
-      roadsouthwestnorth:"images/new/road-south-west-north.png",
-      roadwestnorth:"images/new/road-west-north.png",
-      roadx:"images/new/road-x.png",
-      roadnorth: "images/new/road-lights.png",
-      //roadeast: "images/road-east.png",
-      roadeast: "images/new/road-lights-east.png",
-      roadjunction: "images/road-junction.png",
-      compass: "compass.png",
-    };
-    */
     this.resources = {
       bakery: "bakery",
       library: "library",
@@ -496,6 +465,19 @@ class Game {
     //window.addEventListener("closeframe", this.
     this.toclose = [];
     window.addEventListener("message", this.messagedispatch.bind(this));
+  }
+
+  loginNag() {
+    const game = this;
+    var loginReminder = document.getElementById("loginreminder");
+    loginReminder.classList.remove("close");
+    if (loginReminder) {
+      var closeBtn = document.getElementById("loginreminderclose");
+      closeBtn.addEventListener("click", function() {
+        loginReminder.classList.add("close");
+        setTimeout(game.loginNag.bind(game), 1000*60*25); //try again in 25 mins
+      }, {once: true});
+    }
   }
 
   addLevel(docs) {
@@ -666,34 +648,6 @@ class Game {
 
   async preload() {
     await this.atlasloader.load();
-    /*
-    const loaded_resources = {
-      bakery: await this.loader.load(this.resources.bakery),
-      library: await this.loader.load(this.resources.library),
-      tree1: await this.loader.load(this.resources.tree1),
-      tree2: await this.loader.load(this.resources.tree2),
-      grass: await this.loader.load(this.resources.grass),
-      corn: await this.loader.load(this.resources.corn),
-      field: await this.loader.load(this.resources.field),
-      water: await this.loader.load(this.resources.water),
-      desert1: await this.loader.load(this.resources.desert1),
-      desert2: await this.loader.load(this.resources.desert2),
-      volcano: await this.loader.load(this.resources.volcano),
-      road: await this.loader.load(this.resources.road),
-      roadeastwestnorth: await this.loader.load(this.resources.roadeastwestnorth),
-      roadsouthwestnorth: await this.loader.load(this.resources.roadsouthwestnorth),
-      roadwestnorth: await this.loader.load(this.resources.roadwestnorth),
-      roadx: await this.loader.load(this.resources.roadx),
-      stone: await this.loader.load(this.resources.stone),
-      cloud: await this.loader.load(this.resources.cloud),
-      roadnorth: await this.loader.load(this.resources.roadnorth),
-      roadeast: await this.loader.load(this.resources.roadeast),
-      roadjunction: await this.loader.load(this.resources.roadjunction),
-      compass: await this.loader.load(this.resources.compass),
-    }
-    this.resources = loaded_resources;
-    return this.resources;
-    */
   }
 
   drawDecoration(noise, position) {
@@ -882,22 +836,6 @@ class Game {
     }
     region = this.regions[currentregion%this.regions.length];
     this.updateTrackingElements();
-    /*
-    const towns = this.world.towns();
-    for(var i = 0; i < locations.length; i++) {
-      const position = locations[i];
-      const position_floored = position.clone().floor();
-      for(var j = 0; j < towns.length; j++) {
-        if (position_floored.equals(towns[j].position)) {
-          //town on screen
-          console.log("town location", this.toScreen(position_floored));
-          const div = document.createElement("div");
-          //div. 
-        }
-      }
-    }
-    */
-    //this.context.drawImage(this.resources.compass, this.canvas.width-this.resources.compass.width, this.canvas.height, this.resources.compass.width, this.resources.compass.height);
     this.drawFog(locations);
     this.drawCompletion(locations);
   }
@@ -1010,21 +948,6 @@ class Game {
     const atlas_compass = this.atlas["compass"];
     const [width, height] = atlas_compass["size"];
     const [x, y] = atlas_compass["xy"];
-/*
-    const bl = new Vec2(0+this.resources.compass.height/2, this.canvas.height-this.resources.compass.height/2);
-    const br = new Vec2(this.canvas.width-this.resources.compass.height/2, this.canvas.height-this.resources.compass.height/2);
-    const tl = new Vec2(0+this.resources.compass.height/2, this.resources.compass.height/2);
-    const tr = new Vec2(this.canvas.width-this.resources.compass.height/2, this.resources.compass.height/2);
-    const leftScreen = [tl, bl];
-    const topScreen = [tl, tr];
-    const bottomScreen = [bl, br];
-    const rightScreen = [tr, br];
-    const screenEdges = [leftScreen, topScreen, bottomScreen, rightScreen];
-    drawLine(this.context, topScreen[0], topScreen[1]);
-    */
-    //drawLine(this.context, tl, tr);
-    //drawLine(this.context, bl, br);
-    //drawLine(this.context, tr, br);
 
     const towns = this.world.towns();
     for(var i = 0; i < towns.length; i++) {
@@ -1071,16 +994,6 @@ class Game {
       }
     }
 
-
-    /*
-    this.context.drawImage(this.resources.compass, this.resources.compass.width, this.resources.compass.height, 5, 5);
-    this.next_target = new Vec2(0,0);
-    if (!this.onScreen(this.next_target)) {
-      const next_target_on_screen = this.toScreen(this.next_target);
-      const diff = next_target_on_screen.sub(midscreen);
-      const rotation = Math.atan2(diff.y, diff.x) + Math.PI*.5;
-      //console.log("mid screen", midscreen, "next target on screen", this.next_target, "difference", diff, "angle", rotation);
-    }*/
     //this.drawCircle(midscreen);
     //this.drawCircle(this.next_target);
   }
@@ -1144,7 +1057,6 @@ class Game {
   }
 
   connectToServer() {
-    //const socket = io("wss://lingotowns.com/", {path: "/admin/socket.io"});
     //const socket = io("wss://lingotowns.com/");
     const socket = io();
     var on_data_loaded;
@@ -1153,14 +1065,6 @@ class Game {
     });
     const game = this;
     socket.on("connect", () => {
-      /*game.login();
-        .then(function(userdata) {
-        game.userdata = userdata;
-        socket.emit("auth", userdata.token);
-      });*/
-        // or with emit() and custom event names
-//        socket.emit("salutations", "Hello!", { "mr": "john" }, Uint8Array.from([1, 2, 3, 4]));
-      // handle the event sent with socket.send()
       socket.on("message", data => {
         console.log("loaded data", data);
         //console.log(data);
@@ -1251,11 +1155,8 @@ class Game {
 
 
   centerWorldPointOnScreen(worldPoint) {
-    //console.log(worldPoint);
     let midpoint = this.toWorld(new Vec2(this.canvas.width/2, this.canvas.height/2));//.floor();
-    //this.toWorld(this.screenTranslate);// = new Vec2(0,0);
     midpoint.sub(worldPoint);
-    //this.screenTranslate.sub(this.toScreen(midpoint));
     this.worldTranslate.add(midpoint);
   }
 
@@ -1369,17 +1270,8 @@ class Game {
   }
 
   screenToMiniMap(vec) {
-    //const minimapcenter = new Vec2(minimapcanvas.width/2,minimapcanvas.height/2);
-    //const canvascenter = new Vec2(canvas.width/2,canvas.height/2).toCartesian();
-    //return this.toWorld(vec).clone().add(this.worldTranslate).mult(this.screenScale).add(this.screenTranslate).div(this.minimapscale).add(minimapcenter);
     return this.toWorld(vec).clone().add(this.worldTranslate).mult(this.screenScale).add(this.screenTranslate).sub(this.canvascenter).div(this.minimapscale).add(this.minimapcenter);
   }
-
-  /*
-  toMiniMap(vec) {
-    return vec.clone().add(this.worldTranslate).mult(this.screenScale).add(this.screenTranslate);
-  }
-  */
 
   fromMiniMapToWorld(vec) {
     return vec.sub(this.minimapcenter).mult(this.minimapscale).add(this.canvascenter).sub(this.screenTranslate).div(this.screenScale).sub(this.worldTranslate);
@@ -1407,11 +1299,10 @@ class Game {
     
   zoomLevel(z) {
     return new Vec2(25, 25).mult(z);
-    //return new Vec2(this.canvas.width/worldWidth, this.canvas.height/worldHeight).mult(z);
   }
 
   resetView() {
-    this.screenScale = this.zoomLevel(1);//new Vec2(this.canvas.width/worldWidth, this.canvas.height/worldHeight); //basic orthographic
+    this.screenScale = this.zoomLevel(1); //basic orthographic
     this.worldTranslate = new Vec2(0,0);
   }
 
@@ -1788,6 +1679,7 @@ game.preload().then(function(resources) {
     game.centerWorldPointOnScreen(new Vec2(0,0));
     game.draw();
     game.loaded();
+    game.loginNag();
   });
 });
 
