@@ -1,5 +1,6 @@
 body {
   background-color: white;
+  background-image: url("BG-story.svg");
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -11,8 +12,8 @@ body {
 
 .screen {
   border: 2px solid #333;
-  max-width: 540px;
-  max-height: 940px;
+  max-width: 1080px;
+  max-height: 1080px;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
@@ -33,7 +34,7 @@ body {
 
 .flickity-page-dots {
   display: flex;
-  bottom: 750px;
+  bottom: 1200px;
 }
 .flickity-page-dots .dot {
   background-color: #000 !important;
@@ -80,7 +81,7 @@ body {
 }
 
 .sky {
-  background-image: linear-gradient(#c7c5ef, #96b5ec, #4379d3, #4354d0);
+  background-color: whitesmoke;
   overflow: hidden;
 }
 
@@ -105,6 +106,21 @@ button.button {
 
 }
 
+.player {
+  display: inline-block;
+  margin-bottom: -20px;
+  margin-right: -100px;
+
+}
+
+.timecapsul {
+  display: inline-block;
+  margin-bottom: -100px;
+  margin-right: -220px;
+  z-index: 3;
+
+}
+
 .grassbloc {
   background-image:  linear-gradient(#299b66, #25815b);
   border: 0.5px solid #333;
@@ -122,14 +138,14 @@ button.button {
 .bubble-small {
   background-color: white;
   height: 200px;
-  width: 480px;
+  width: 490px;
   padding: 30px;
   border-radius: 30px 30px 0px 0px;
   align-items: center;
   position: absolute;
-  margin-top: 120px;
-  margin-left: 0px;
-  box-shadow: 0px 30px 100px rgba(0, 0, 0, 0.4);
+  margin-top: -295px;
+  margin-left: 225px;
+  
   z-index: 1;
 }
 
@@ -454,4 +470,9 @@ img {
 align-items: center;
 margin-left: 40px;
 
+}
+
+
+.scene1 {
+  z-index: -1;
 }
