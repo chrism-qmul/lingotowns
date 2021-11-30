@@ -170,7 +170,7 @@ def lingotowns():
         session['auth_token'] = auth_token
         return redirect("/")
     if session.get("auth_token"):
-        session['auth'] = auth_from_token(auth_token)
+        session['auth'] = auth_from_token(session.get("auth_token"))
         session_auth = session.get('auth')
     if session_auth:
         if True:#session.get('seen_intro'):
