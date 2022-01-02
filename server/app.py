@@ -188,6 +188,22 @@ def intro_text():
     session['seen_intro'] = True
     return render_template("story-text/index.html")
 
+@app.route("/game-animated")
+def tutorial_animated():
+    session['seen_tutorial'] = True
+    return render_template("game-tutorial-animated/index.html")
+
+@app.route("/game-text")
+def tutorial_text():
+    session['seen_tutorial'] = True
+    return render_template("game-tutorial-text/index.html")
+
+@app.route("/playgame")
+def tutorial_playgame():
+    session['seen_tutorial'] = True
+    return render_template("story/playgame.html")
+
+
 @app.route("/forcelevelup")
 def forcelevelup():
     uuid = session['auth']['uuid']
@@ -250,3 +266,16 @@ if __name__ == '__main__':
    # result = create_town(create_game("food", 81), create_game("farms", 2), create_game("library", 40), document_id=10, document_name="Tell Tale Heart", subject_type="Stories - Gutenberg", available=True, town_name="Poe Woods", total_completion=95)
     #print(result)
     socketio.run(app, host="0.0.0.0", debug=True)
+
+@app.before_request
+def manage_login():
+    auth_token = request.args.get("auth_token")
+    session_auth = session.get('auth')
+    if auth_token:
+        session['auth'] = auth_from_token(auth_token)
+        session['auth_token'] = auth_token
+        return redirect(request.base_url)
+    elif session_auth:
+        return None
+    else:
+        return redirect(AUTH_SERVER + "/login-as-guest?redirect=" + request.base_url)

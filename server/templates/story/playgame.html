@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Play</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+  <link rel="stylesheet" href="/css/story.css">
+</head>
+
+<body>
+  <div id="playgame" style="height: 1080px;width: 1080px;">
+    <div class="gamewrapper">
+      <div class="gameanimation">
+        <lottie-player id="player4" class="animation" src="/story/scene3.json" style="
+                --lottie-player-seeker-track-color: #f2f6ff;
+                --lottie-player-seeker-thumb-color: #f2f6ff;
+              " autoplay background="transparent" speed="1.2"></lottie-player>
+      </div>
+    </div>
+  </div>
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.4.5/swiper-bundle.min.js'></script>
+  <script src="/js/playgame.js"></script>
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+  <script src="https://unpkg.com/@lottiefiles/lottie-interactivity@latest/dist/lottie-interactivity.min.js"></script>
+</body>
+</html>
