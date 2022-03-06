@@ -1554,9 +1554,24 @@ class Game {
         </table>
         */
     const townsummarybutton = gameoverlay.getElementsByClassName('townsummary');
+    const games = ['food', 'farm', 'library'];
     for (var i = 0; i < townsummarybutton.length; i++) {
       townsummarybutton[i].addEventListener('click', function() {
-        game.updateFocus(townposition, 2.0);
+        //game.updateFocus(townposition, 2.0);
+        //TODO: PLAY FIRST INCOMPLETE GAME
+        console.log(townInformation); 
+        for(var j = 0; j < games.length; j++) {
+          const game = games[j]
+          if (townInformation.games[game].completion < 100) {
+            if (townInformation.document_id == "tutorial") {
+              window.location.assign("/play-tutorial?game=" + game)
+            } else {
+              window.location.assign("/play-game?game=" + game + "&document_id=" + townInformation.document_id)
+            }
+            break;
+          }
+        }
+        //
         // this.style.cursor = "pointer";
         //game.townsummary(townInformation);
       });
