@@ -1194,12 +1194,15 @@ class Game {
         if (town) {
           switch(tile) {
             case "b0":
+              if (!town.games.food) continue;
               completion = town.games.food.completion;
               break;
             case "b1":
+              if (!town.games.farm) continue;
               completion = town.games.farm.completion;
               break;
             case "b2":
+              if (!town.games.library) continue;
               completion = town.games.library.completion;
               break;
           }
