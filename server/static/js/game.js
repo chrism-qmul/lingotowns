@@ -770,16 +770,22 @@ class Game {
       var complete = false;
       switch(tile) {
         case "b0":
+          if (town.games.food) {
           complete = (town.games.food.completion == 100);
           this.drawImageToTiles(position, new Vec2(3, 3), this.resources.bakery, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b0"));
+          }
           break;
         case "b1":
+          if (town.games.farm) {
           complete = (town.games.farm.completion == 100);
           this.drawImageToTiles(position, new Vec2(3, 3), this.resources.farm, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b1"));
+          }
           break;
         case "b2":
+          if (town.games.library) {
           complete = (town.games.library.completion == 100);
           this.drawImageToTiles(position, new Vec2(3, 3), this.resources.library, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b2"));
+          }
           break;
         case ("r" + RoadWest):
         case ("r" + RoadEast):
