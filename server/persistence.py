@@ -131,6 +131,19 @@ class User(Base,IDd,Timestamped):
     def __str__(self):
         return "user: {}".format(self.name)
 
+class TutorialCompletion(Base,IDd,Timestamped):
+    __tablename__ = 'tutorial_completion'
+
+    level = Column(Integer)
+
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship("User")
+
+    game_id = Column(Integer, ForeignKey('games.id'))
+    game = relationship("Game")
+
+    complete = Column(Boolean, nullable=False, default=False)
+
 class CollectionAvailability(Base,IDd):
     __tablename__ = 'collection_availability'
 
@@ -223,6 +236,18 @@ def create_match(session, game, groups, timestamp, user, item, label_class, labe
     match = Match(**args)
     session.add(match)
     return match
+
+def tutorial_complete(uuid, level, game, session):
+    user = get_or_create(session, User, name=uuid)
+    game = get(session, Game, name=game)
+    print("tutorial_complete", user, game)
+    return get_or_create(session, TutorialCompletion, user=user, level=level, game=game, complete=True)
+
+def is_tutorial_complete(uuid, level, game, session):
+    user = get(session, User, name=uuid)
+    game = get(session, Game, name=game)
+    completion = get(session, TutorialCompletion, user=user, level=level, game=game)
+    return completion and completion.complete
 
 def info():
     sql = """

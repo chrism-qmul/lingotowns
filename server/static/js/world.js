@@ -16,7 +16,8 @@ export class World {
     //level indexed
     this.seed = seed;
     this.includeBuildings = includeBuildings;
-    this.number_of_towns = [1];
+    //this.number_of_towns = [1];
+    this.number_of_towns = [];
     this.locations = [];
     this.roads = [];
     this.home = new Vec2(0,0);
