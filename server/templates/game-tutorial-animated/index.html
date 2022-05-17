@@ -466,17 +466,24 @@
         padding-bottom: 5%;
         padding-right: 5%;
         padding-top: 2%;
-        /* position: fixed; */
-        /* 
-    font-size: 1.1vw;
-    line-height: 150%;  */
 
     }
 
-    @media screen and (max-width: 520px) {
-        p {
-            font-size: 14px;
-            line-height: 20px;
+    @media screen and (max-width: 600px) {
+        p.slider-item-text  {
+            font-size: 24px;
+            line-height: 34px;
+            margin-top: 0%;
+        }
+    }
+
+    @media screen and (max-width: 1300px) {
+        p.slider-item-text {
+            font-size: 10px;
+            line-height: 12px;
+            margin-top: -50%;
+            margin-left: 25%;
+            padding-bottom: 10%;
         }
     }
 
@@ -488,7 +495,6 @@
         z-index: 1;
         position: relative;
         margin-top: -8%;
-        /* padding-bottom: 5%; */
     }
 
     .swiper-container {
@@ -500,11 +506,26 @@
         border-radius: 10px;
         z-index: 999;
         animation: fadein 2s;
-        /* margin-top: -5%; */
-        margin-bottom: -30%;
         opacity: 95%;
-        bottom: 65%;
+        bottom: 5%;
+        margin-bottom: 5%;
         filter: drop-shadow(0 0 2.5rem rgba(0, 0, 0, 0.5));
+    }
+
+    @media screen and (max-width: 600px) {
+        .swiper-container {
+            bottom: 35%;
+            max-width: 100%;
+            margin-bottom: 2%;
+        }
+    }
+
+    @media screen and (max-width: 1300px) {
+        .swiper-container {
+            bottom: 20%;
+            max-width: 100%;
+            margin-bottom: 5%;
+        }
     }
 
     @keyframes fadein {
@@ -533,6 +554,22 @@
         padding: 2%;
     }
 
+    @media screen and (max-width: 600px) {
+        .slider-image-wrapper {
+            width: 30%;
+            padding-left: 8%;
+            padding-bottom: 15%;
+        }
+    }
+
+    @media screen and (max-width: 1300px) {
+        .slider-image-wrapper {
+            width: 30%;
+            padding-left: 8%;
+            padding-bottom: 15%;
+        }
+    }
+
     .slider-item {
         width: 100%;
         height: 100%;
@@ -543,13 +580,9 @@
         flex-shrink: 0;
         opacity: 0;
         background: linear-gradient(270deg, #f7f9ff 0%, #f2f6ff 100%);
-        /* cursor: -webkit-grab; */
-        /* cursor: grab; */
     }
 
     .slider-item-content {
-        /* padding-bottom: 5%;
-        padding-top: 5%; */
         margin-bottom: 5%;
         padding-top: 2%;
         display: flex;
@@ -578,46 +611,80 @@
         /* padding-bottom: 5%; */
     }
 
+    /* Extra small devices (phones, 600px and down) */
+    @media only screen and (max-width: 900px) {
+        .slider-image-wrapper {
+            height: 220px;
+        }
+    }
+
     .swiper-pagination {
         position: absolute;
         left: 50%;
-        bottom: -12px;
+        bottom: 0%;
         transform: translatex(-50%);
         z-index: 1;
         width: auto !important;
     }
 
-    .swiper-pagination-bullet {
-        border-radius: 0;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        line-height: 30px;
-        font-size: 12px;
-        opacity: 1;
-        background: #96b5ec;
-        display: inline-block;
-        margin-right: 8px;
-        cursor: pointer;
-        transition: all 0.2s;
+    @media screen and (max-width: 600px) {
+        .swiper-pagination {
+            position: relative;
+            left: 75%;
+            margin-bottom: 0%;
+        }
     }
 
-    .swiper-pagination-bullet-active {
-        background: #4354d0;
-        width: 20px;
-        border-radius: 10px;
+    @media screen and (max-width: 1300px) {
+        .swiper-pagination {
+            position: relative;
+            left: 85%;
+            top: 0%;
+            margin-bottom: -10%;
+        }
+
+        .swiper-pagination-bullet {
+            border-radius: 0;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            line-height: 30px;
+            font-size: 12px;
+            opacity: 1;
+            background: #96b5ec;
+            display: inline-block;
+            margin-right: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .swiper-pagination-bullet-active {
+            background: #4354d0;
+            width: 20px;
+            border-radius: 10px;
+        }
+
+        .slider-buttons {
+            position: absolute;
+            display: flex;
+            justify-content: flex-end;
+            width: 105%;
+            margin-left: -10%;
+        }
+
+    }
+    
+    @media screen and (max-width: 600px) {
+        .slider-buttons {
+            margin-left: -5%;
+        }
     }
 
-    .slider-buttons {
-        position: absolute;
-        display: flex;
-        top: 72%;
-        justify-content: flex-end;
-        width: 105%;
-        padding-top: 3%;
-        margin-left: -10%;
-        /* padding-bottom: 5%; */
-
+    @media screen and (max-width: 1300px) {
+        .slider-buttons {
+            margin-left: 35%;
+            width: 50%;
+        }
     }
 
     .swiper-button-next,
@@ -700,8 +767,6 @@
         background-color: #3b4ab8;
     }
 
-
-
     @media all and (max-width:30em) {
         .playbutton {
             display: block;
@@ -710,16 +775,12 @@
     }
 
 
-    /* .img {
-    z-index: 9999;
-} */
-
     .tutorial-img {
         animation-name: jump;
         animation-timing-function: ease;
         animation-duration: 2s;
         animation-iteration-count: infinite;
-        padding-left: 5%;
+        float: bottom;
         -webkit-filter: drop-shadow(0 0 0.90rem rgba(10, 255, 128, 1));
     }
 
@@ -745,71 +806,20 @@
         }
     }
 
-    /* .swiper-button-next-disabled {
-  opacity: 0;
-} */
-
-
-    /* .animationbox {
-        height: 150%;
-        width: 20%;
-
-        overflow: hidden;
-        float: left; */
-    /* outline-style: solid;
-        outline-color: rgb(226, 226, 226);
-        outline-width: 2px; */
-    /* position: relative;
-    } */
-
-    /* .characteranimation {
-        margin-left: -70%;
-        margin-top: -40%;
-        position: absolute;
-
-
-
+    @media screen and (max-width: 600px) {
+        .tutorial-img {
+            padding-right: 40%; padding-top: 50%; margin: 1%; margin-bottom: -15%; margin-top: 10%;
+        }
     }
 
-    .tutorialp {
-        font-family: "Montserrat", sans-serif;
-        font-size: 24px;
-        line-height: 24px;
-        color: #889DB8;
-        transform: translateY(20px);
-        transition: all 0.4s ease;
-        transition-delay: 0.3s;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        padding-right: 5%;
-        float: right;
-    } */
 
-    /* .text {
-        margin-top: -15%;
-        margin-left: 15%;
-        position: fixed;
-        padding-right: 20%;
-        padding-top: 5%;
-    } */
 
-    /* .innertext {
-        margin-left: 20%;
-        margin-top: 5%;
-        padding-bottom: 5%;
-        padding-right: 5%;
-        margin-right: 5%;
-        position: fixed;
-        font-size: 1.1vw;
-        line-height: 150%;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
+    @media screen and (max-width: 1300px) {
+        .tutorial-img {
+            padding-right: 40%; padding-top: 50%; margin: 1%; margin-bottom: -15%; margin-top: 10%;
+        }
 
-    } */
+}
 </style>
 
 <body>
@@ -843,9 +853,7 @@
                             background="transparent" speed="1" style="height: 100%; width: 100%; margin-left: -40%;">
                         </lottie-player>
                     </div>
-                    <p class="slider-item-text">Welcome to LingoTowns! This is the map of the world. You can explore
-                        different towns
-                        and find games in each building.</p>
+                    <p class="slider-item-text">Welcome to LingoTowns! This is the map of the world. You can explore different towns and find games in each building.</p>
                 </div>
             </div>
             <div class="slider-item swiper-slide">
@@ -865,8 +873,7 @@
                         <img class="tutorial-img" src="/images/building-icon/orig/farm.png"
                             style="height: 70%; margin-top: 5%; margin-left: 2%;"></img>
                     </div>
-                    <p class="slider-item-text"> One of the
-                        buildings is the farm where you can play the game PhraseFarms and start harvesting crops.</p>
+                    <p class="slider-item-text"> One of the buildings is the farm where you can start harvesting crops for the town by selecting the correct noun phrases.</p>
                 </div>
             </div>
             <div class="slider-item swiper-slide">
@@ -876,8 +883,7 @@
                         <img class="tutorial-img" src="/images/building-icon/orig/food.png"
                             style="height: 70%; margin-top: 5%; margin-left: 2%;"></img>
                     </div>
-                    <p class="slider-item-text">The next building is the bakery where you can play CafeClicker to bake
-                        goods for the town.</p>
+                    <p class="slider-item-text">The next building is the bakery where you can bake goods for the town by labeling part of speech in a text.</p>
                 </div>
             </div>
 
@@ -888,8 +894,7 @@
                         <img class="tutorial-img" src="/images/building-icon/orig/library.png"
                             style="height: 70%; margin-top: 5%; margin-left: 2%;"></img>
                     </div>
-                    <p class="slider-item-text">The last building is the library where you can play Lingotorium and help
-                        the town understand archived documents.</p>
+                    <p class="slider-item-text">The last building is the library where you can help the town understand archived documents  by filling in the blank and completing word puzzles</p>
                 </div>
             </div>
             <div class="slider-item swiper-slide">
@@ -900,14 +905,14 @@
                             background="transparent" speed="1" style="height: 100%; width: 100%; margin-left: -40%;">
                         </lottie-player>
                     </div>
-                    <p class="slider-item-text">That's it for now! Enjoy exploring LingoTowns and help our people
-                        understand your language.</p>
+                    <p class="slider-item-text">That's it for now! Enjoy exploring LingoTowns and help our people understand your language.</p>
                 </div>
 
             </div>
         </div>
         <div class="slider-buttons">
-            <button id="swiper-button-prev" class="swiper-button-prev" style="transform: rotate(180deg);">&#10142;</button>
+            <button id="swiper-button-prev" class="swiper-button-prev"
+                style="transform: rotate(180deg);">&#10142;</button>
             <button class="swiper-button-next">&#10142;</button>
             <div class="play-button-container"> <button id="playbutton" class="playbutton"
                     onclick="window.location.href='https://lingotowns.com'">Play</button>

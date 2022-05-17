@@ -459,9 +459,20 @@
         float: left;
         margin-left: 20%;
         padding-top: 1%;
-        margin-bottom: -5%;
 
+    }
 
+    @media screen and (max-width: 1500px) {
+        h1.slider-item-heading {margin-top: 5%;}
+    }
+
+    @media screen and (min-width: 300px) and (max-width : 1024px) {
+        h1.slider-item-heading {
+            margin-top: 5%; 
+            max-width: 70%; 
+            font-size: 18px;
+            line-height: 13px;
+        }
     }
 
     p.slider-item-text {
@@ -481,7 +492,7 @@
 
 
         /* from innnertext */
-        margin-left: 20%;
+        margin-left: 10%;
         margin-top: -5%;
         margin-right: 5%;
         /* padding-bottom: 10%; */
@@ -493,10 +504,17 @@
 
     }
 
-    @media screen and (max-width: 520px) {
-        p {
+    @media screen and (max-width: 1500px) {
+        p.slider-item-text  {
+            font-size: 24px;
+            line-height: 35px;
+        }   
+    }
+
+    @media screen and (min-width: 300px) and (max-width : 1024px) {
+        p.slider-item-text  {
             font-size: 14px;
-            line-height: 20px;
+            line-height: 18px;
         }
     }
 
@@ -542,6 +560,16 @@
         }
     }
 
+    @media screen and (max-width: 1500px) {
+        .swiper-container {margin-top: -20%;}
+    }
+
+    @media screen and (min-width: 300px) and (max-width : 1024px) {
+        .swiper-container {
+            margin-top: -70%; 
+            max-width: 70%;
+        }
+    }
 
     .slider-image-wrapper {
         height: 200px;
@@ -670,12 +698,9 @@
         transition-duration: 0.1s;
     }
 
-
     .swiper-button-disabled {
         display: none;
     }
-
-
 
     .playbutton {
         z-index: 9999;
@@ -698,9 +723,8 @@
         transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
         vertical-align: middle;
         margin-left: 45%;
+        margin-top: 5%;
         margin-bottom: 5%;
-
-
     }
 
     .playbutton:hover {
@@ -709,7 +733,18 @@
         transition-duration: 0.1s;
     }
 
+    @media screen and (max-width: 1500px) {
+        .playbutton {font-size: 24px;}
+    }
 
+    @media screen and (min-width: 300px) and (max-width : 1024px) {
+        .playbutton {
+            font-size: 15px; 
+            padding: 10px 20px; 
+            margin-left: 35%; 
+            margin-top: 10%;
+        }
+    }
 
     
 </style>
@@ -738,26 +773,26 @@
     <div class="swiper-container">
         <div class="swiper-wrapper">
             <div class="slider-item swiper-slide">
-
+    
                 <div class="slider-item-content">
                     <h1 class="slider-item-heading">Game Instructions</h1>
-                    <div class="slider-image-wrapper">
-
-                    </div>
-
-                    <p class="slider-item-text">Welcome to LingoTowns! This is the map of the world. You can explore
-                        different town and find games in each building. The farm is where you can play the game PhraseFarms and start harvesting crops.
-                        The bakery is where you can play the game CafeClicker where you will bake goods for the town. 
-                        The last building is the library where you can play Lingotorium and help the town understand archived documents.
-                         <br><br>That's it for now! Enjoy exploring LingoTowns and help our people understand your language. </p>
                 </div>
+    
+                <p class="slider-item-text">Welcome to LingoTowns! This is the map of the world. You can explore
+                    different town and find games in each building. The farm where you can start harvesting crops for the
+                    town by selecting the correct noun phrases
+                    The bakery where you can bake goods for the town by labeling part of speech in a text
+                    The library where you can help the town understand archived documents by filling in the blank and
+                    completing word puzzles
+                    <br><br>That's it for now! Enjoy exploring LingoTowns and help our people understand your language.
+                </p>
                 <div>
                     <button class="playbutton" onclick="window.location.href='https://lingotowns.com'">Start</button>
                 </div>
             </div>
-
+    
         </div>
-
+    
     </div>
 
 
