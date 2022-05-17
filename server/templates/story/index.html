@@ -2,8 +2,7 @@
 <html lang="en">
 
 <head>
-
-
+  
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <meta charset="UTF-8">
   <title>Onboarding</title>
@@ -13,13 +12,12 @@
 </head>
 
 <body>
-
-  <div id="Page1">
+  <div class="pagewrapper" id="Page1">
     <div class="swiper-container">
       <div class="swiper-wrapper">
         <div class="slider-item swiper-slide">
           <div class="slider-image-wrapper">
-            <lottie-player id="player1" src="/story/scene1.json" style=" height: 100%; width: 100%; padding-top: 5%;
+            <lottie-player class="animation-player" id="player1" src="/story/scene1.json" style=" height: 100%; width: 100%; padding-top: 5%;
                 --lottie-player-seeker-track-color: #f2f6ff;
                 --lottie-player-seeker-thumb-color: #f2f6ff;
               " background="transparent" speed="1" autoplay></lottie-player>
@@ -39,7 +37,7 @@
         </div>
         <div class="slider-item swiper-slide">
           <div class="slider-image-wrapper">
-            <lottie-player id="player2" src="/story/scene2.json" style=" height: 100%; width: 100%; padding-top: 5%;
+            <lottie-player class="animation-player" id="player2" src="/story/scene2.json" style=" height: 100%; width: 100%; padding-top: 5%;
                 --lottie-player-seeker-track-color: #f2f6ff;
                 --lottie-player-seeker-thumb-color: #f2f6ff;
               " background="transparent" speed="1"></lottie-player>
@@ -56,7 +54,7 @@
         </div>
         <div class="slider-item swiper-slide">
           <div class="slider-image-wrapper">
-            <lottie-player id="player3" src="/story/scene1.json" style=" height: 100%; width: 100%; padding-top: 5%;
+            <lottie-player class="animation-player" id="player3" src="/story/scene1.json" style=" height: 100%; width: 100%; padding-top: 5%;
                 --lottie-player-seeker-track-color: #f2f6ff;
                 --lottie-player-seeker-thumb-color: #f2f6ff;
               " background="transparent" speed="1" ></lottie-player>
@@ -93,7 +91,6 @@
 
       </div>
     </div>
-
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.4.5/swiper-bundle.min.js'></script>
     <script src="/js/story.js"></script>
