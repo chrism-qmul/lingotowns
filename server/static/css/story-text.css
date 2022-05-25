@@ -825,14 +825,14 @@ padding-bottom: 10px;
   }
 }
 
-  .maintitle{
+.title{
 
   background-color: #e4e4e4;
   height: 150px;
   width: 400px;
   border-radius: 10px 10px 10px 10px;
   box-shadow: 0px 30px 60px rgba(0, 0, 0, 0.4);
-  margin-top: -20%;
+  margin-top: -15%;
   margin-bottom: 50px;
   /* padding-bottom: 10%; */
   bottom: 10%;
@@ -842,6 +842,25 @@ padding-bottom: 10px;
 
 }
 
+#maintitle {
+  position: absolute;
+  left: 50%;
+  top: 25%;
+  transform: translate(-50%, -50%);
+  font-size: 5vw;
+  margin-top: -10vw;
+  z-index: 999;
+  filter: drop-shadow(0px 0px 13px black);
+  font-family: 'Mouse Memoirs';
+  background-image: linear-gradient(0deg, #ffa006, #ffd156);
+  -webkit-text-fill-color: transparent;
+  -moz-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  pointer-events: none;
+  padding-top: 20%;
+  padding-bottom: 20%;
+}
 
 h2 {
   margin: 0;
