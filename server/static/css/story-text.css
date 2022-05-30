@@ -84,8 +84,8 @@ h1 {
 }
 
 p {
-  font-size: 24px;
-  line-height: 34px;
+  font-size: 20px;
+  line-height: 18px;
   color: #889DB8;
   transform: translateY(20px);
   transition: all 0.4s ease;
@@ -270,11 +270,10 @@ p {
 .slider-buttons {
   position: absolute;
   display: flex;
-  top: 87%;
+  top: 77%;
   justify-content: flex-end;
   width: 100%;
-  padding-top: 8px;
-  z-index: 99999;
+  z-index: 9999;
   margin-left: -8%;
   margin-bottom: 10%;
   padding-bottom: 1%;
@@ -612,7 +611,7 @@ word-wrap: break-word;
 }
 
 .dialogueanswer {
-z-index: 999;
+z-index: 99999;
 margin-top: -10%;
 padding-bottom: 10px;
 
@@ -790,6 +789,9 @@ padding-bottom: 10px;
 
   .button6{
     display:inline-block;
+    width: 150%;
+    padding: 10%;
+    margin: 10%;
     border-radius:0.15em;
     box-sizing: border-box;
     text-decoration:none;
@@ -802,10 +804,10 @@ padding-bottom: 10px;
     text-align:center;
     position:relative;
     font-size: 20pt;
-    top: 100%;
+    top: 10%;
     cursor: pointer;
     z-index: 99999;
-    left: 10%;
+    left: 350%;
     display: block;
     }
 
@@ -821,7 +823,7 @@ padding-bottom: 10px;
 
 
   @media screen and (min-width: 375px) and (max-width : 1024px){
-  .button6 { font-size: 60px; top: 0%;
+  .button6 { font-size: 60px; left: 200%; top: -20%; margin-bottom: 5%;
   }
 }
 
@@ -837,10 +839,13 @@ padding-bottom: 10px;
   /* padding-bottom: 10%; */
   bottom: 10%;
   align-items: center;
-  z-index: 99999;
-  
-
+  z-index: 9999;
 }
+
+/* @media screen and (min-width: 375px) and (max-width : 1024px){
+  .title { margin-top: -50%;
+  }
+} */
 
 #maintitle {
   position: absolute;
@@ -849,7 +854,7 @@ padding-bottom: 10px;
   transform: translate(-50%, -50%);
   font-size: 5vw;
   margin-top: -10vw;
-  z-index: 999;
+  z-index: 99999;
   filter: drop-shadow(0px 0px 13px black);
   font-family: 'Mouse Memoirs';
   background-image: linear-gradient(0deg, #ffa006, #ffd156);
@@ -858,8 +863,13 @@ padding-bottom: 10px;
   -webkit-background-clip: text;
   -moz-background-clip: text;
   pointer-events: none;
-  padding-top: 20%;
-  padding-bottom: 20%;
+  padding-top: 30%;
+  padding-bottom: 30%;
+  margin-bottom: 10%;
+}
+@media screen and (min-width: 375px) and (max-width : 1024px){
+  #maintitle { top: 15%; font-size: 10vw;
+  }
 }
 
 h2 {

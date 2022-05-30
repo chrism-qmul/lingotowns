@@ -1836,6 +1836,8 @@ swiper.on('slideChange', highlight_town);
 
 function showPlay (){
   document.getElementById('playbutton').style.display = "block" ;
+  document.getElementById('swiper-button-next').style.display = "none" ;
+  document.getElementById('swiper-button-next').style.pointerEvents = "none";
   document.getElementById('swiper-button-prev').style.left = "-74.9%" ;
 
 }
