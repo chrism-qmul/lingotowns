@@ -73,9 +73,9 @@ h1 {
 }
 
 p {
-  font-size: 16px;
-  line-height: 24px;
-  color: #889DB8;
+  font-size: 14px;
+  line-height: 20px;
+  color: black;
   transform: translateY(20px);
   transition: all 0.4s ease;
   transition-delay: 0.3s;
@@ -86,16 +86,10 @@ p {
   text-overflow: ellipsis;
   padding: 5%;
 }
-@media screen and (max-width: 520px) {
-  p {
-    font-size: 14px;
-    line-height: 20px;
-  }
-}
 
 @media screen and (max-width: 1500px) {
   p {
-    font-size: 12px;
+    font-size: 11px;
     line-height: 15px;
   }
 }
@@ -109,7 +103,7 @@ p {
 #maintitle {
   position: absolute;
   left: 50%;
-  top: 25%;
+  top: 28%;
   transform: translate(-50%, -50%);
   font-size: 5vw;
   margin-top: -10vw;
@@ -141,18 +135,19 @@ p {
 .swiper-container {
   background: #f2f6ff;
   width: 100%;
+  margin-top: -5%;
   position: relative;
   border-radius: 30px 30px 30px 30px;
-  max-width: 1000px;
+  max-width: 700px;
   height: 100%;
-  max-height: 1000px;
+  max-height: 700px;
   border-radius: 10px;
   /* align-items: center; */
   
 }
 
 @media screen and (max-width: 1500px) {
-  .swiper-container { max-width: 600px; max-height: 600px;
+  .swiper-container { max-width: 600px; max-height: 600px; margin-top: -5%;
   }
 }
 
@@ -246,8 +241,8 @@ display: inline-block;
   animation: bottom2top 4s forwards;
   /* animation-delay: 1s; */
 }
-@media screen and (max-width: 1000px) {
-  .slider-item-content { width: 100%; padding: 10% 10% 10% 30%;
+@media screen and (max-width: 1500px) {
+  .slider-item-content { width: 80%; margin-top: -10%;
   }
 }
 
@@ -320,11 +315,11 @@ display: inline-block;
 .slider-buttons {
   position: absolute;
   display: flex;
-  top: 93%;
+  top: 100%;
   justify-content: flex-end;
   width: 100%;
   padding-top: 8px;
-  z-index: 1;
+  z-index: 99999;
   margin-left: -20%;
   animation: bottom2top 4s forwards;
 }
@@ -675,13 +670,16 @@ word-wrap: break-word;
 .dialogueanswer {
 z-index: 999;
 margin-top: -12%;
-padding-bottom: 9%;
+/* padding-bottom: 9%; */
 /* padding-bottom: 10px; */
 
 }
-
+@media screen and (max-width : 1500px) {
+  .dialogueanswer {margin-top: -8%; padding-bottom: 1%;
+  }
+}
 @media screen and (min-width: 375px) and (max-width : 1024px) {
-  .dialogueanswer {z-index: 999999; margin-bottom: -90%; margin-top: 20%; padding-bottom: 0%; transform: scale(2.5);
+  .dialogueanswer {z-index: 999999; margin-bottom: -60%; margin-top: 20%; padding-bottom: 0%; transform: scale(2.5);
   }
 }
 
@@ -874,13 +872,9 @@ padding-bottom: 9%;
 
   }
 
-  @media screen and (max-width: 1000px) {
-    .closeup-charac{ width: 100%; margin: -40%; margin-top: 10%; height: 300%;
-    }
-  }
 
   @media screen and (max-width: 1500px) {
-    .closeup-charac{ width: 100%; margin-right: -40%; margin-bottom: -80%; height: 200%;
+    .closeup-charac{ width: 50%; margin-left: -25%; margin-bottom: -50%; height: 200%;
     }
   }
 
@@ -917,9 +911,18 @@ padding-bottom: 9%;
     /* margin-left: -45%; */
     bottom: 85%;
 
-
-
   }
+
+  /* @media screen and (max-width : 1500px) {
+    .replay-icon { width: 50%;
+    }
+  } */
+  /* @media screen and (min-width: 375px) and (max-width : 1024px) {
+    .replay-icon {z-index: 999999; margin-bottom: -60%; margin-top: 20%; padding-bottom: 0%; transform: scale(2.5);
+    }
+  } */
+
+
 
   .replay-icon.active-animation {
     animation: top2bottom 1s forwards;
@@ -974,6 +977,11 @@ padding-bottom: 9%;
     transition-duration: 0.1s;
     filter: grayscale(5%);
     opacity: 100%;
+  }
+
+  @media screen and (max-width : 1500px) {
+    .replay-button {padding: 2px 4px; margin-right: 8%; margin-bottom: -5%;
+    }
   }
 
    /* .player1 {
