@@ -109,8 +109,8 @@ p {
 
 @media screen and (max-width: 1500px) {
   p {
-    font-size: 16px;
-    line-height: 25px;
+    font-size: 18px;
+    line-height: 28px;
     padding-bottom: 1%;
     padding-top: 5%;
   }
@@ -121,7 +121,7 @@ p {
 @media screen and (min-width: 375px) and (max-width: 1000px) {
   p {
     font-size: 30px;
-    line-height: 38px;
+    line-height: 45px;
     padding-bottom: 20%;
     padding-top: 20%;
   }
