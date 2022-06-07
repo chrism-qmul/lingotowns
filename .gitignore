@@ -1,6 +1,6 @@
 *.pyc
 __pycache__
 env
-.DS_Store
+**/.DS_Store
 .vscode
 server/file.db
