@@ -184,6 +184,7 @@ p {
 
 .gameanimation{
 height: 100%;
+width: 100%;
 display: inline-block;
 
 
@@ -719,6 +720,7 @@ margin-top: -10%;
 .gamewrapper {
   width: 100%;
   height: 100%;
+  object-fit: fill;
   display: flex;
   align-items: center;
   position: relative;
