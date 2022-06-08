@@ -26,6 +26,7 @@ body {
   padding-top: 10%;
 }
 
+
 @-webkit-keyframes gradient {
   0% {
     background-position: 0% 50%;
@@ -65,16 +66,21 @@ h1 {
   margin-bottom: -10%;
   margin-left: -30%;
 }
-@media screen and (max-width: 520px) {
-  h1 {
-    font-size: 12px;
-    line-height: 24px;
+@media screen and (max-width: 1500px) {
+  h1 {font-size: 13px; margin-bottom: -13%;
+
+  }
+}
+
+@media screen and (min-width: 375px) and (max-width : 1024px) {
+  h1 {font-size: 24px; margin-top: 15%;
+
   }
 }
 
 p {
-  font-size: 16px;
-  line-height: 24px;
+  font-size: 12px;
+  line-height: 20px;
   color: black;
   transform: translateY(20px);
   transition: all 0.4s ease;
@@ -86,16 +92,10 @@ p {
   text-overflow: ellipsis;
   padding: 5%;
 }
-@media screen and (max-width: 520px) {
-  p {
-    font-size: 14px;
-    line-height: 20px;
-  }
-}
 
 @media screen and (max-width: 1500px) {
   p {
-    font-size: 12px;
+    font-size: 10px;
     line-height: 15px;
   }
 }
@@ -103,7 +103,7 @@ p {
 @media screen and (min-width: 375px) and (max-width : 1024px) {
   p {
     font-size: 25px;
-    line-height: 30px;
+    line-height: 35px;
   }
 }
 #maintitle {
@@ -112,7 +112,7 @@ p {
   top: 25%;
   transform: translate(-50%, -50%);
   font-size: 5vw;
-  margin-top: -10vw;
+  margin-top: -9vw;
   z-index: 999;
   filter: drop-shadow(0px 0px 13px black);
   font-family: 'Mouse Memoirs';
@@ -127,12 +127,12 @@ p {
 }
 
 @media screen and (max-width : 1500px){
-  #maintitle { top: 25%; font-size: 8vw; transform: translate(-50%, -50%);
+  #maintitle { top: 30%; font-size: 6vw; transform: translate(-50%, -50%);
   }
 }
 
 @media screen and (min-width : 375px) and (max-width: 1000px){
-  #maintitle { top: 12%; font-size: 15vw;
+  #maintitle { top: 11%; font-size: 11vw;
   }
 }
 
@@ -146,7 +146,16 @@ p {
   -webkit-backdrop-filter: blur(30px);
           backdrop-filter: blur(30px);
   box-shadow: 0px 30px 60px rgba(0, 0, 0, 0.233);
-  
+  margin-top: -5%;
+}
+@media screen and (max-width: 1500px) {
+  .swiper-wrapper {margin-top: -5%;
+  }
+}
+
+@media screen and (min-width: 375px) and (max-width : 1024px){
+  .swiper-wrapper {margin-top: 10%;
+  }
 }
 
 .swiper-container {
@@ -154,16 +163,16 @@ p {
   width: 100%;
   position: relative;
   border-radius: 30px 30px 30px 30px;
-  max-width: 1000px;
+  max-width: 750px;
   height: 100%;
-  max-height: 1000px;
+  max-height: 750px;
   border-radius: 10px;
   /* align-items: center; */
   
 }
 
 @media screen and (max-width: 1500px) {
-  .swiper-container { max-width: 600px; max-height: 600px;
+  .swiper-container { max-width: 530px; max-height: 530px;
   }
 }
 
@@ -263,7 +272,7 @@ display: inline-block;
 }
 
 @media screen and (min-width: 375px) and (max-width : 1024px) {
-  .slider-item-content { width: 100%; height: 50%; margin-bottom: -30%; z-index: 9999; overflow: visible;
+  .slider-item-content { width: 100%; height: 30%; margin-bottom: -15%; z-index: 9999; overflow: visible; margin-top: -35%;
   }
 }
 
@@ -331,22 +340,22 @@ display: inline-block;
 .slider-buttons {
   position: absolute;
   display: flex;
-  top: 93%;
+  top: 100%;
   justify-content: flex-end;
   width: 100%;
   padding-top: 8px;
   z-index: 1;
-  margin-left: -20%;
+  margin-left: -18%;
   animation: bottom2top 4s forwards;
 }
 
 @media screen and (max-width: 1500px) {
-  .slider-buttons{ width: 100%;
+  .slider-buttons{ width: 100%; margin-left: -16%;
   }
 }
 
 @media screen and (min-width: 375px) and (max-width : 1024px) {
-  .slider-buttons {margin-top: 40%; margin-left: -10%;
+  .slider-buttons {margin-top: 7%; margin-left: -10%;
   }
 }
 
@@ -662,6 +671,7 @@ word-wrap: break-word;
   vertical-align: middle;
   white-space: nowrap;
   word-wrap: break-word;
+  margin-left: 15%;
   
   }
   
@@ -685,14 +695,24 @@ word-wrap: break-word;
 
 .dialogueanswer {
 z-index: 999;
-margin-top: -12%;
-padding-bottom: 9%;
+margin-top: -10%;
+/* padding-bottom: 9%; */
 /* padding-bottom: 10px; */
 
 }
 
-@media screen and (min-width: 375px) and (max-width : 1024px) {
+/* @media screen and (min-width: 375px) and (max-width : 1024px) {
   .dialogueanswer {z-index: 999999; margin-bottom: -90%; margin-top: 20%; padding-bottom: 0%; transform: scale(2.5);
+  }
+} */
+
+@media screen and (max-width: 1500px) {
+  .dialogueanswer {margin-top: -8%; transform: scale(0.7)
+  }
+}
+
+@media screen and (min-width: 375px) and (max-width : 1024px){
+  .dialogueanswer {z-index: 999999; margin-bottom: -90%; margin-top: 5%; padding-bottom: 0%; transform: scale(2.5);
   }
 }
 
@@ -913,7 +933,6 @@ padding-bottom: 9%;
     /* padding-bottom: -10%; */
     /* margin-top: -50%; */
     /* margin-left: -20%; */
-
     /* margin: auto 10px; */
     cursor: pointer;
     justify-content: center;
@@ -949,8 +968,8 @@ padding-bottom: 9%;
   .replay-button {
 
     cursor: pointer;
-    cursor:hand;
-
+    cursor: hand;
+    /* position: fixed; */
     z-index: 999999;
     appearance: none;
     background-color: #FAFBFC;
