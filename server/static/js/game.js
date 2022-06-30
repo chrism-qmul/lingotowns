@@ -732,19 +732,16 @@ class Game {
   }
 
   getTownInformation(regionIdx) {
-    //if (regionIdx == 0) return this.tutorialTownInfo();
-    //console.log("data", this.data);
-    let idx = 0;//regionIdx-1;
+    if (regionIdx == 0) return this.tutorialTownInfo();
+    let idx = regionIdx-1;
     for(var level_idx = 0; level_idx < this.data.levels.length; level_idx++) {
       const towns = this.data.levels[level_idx].towns;
       for(var town_idx = 0; town_idx < towns.length; town_idx++) {
-        //if (idx == 0) {
-        if (idx == regionIdx) {
+        if (idx == 0) {
           towns[town_idx].level = level_idx;
           return towns[town_idx];
         }
-        idx++;
-        //idx--;
+        idx--;
       }
     }
   }
@@ -824,8 +821,7 @@ class Game {
           //console.log("no tile defined for", tile);
           break;
       }
-      //var region = this.regions[(regionIdx-1)%this.regions.length];
-      var region = this.regions[regionIdx%this.regions.length];
+      var region = this.regions[(regionIdx-1)%this.regions.length];
       if (town && town.region) {
         region = this.region_by_name[town.region];
       }
@@ -1054,7 +1050,6 @@ class Game {
   updateData(data) {
     this.world = new World("testa", true);
     this.data = data;
-    this.data.levels.unshift({"towns": [this.tutorialTownInfo()]});
     console.log(data);
     //for(var level_idx = this.world.levels()-1; level_idx < this.data.levels.length; level_idx++) {
     for(var level_idx = 0; level_idx < this.data.levels.length; level_idx++) {

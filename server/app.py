@@ -13,7 +13,6 @@ import json
 import random
 from namegen.sample import sample
 import os
-import json
 
 #AUTH_SERVER = "http://localhost:5000"
 #can't access localhost, it's this container
@@ -35,7 +34,7 @@ db = SQLAlchemy(app)
 SESSION_SQLALCHEMY = db
 Session(app)
 admin = Admin(app, name='lingotowns', template_mode='bootstrap3')
-models = [persistence.Document, persistence.User, persistence.Town, persistence.Game, persistence.Completion, persistence.TownName, persistence.CollectionAvailability, persistence.Experiment, persistence.TutorialCompletion]
+models = [persistence.Document, persistence.User, persistence.Town, persistence.Game, persistence.Completion, persistence.TownName, persistence.CollectionAvailability, persistence.Experiment]
 
 #db.create_all()
 
@@ -72,14 +71,9 @@ def send_update(update, user):
     app.logger.info("[%s] %s", user, update)
     socketio.send(update, to=str(user))
 
-def tutorials_completed_for_level(level, user_id):
-    games = ["farm", "library", "food"]
-    return {game:persistence.is_tutorial_complete(user_id, 0, game, session=db.session) for game in games}
-
 def send_update_for_user(user_id):
     user_update = persistence.load_data_for_user(user_id, session=db.session)
-    tutorials_complete = tutorials_completed_for_level(0, user_id).values()
-    if all(tutorials_complete) and is_ready_for_new_level(user_update):
+    if is_ready_for_new_level(user_update):
         create_mpa_next_level_for(user_id, next_level(user_update))
     user_update = persistence.load_data_for_user(user_id, session=db.session)
     send_update(user_update, user_id)
@@ -114,7 +108,7 @@ session_uuid = {}
 prefix = "/"
 
 game_tutorial_url_builders = {"farm": lambda auth_token: "https://phrasefarm.org/?auth_token={auth_token}&from=lingotowns#/tutorial".format(auth_token=auth_token),
-        "library": lambda auth_token: "https://lingotorium.com/?auth_token={auth_token}&from=lingotowns".format(auth_token=auth_token),
+        "library": lambda auth_token: "https://lingotorium.com/tutorial?auth_token={auth_token}&from=lingotowns".format(auth_token=auth_token),
         "food": lambda auth_token:  "https://cafeclicker.com/?auth_token={auth_token}&from=lingotowns#/tutorial".format(auth_token=auth_token),
         "detectives": lambda a:  "https://anawiki.essex.ac.uk/phrasedetectives/"}
 
@@ -166,7 +160,7 @@ def auth_from_token(token):
 
 @app.route("/info")
 def info():
-    return json.dumps({k:v for k,v in session.items()})
+    return str(session['auth'])
 
 @app.route("/")
 def lingotowns():
@@ -209,17 +203,6 @@ def tutorial_playgame():
     session['seen_tutorial'] = True
     return render_template("story/playgame.html")
 
-@app.route("/tutorial-complete")
-def tutorial_complete():
-    # THIS IS UNUSED
-    # IT SERVES AS AN EXAMPLE OF HOW THE MANUAL TUTORIAL
-    # HANDLER MIGHT WORK - CURRENTLY IN MIDDLEWARE
-    game = request.args.get("game")
-    level = int(request.args.get("level"))
-    uuid = session['auth']['uuid']
-    persistence.tutorial_complete(uuid, level, game, session=db.session)
-    create_mpa_next_level_for(uuid, next_level(user_update))
-    return redirect("/")
 
 @app.route("/forcelevelup")
 def forcelevelup():
@@ -241,7 +224,6 @@ def playgame():
 @app.route("/play-tutorial")
 def playtutorial():
     game = request.args.get("game")
-    session['playing-tutorial'] = (0, game)
     if game in game_tutorial_url_builders:
         url = game_tutorial_url_builders[game](session['auth_token'])
         return redirect(url)
@@ -279,6 +261,12 @@ def townsummary(townid):
     town = persistence.load_data_for_user(uuid, townid, session=db.session)['levels'][0]['towns'][0]
     return render_template("town-summary.html", town=town)
 
+if __name__ == '__main__':
+   #result = create_game("library", 40)
+   # result = create_town(create_game("food", 81), create_game("farms", 2), create_game("library", 40), document_id=10, document_name="Tell Tale Heart", subject_type="Stories - Gutenberg", available=True, town_name="Poe Woods", total_completion=95)
+    #print(result)
+    socketio.run(app, host="0.0.0.0", debug=True)
+
 @app.before_request
 def manage_login():
     auth_token = request.args.get("auth_token")
@@ -288,36 +276,6 @@ def manage_login():
         session['auth_token'] = auth_token
         return redirect(request.base_url)
     elif session_auth:
-        # this should be in its own handler, but...
-        # flask middleware can't be ordered??? ...so this has to go here
-        # attempt to automatically track tutorial completion
-        # in future this could be more accurate by being manually handled
-        uuid = session['auth']['uuid']
-        app.logger.info("%s", session)
-        if 'playing-tutorial' in session:
-            app.logger.info("playing tutorial")
-            level, game = session['playing-tutorial']
-            del session['playing-tutorial']
-            persistence.tutorial_complete(uuid, level, game, session=db.session)
-            db.session.commit()
-        else:
-            app.logger.info("not playing tutorial")
         return None
     else:
         return redirect(AUTH_SERVER + "/login-as-guest?redirect=" + request.base_url)
-
-if __name__ == '__main__':
-   #result = create_game("library", 40)
-   # result = create_town(create_game("food", 81), create_game("farms", 2), create_game("library", 40), document_id=10, document_name="Tell Tale Heart", subject_type="Stories - Gutenberg", available=True, town_name="Poe Woods", total_completion=95)
-    #print(result)
-    socketio.run(app, host="0.0.0.0", debug=True)
-
-#@app.before_request
-def log_tutorial():
-    # log tutorial
-    # attempt to automatically track tutorial completion
-    # in future this could be more accurate by being manually handled
-    if 'playing-tutorial' in session:
-        level, game = session['playing-tutorial']
-        del session['playing-tutorial']
-
