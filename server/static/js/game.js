@@ -1865,3 +1865,6 @@ document.getElementById('swiper-button-prev').onclick = function() {hidePlay()};
 
 // swiper.on('slideChange', hidePlay); 
 swiper.on('reachEnd', showPlay); 
+
+var storybgmusic = document.getElementById("bgmusic");
+storybgmusic.play();
