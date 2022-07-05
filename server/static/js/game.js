@@ -750,44 +750,59 @@ class Game {
     return this.getTownInformation(this.lastregion);
   }
 
-  drawMap() {
-    const worldDimensions = this.worldDimensions();
-    let locations = this.screenWorldLocations();
-    for(var i = 0; i < locations.length; i++) {
-      let position = locations[i];
-      let position_floored = position.clone().floor();
-      const mag = position_floored.magnitude();
-      var fog_alpha = Math.min((mag - this.fog_radius)/8, 1.0);
-      if (Math.abs(fog_alpha-1) < 0.01) continue;
-      let tile = this.world.get(position_floored)
-      let highlight = false;
-      const regionIdx = this.world.regions.get(position_floored,0);
-      //const region = this.regions[regionIdx%this.regions.length];
-      const town = this.getTownInformation(regionIdx);
-      if (tile && tile.startsWith("b") && this.mouseGridPosition) {
-        highlight = this.mouseGridPosition.distance(position) < 4;
-      }
-      var complete = false;
-      switch(tile) {
-        case "b0":
-          if (town.games.food) {
-          complete = (town.games.food.completion == 100);
-          this.drawImageToTiles(position, new Vec2(3, 3), this.resources.bakery, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b0"));
-          }
-          break;
-        case "b1":
-          if (town.games.farm) {
-          complete = (town.games.farm.completion == 100);
-          this.drawImageToTiles(position, new Vec2(3, 3), this.resources.farm, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b1"));
-          }
-          break;
-        case "b2":
-          if (town.games.library) {
-          complete = (town.games.library.completion == 100);
-          this.drawImageToTiles(position, new Vec2(3, 3), this.resources.library, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b2"));
-          }
-          break;
-        case ("r" + RoadWest):
+  drawBuildingLabel(label, buildingPosition) {
+    this.context.save();
+    this.context.font = "30px Arial";
+    this.context.textAlign = "right";
+    const labelpos = this.toScreen(buildingPosition.clone().sub(new Vec2(3,3)));
+    this.context.shadowColor = 'black';
+    this.context.shadowBlur = 10;
+    this.context.fillStyle = "white";
+    this.context.fillText(label, labelpos.x, labelpos.y);
+    this.context.restore();
+}
+
+drawMap() {
+  const worldDimensions = this.worldDimensions();
+  let locations = this.screenWorldLocations();
+  for(var i = 0; i < locations.length; i++) {
+    let position = locations[i];
+    let position_floored = position.clone().floor();
+    const mag = position_floored.magnitude();
+    var fog_alpha = Math.min((mag - this.fog_radius)/8, 1.0);
+    if (Math.abs(fog_alpha-1) < 0.01) continue;
+    let tile = this.world.get(position_floored)
+    let highlight = false;
+    const regionIdx = this.world.regions.get(position_floored,0);
+    //const region = this.regions[regionIdx%this.regions.length];
+    const town = this.getTownInformation(regionIdx);
+    if (tile && tile.startsWith("b") && this.mouseGridPosition) {
+      highlight = this.mouseGridPosition.distance(position) < 4;
+    }
+    var complete = false;
+    switch(tile) {
+      case "b0":
+        if (town.games.food) {
+        complete = (town.games.food.completion == 100);
+        this.drawImageToTiles(position, new Vec2(3, 3), this.resources.bakery, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b0"));
+          if (highlight) this.drawBuildingLabel("CafeClicker", position)
+        }
+        break;
+      case "b1":
+        if (town.games.farm) {
+        complete = (town.games.farm.completion == 100);
+        this.drawImageToTiles(position, new Vec2(3, 3), this.resources.farm, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b1"));
+          if (highlight) this.drawBuildingLabel("PhraseFarm", position)
+        }
+        break;
+      case "b2":
+        if (town.games.library) {
+        complete = (town.games.library.completion == 100);
+        this.drawImageToTiles(position, new Vec2(3, 3), this.resources.library, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b2"));
+          if (highlight) this.drawBuildingLabel("LingoTorium", position)
+        }
+        break;
+      case ("r" + RoadWest):
         case ("r" + RoadEast):
         case ("r" + (RoadEast | RoadWest)):
           this.drawImageToTiles(position, new Vec2(1, 1), this.resources.roadeast);
@@ -1714,9 +1729,9 @@ class Game {
     if (index > -1) {
         this.highlighted_buildings.splice(index, 1);
         this.requireDraw();
-        return true;
+        // return true;
     }
-    return false;
+    // return false;
   }
 }
 
@@ -1845,3 +1860,6 @@ document.getElementById('swiper-button-prev').onclick = function() {hidePlay()};
 
 // swiper.on('slideChange', hidePlay); 
 swiper.on('reachEnd', showPlay); 
+
+// var storybgmusic = document.getElementById("bgmusic");
+//  storybgmusic.play();
