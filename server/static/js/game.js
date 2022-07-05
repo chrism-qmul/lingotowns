@@ -753,6 +753,18 @@ class Game {
     return this.getTownInformation(this.lastregion);
   }
 
+  drawBuildingLabel(label, buildingPosition) {
+      this.context.save();
+      this.context.font = "30px Arial";
+      this.context.textAlign = "right";
+      const labelpos = this.toScreen(buildingPosition.clone().sub(new Vec2(3,3)));
+      this.context.shadowColor = 'black';
+      this.context.shadowBlur = 10;
+      this.context.fillStyle = "white";
+      this.context.fillText(label, labelpos.x, labelpos.y);
+      this.context.restore();
+  }
+
   drawMap() {
     const worldDimensions = this.worldDimensions();
     let locations = this.screenWorldLocations();
@@ -776,18 +788,21 @@ class Game {
           if (town.games.food) {
           complete = (town.games.food.completion == 100);
           this.drawImageToTiles(position, new Vec2(3, 3), this.resources.bakery, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b0"));
+            if (highlight) this.drawBuildingLabel("CafeClicker", position)
           }
           break;
         case "b1":
           if (town.games.farm) {
           complete = (town.games.farm.completion == 100);
           this.drawImageToTiles(position, new Vec2(3, 3), this.resources.farm, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b1"));
+            if (highlight) this.drawBuildingLabel("PhraseFarm", position)
           }
           break;
         case "b2":
           if (town.games.library) {
           complete = (town.games.library.completion == 100);
           this.drawImageToTiles(position, new Vec2(3, 3), this.resources.library, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b2"));
+            if (highlight) this.drawBuildingLabel("LingoTorium", position)
           }
           break;
         case ("r" + RoadWest):
@@ -1850,3 +1865,6 @@ document.getElementById('swiper-button-prev').onclick = function() {hidePlay()};
 
 // swiper.on('slideChange', hidePlay); 
 swiper.on('reachEnd', showPlay); 
+
+var storybgmusic = document.getElementById("bgmusic");
+storybgmusic.play();
