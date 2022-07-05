@@ -754,16 +754,16 @@ class Game {
   }
 
   drawBuildingLabel(label, buildingPosition) {
-      this.context.save();
-      this.context.font = "30px Arial";
-      this.context.textAlign = "right";
-      const labelpos = this.toScreen(buildingPosition.clone().sub(new Vec2(3,3)));
-      this.context.shadowColor = 'black';
-      this.context.shadowBlur = 10;
-      this.context.fillStyle = "white";
-      this.context.fillText(label, labelpos.x, labelpos.y);
-      this.context.restore();
-  }
+    this.context.save();
+    this.context.font = "20px Arial";
+    this.context.textAlign = "center";
+    const labelpos = this.toScreen(buildingPosition.clone().sub(new Vec2(4,4)));
+    this.context.shadowColor = 'black';
+    this.context.shadowBlur = 5;
+    this.context.fillStyle = "white";
+    this.context.fillText(label, labelpos.x, labelpos.y);
+    this.context.restore();
+}
 
   drawMap() {
     const worldDimensions = this.worldDimensions();
