@@ -202,10 +202,15 @@ def lingotowns():
         return redirect(AUTH_SERVER + "/login-as-guest?redirect=" + HOSTNAME)
 
 
-@app.route("/")
+@app.route("/intro")
 def intro():
     session['seen_intro'] = True
     return render_template("story/index.html")
+
+@app.route("/")
+def homepage():
+    session['seen_homepage'] = True
+    return render_template("homepage.html")
 
 @app.route("/intro-text")
 def intro_text():
