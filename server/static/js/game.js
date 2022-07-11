@@ -399,7 +399,7 @@ class Game {
     this.wasNearCompass = false;
     this.context = canvas.getContext("2d");
     this.minimapcontext = minimapcanvas.getContext("2d");
-    this.context.font = "12px Arial";
+    this.context.font = "12px Verdana";
     this.regions = [new WoodlandRegion(this), new LakesRegion(this), new DesertRegion(this), new FarmRegionA(this), new FarmRegionB(this)];
     this.region_by_name = {"Desert": new DesertRegion(this), "Lakes": new LakesRegion(this), "Farms": new FarmRegionA(this), "Woods":new WoodlandRegion(this)};
     this.regions_colors = this.regions.map(function(r) {return hexColorToRGB(r.color())});
@@ -755,7 +755,7 @@ class Game {
 
   drawBuildingLabel(label, buildingPosition) {
     this.context.save();
-    this.context.font = "20px Arial";
+    this.context.font = "600 20px Verdana";
     this.context.textAlign = "center";
     const labelpos = this.toScreen(buildingPosition.clone().sub(new Vec2(4,4)));
     this.context.shadowColor = 'black';
