@@ -66,6 +66,7 @@ var music = {
 newGameButton.onclick = function() {
   startStory();
   music.overworld.play();
+  swiper.update();
 
 };
 
