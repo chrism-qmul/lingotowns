@@ -219,6 +219,8 @@ def intro_text():
 
 @app.route("/game-animated")
 def tutorial_animated():
+    if "intro_complete" in request.cookies:
+        return redirect("/playgame")
     session['seen_tutorial'] = True
     return render_template("game-tutorial-animated/index.html")
 

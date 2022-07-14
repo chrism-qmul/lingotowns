@@ -928,7 +928,7 @@
                 style="transform: rotate(180deg);">&#10142;</button>
             <button class="swiper-button-next">&#10142;</button>
             <div class="play-button-container"> <button id="playbutton" class="playbutton"
-                    onclick="window.location.href='https://lingotowns.com/play'">Play</button>
+                    onclick="">Play</button>
             </div>
         </div>
 
@@ -945,6 +945,15 @@
         crossorigin="anonymous"></script>
     <script type="module" src="/js/game.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+    <script type='text/javascript'>
+      function setCookie(key, value) {
+          document.cookie = key + "=" + value + "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+      }
+      $("#playbutton").click(function() {
+        setCookie("intro_complete", "animated");
+        window.location.href='https://lingotowns.com/play';
+      });
+    </script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.4.5/swiper-bundle.min.js'></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-interactivity@latest/dist/lottie-interactivity.min.js"></script>
