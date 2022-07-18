@@ -178,6 +178,11 @@ def lingotowns():
     else:
         return redirect(AUTH_SERVER + "/login-as-guest?redirect=" + HOSTNAME)
 
+@app.route("/homepage")
+def home():
+    session['seen_home'] = True
+    return render_template("homepage.html")
+
 @app.route("/intro")
 def intro():
     session['seen_intro'] = True
