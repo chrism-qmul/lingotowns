@@ -3,6 +3,9 @@ let player2 = document.querySelector("#player2");
 let player3 = document.querySelector("#player3");
 
 let replayButton = document.querySelector('#replay-icon');
+let newGameButton = document.querySelector('#new-game-button');
+let swiperContainer = document.querySelector('#swiper-container');
+
 
 var swiper = new Swiper('.swiper-container', {
   slidesPerView: 1,
@@ -45,6 +48,27 @@ var swiper = new Swiper('.swiper-container', {
 //   $("p.typewriter").each((i,el) => typewritereffect($(el)));
 // }
 
+function startStory(){
+  // alert("I am an alert box!");
+  document.getElementById('game-container').style.display='none';
+  swiperContainer.style.display='block';
+}
+
+
+
+var music = {
+  overworld: new Howl({
+     src: [
+        '/story/background.wav'
+     ]
+  })
+}
+newGameButton.onclick = function() {
+  startStory();
+  music.overworld.play();
+  swiper.update();
+
+};
 
 swiper.on('slideChange', function() {
   // runtypewriters();

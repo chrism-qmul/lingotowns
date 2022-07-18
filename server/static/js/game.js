@@ -399,7 +399,7 @@ class Game {
     this.wasNearCompass = false;
     this.context = canvas.getContext("2d");
     this.minimapcontext = minimapcanvas.getContext("2d");
-    this.context.font = "12px Arial";
+    this.context.font = "12px Verdana";
     this.regions = [new WoodlandRegion(this), new LakesRegion(this), new DesertRegion(this), new FarmRegionA(this), new FarmRegionB(this)];
     this.region_by_name = {"Desert": new DesertRegion(this), "Lakes": new LakesRegion(this), "Farms": new FarmRegionA(this), "Woods":new WoodlandRegion(this)};
     this.regions_colors = this.regions.map(function(r) {return hexColorToRGB(r.color())});
@@ -752,15 +752,27 @@ class Game {
 
   drawBuildingLabel(label, buildingPosition) {
     this.context.save();
-    this.context.font = "30px Arial";
-    this.context.textAlign = "right";
-    const labelpos = this.toScreen(buildingPosition.clone().sub(new Vec2(3,3)));
+    this.context.font = "600 20px Verdana";
+    this.context.textAlign = "center";
+    const labelpos = this.toScreen(buildingPosition.clone().sub(new Vec2(4,4)));
     this.context.shadowColor = 'black';
-    this.context.shadowBlur = 10;
+    this.context.shadowBlur = 5;
     this.context.fillStyle = "white";
     this.context.fillText(label, labelpos.x, labelpos.y);
     this.context.restore();
 }
+//   removeBuildingLabel(label, buildingPosition) {
+//     this.context.save();
+//     this.context.font = "20px Arial";
+//     this.context.textAlign = "center";
+//     const labelpos = this.toScreen(buildingPosition.clone().sub(new Vec2(4,4)));
+//     this.context.shadowColor = 'black';
+//     this.context.shadowBlur = 5;
+//     this.context.globalAlpha= 0.00;
+//     this.context.fillStyle = "white";
+//     this.context.fillText(label, labelpos.x, labelpos.y);
+//     this.context.restore();
+// }
 
 drawMap() {
   const worldDimensions = this.worldDimensions();
@@ -1826,19 +1838,26 @@ function highlight_town() {
   if (this.activeIndex === 3) {
     game.removeHighlightFromBuilding(0, "b1")
     game.removeHighlightFromBuilding(0, "b2")
+    // game.drawBuildingLabel("CafeClicker", buildingPosition)
     game.highlightBuilding(0, "b0")
+
   } else if (this.activeIndex === 2) {
     game.removeHighlightFromBuilding(0, "b0")
     game.removeHighlightFromBuilding(0, "b2")
     game.highlightBuilding(0, "b1") 
+    // game.drawBuildingLabel(0,"b1")
   } else if (this.activeIndex === 4) {
     game.removeHighlightFromBuilding(0, "b0")
     game.removeHighlightFromBuilding(0, "b1")
-    game.highlightBuilding(0, "b2") 
+    game.highlightBuilding(0, "b2")
+    // game.drawBuildingLabel(0,"b2")
    } else {
     game.removeHighlightFromBuilding(0, "b0")
     game.removeHighlightFromBuilding(0, "b1")
-    game.removeHighlightFromBuilding(0, "b2") 
+    game.removeHighlightFromBuilding(0, "b2")
+    // game.removeBuildingLabel(0,"b0")
+    // game.removeBuildingLabel(0,"b1")
+    // game.removeBuildingLabel(0,"b2") 
   }
 }
 
@@ -1863,3 +1882,13 @@ swiper.on('reachEnd', showPlay);
 
 // var storybgmusic = document.getElementById("bgmusic");
 //  storybgmusic.play();
+
+// var sound = new Howl({
+//   src: ['background.wav'],
+//   autoplay: true,
+//   loop: true,
+//   volume: 0.5,
+//   onend: function() {
+//     console.log('Finished!');
+//   }
+// });
