@@ -57,24 +57,78 @@ function startStory(){
 
 
 var music = {
-  overworld: new Howl({
+  scene1: new Howl({
      src: [
-        '/story/background.wav'
+        '/story/scene1.mp3'
      ]
+  }),
+  scene2: new Howl({
+    src: [
+       '/story/scene2.mp3'
+    ]
+ }),
+  scene3: new Howl({
+    src: [
+      '/story/scene3.wav'
+    ]
   })
+
+
 }
 newGameButton.onclick = function() {
   startStory();
-  music.overworld.play();
+  music.scene1.play();
   swiper.update();
+  player1.seek(0);
 
 };
 
+function playAnimation() {
+  if (swiper.activeIndex === 0){
+    player1.seek(0);
+    player1.play();
+    music.scene1.play();
+    music.scene2.stop();
+    music.scene3.stop();
+  } else if (swiper.activeIndex === 1) {
+    player2.seek(0);
+    player2.play();
+    music.scene2.play();
+    music.scene3.stop();
+    music.scene1.stop();
+  } else if (swiper.activeIndex === 2) {
+    player3.seek(100);
+    player3.play();
+    music.scene3.play();
+    music.scene2.stop();
+    music.scene1.stop();
+
+   } 
+  }
+
+// function playSFX() {
+//   if (swiper.activeIndex === 1) {
+
+
+
+//   } else if (swiper.activeIndex === 2) {
+
+//    } else {
+
+//   }
+// }
+
+
 swiper.on('slideChange', function() {
   // runtypewriters();
-  player2.play();
-  player3.play();
-  player3.seek(100);
+  // playSFX();
+  // music.scene1.stop();
+  // music.scene2.seek(0);
+  // music.scene2.play();
+  // player2.play();
+  // player3.play();
+  // player3.seek(100);
+  playAnimation();
 });
 
 function displayReload(){
@@ -85,14 +139,22 @@ function hideReplay(){
   replayButton.classList.remove('active-animation');
 }
 
+function noReplay(){
+  replayButton.style.animation = "none";
+}
+
 // runtypewriters();
 
 player1.addEventListener('complete', displayReload);
+player1.addEventListener('frame', hideReplay);
 player2.addEventListener('complete', displayReload);
-// player3.addEventListener('complete', displayReload);
+player2.addEventListener('frame', hideReplay);
 
-player2.addEventListener('play', hideReplay);
-player3.addEventListener('frame', hideReplay);
+
+// player3.addEventListener('complete', loopPlayer3);
+player3.addEventListener('complete', noReplay);
+player3.addEventListener('frame', noReplay);
+
 
 
 function loopScene (){
@@ -102,7 +164,14 @@ function loopScene (){
   player2.play();
 }
 
+//if player3 is complete, play from frame 100
 
+function reverseAnimation (){
+  player3.setDirection(-1);
+}
+
+
+// document.getElementById('yesButton').onclick = function() {reverseAnimation()};
 
 replayButton.onclick = function() {hideReplay()};
 
@@ -129,19 +198,75 @@ function addPrev (){
   document.getElementById('swiper-button-prev').style.opacity = 1;
 }
 
+
+
+//make player grey 
+
+function greyOut1 (){
+  document.getElementById('image-wrapper1').style.animation = "grey-out 1.5s forwards";
+}
+function greyOut2 (){
+  document.getElementById('image-wrapper2').style.animation = "grey-out2 1.5s forwards";
+}
+function removeGreyOut1 (){
+  document.getElementById('image-wrapper1').style.animation = "none";
+}
+function removeGreyOut2 (){
+  document.getElementById('image-wrapper2').style.animation = "none";
+}
+function blurOut (){
+  document.getElementById('image-wrapper3').style.animation = "blur-out 1.5s forwards";
+}
+function removeBlurOut (){
+  document.getElementById('image-wrapper3').style.animation = "none";
+}
+
 // document.getElementById('swiper-button-next').onclick = function() {addPrev()};
 
-
-
-
+player1.addEventListener('complete', greyOut1);
 player1.addEventListener('complete', animateButton);
+player1.addEventListener('frame', removeGreyOut1);
+player2.addEventListener('complete', greyOut2);
 player2.addEventListener('complete', animateButton);
 // player2.addEventListener('play', addPrev);
 
 
 player2.addEventListener('play', stopAnimateButton);
+player2.addEventListener('frame', removeGreyOut2);
 
 player3.addEventListener('complete', removeAnimateButton);
+player3.addEventListener('complete', blurOut);
+player3.addEventListener('frame', removeBlurOut);
 // player3.addEventListener('frame', removePrev);
 
 
+
+var un_mute = document.getElementById('un-mute');
+
+var mute = document.getElementById('mute');
+
+function musicPlays (){
+  music.scene1.volume(1);
+  music.scene2.volume(1);
+  music.scene3.volume(1);
+}
+
+function musicStops (){
+  music.scene1.volume(0);
+  music.scene2.volume(0);
+  music.scene3.volume(0);
+}
+
+
+
+// un_mute.onclick = function(mute) {
+//   music.scene1.volume(0);
+//   music.scene2.volume(0);
+//   music.scene3.volume(0);
+// };
+
+
+
+mute.onclick = function() {musicPlays()};
+
+unmute.onclick = function() {musicStops()};

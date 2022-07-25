@@ -209,14 +209,37 @@ display: inline-block;
   width: 100%;
   overflow: hidden;
   object-fit: cover;
-  z-index: 999;
-  
+  z-index: 99999;
+  /* animation: grey-out 4s forwards; */
+  /* filter: grayscale(1) blur(4px); */
 }
 
+@keyframes grey-out {
+  0% { filter: grayscale(0) blur(0px);
+  }
+  100% { filter: grayscale(1) blur(3px);
+  }
+}
+@keyframes grey-out2 {
+  0% { filter: grayscale(0) blur(0px);
+  }
+  100% { filter: grayscale(1) blur(3px);
+  }
+}
+@keyframes blur-out {
+  0% { filter: blur(0px);
+  }
+  100% { filter: blur(3px);
+  }
+}
 @media screen and (min-width: 375px) and (max-width : 1024px){
   .animation-player { width: 100%; height: 250%; transform: scale(1.5);
   }
 }
+
+/* .filter {
+  filter: grayscale(1);
+} */
 
 .typewriter {
   margin-top: 0%;
@@ -265,7 +288,7 @@ display: inline-block;
   margin-top: -27%;
   z-index: 999;
   /* display: none; */
-  animation: bottom2top 4s forwards;
+  animation: bottom2top 3s forwards;
   /* animation-delay: 1s; */
 }
 @media screen and (max-width: 1000px) {
@@ -954,12 +977,10 @@ margin-top: -10%;
     justify-content: flex-end;
     /* height: 100%; */
     width: 100%;
-    padding-top: 8px;
-    right: 8%;
+    /* padding-top: 8px; */
+    right: 45%;
     /* margin-left: -45%; */
-    bottom: 85%;
-
-
+    bottom: 50%;
 
   }
 
@@ -1125,3 +1146,46 @@ margin-top: -10%;
   }
 
 
+
+
+  input#un-mute {
+    display: none;
+    cursor: pointer;
+}
+
+  .unmute img {
+      display: none;
+      cursor: pointer;
+  }
+
+  input#un-mute:checked ~ .unmute img {
+      display: initial;
+      cursor: pointer;
+  }
+
+  input#un-mute:checked ~ .mute img {
+      display: none;
+      cursor: pointer;
+  }
+
+  .music-icon {
+    background: #f2f6ff;
+    position: relative;
+    border-radius: 30px 30px 30px 30px;
+    border-radius: 10px;
+    /* margin-top: -30%; */
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    /* width: 5%; */
+    /* height: 10%; */
+    position: sticky;
+    align-items: center;
+    float: right;
+    /* display: inline; */
+    padding: 1%;
+    margin:10%;
+    cursor: pointer;
+    /* opacity: 50%; */
+  }
+
+
+  
