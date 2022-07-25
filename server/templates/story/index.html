@@ -2,35 +2,50 @@
 <html lang="en">
 
 <head>
-  
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.min.js"
-  integrity="sha512-L6Z/YtIPQ7eU3BProP34WGU5yIRk7tNHk7vaC2dB1Vy1atz6wl9mCkTPPZ2Rn1qPr+vY2mZ9odZLdGYuaBk7dQ=="
-  crossorigin="anonymous"></script>
-<meta charset="UTF-8">
-<title>Onboarding</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-<link rel="stylesheet" href="/css/story.css">
-<link href="https://fonts.googleapis.com/css2?family=Mouse+Memoirs&display=swap" rel="stylesheet">
+    integrity="sha512-L6Z/YtIPQ7eU3BProP34WGU5yIRk7tNHk7vaC2dB1Vy1atz6wl9mCkTPPZ2Rn1qPr+vY2mZ9odZLdGYuaBk7dQ=="
+    crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <title>Onboarding</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+  <link rel="stylesheet" href="/css/story.css">
+  <link href="https://fonts.googleapis.com/css2?family=Mouse+Memoirs&display=swap" rel="stylesheet">
 
 </head>
 
 <body>
-<div class="pagewrapper" id="Page1">
-  <div id="maintitle">LingoTowns</div>
-  <!-- <audio>
+  <div style="width:100%; padding-bottom: 40%; padding-top: -20%; margin-top: -10%; position: fixed;">
+    <div class="music-icon"><input type="checkbox"
+        name="un-mute" id="un-mute">
+      <label for="un-mute" class="unmute" onclick="musicPlays()">
+        <img src="http://upload.wikimedia.org/wikipedia/commons/3/3f/Mute_Icon.svg" alt="Mute_Icon.svg"
+          title="Mute icon" style="height: 25px;">
+      </label>
+      <label for="un-mute" class="mute" onclick="musicStops()">
+        <img src="http://upload.wikimedia.org/wikipedia/commons/2/21/Speaker_Icon.svg" alt="Speaker_Icon.svg"
+          title="Unmute/speaker icon" style="height: 25px; fill:white;">
+      </label>
+    </div>
+  </div>
+  <div class="pagewrapper" id="Page1">
+    <div id="maintitle">LingoTowns</div>
+
+    <!-- <audio>
   <source src="/story/background.wav" type="audio/wav"> 
   </audio> -->
-  <div id="game-container" class="game-container">
-    <div class="game-button-container"><button id="new-game-button" class="game-button"
-        onclick="startStory()">New Game</button></div>
-    <div class="game-button-container"><button class="game-button"
-        onclick="window.location.href='https://auth.tileattack.com/login?redirect=https://lingotowns.com'">Continue Game</button></div>
-  </div>
-  <div id="swiper-container" class="swiper-container">
-    <div id="swiper-wrapper" class="swiper-wrapper">
+    <div id="game-container" class="game-container">
+      <div class="game-button-container"><button id="new-game-button" class="game-button" onclick="startStory()">New
+          Game</button></div>
+      <div class="game-button-container"><button class="game-button"
+          onclick="window.location.href='https://auth.tileattack.com/login?redirect=https://lingotowns.com'">Continue
+          Game</button></div>
+    </div>
+    <div id="swiper-container" class="swiper-container">
+      <div id="swiper-wrapper" class="swiper-wrapper">
         <div class="slider-item swiper-slide">
-          <div class="slider-image-wrapper">
+          <div class="slider-image-wrapper" id="image-wrapper1">
             <lottie-player class="animation-player" id="player1" src="/story/scene1.json" style=" height: 100%; width: 100%; padding-top: 5%;
                 --lottie-player-seeker-track-color: #f2f6ff;
                 --lottie-player-seeker-thumb-color: #f2f6ff;
@@ -50,7 +65,7 @@
           </div>
         </div>
         <div class="slider-item swiper-slide">
-          <div class="slider-image-wrapper">
+          <div class="slider-image-wrapper" id="image-wrapper2">
             <lottie-player class="animation-player" id="player2" src="/story/scene2.json" style=" height: 100%; width: 100%; padding-top: 5%;
                 --lottie-player-seeker-track-color: #f2f6ff;
                 --lottie-player-seeker-thumb-color: #f2f6ff;
@@ -67,11 +82,11 @@
           </div>
         </div>
         <div class="slider-item swiper-slide">
-          <div class="slider-image-wrapper">
+          <div class="slider-image-wrapper" id="image-wrapper3">
             <lottie-player class="animation-player" id="player3" src="/story/scene1.json" style=" height: 100%; width: 100%; padding-top: 5%;
                 --lottie-player-seeker-track-color: #f2f6ff;
                 --lottie-player-seeker-thumb-color: #f2f6ff;
-              " background="transparent" speed="1" ></lottie-player>
+              " background="transparent" speed="1"></lottie-player>
           </div>
           <div class="slider-item-content">
             <h1 style="padding-bottom: 15%; padding-left: 5%;">Larunda</h1>
@@ -88,6 +103,8 @@
             </div>
             <div class="yes">
               <button class="yesbutton" onclick="window.location.href='playgame'">Yes</button>
+              <!-- <button class="yesbutton" id="yesButton" onclick="window.location.href='playgame'">Yes</button> -->
+
             </div>
           </div>
         </div>
