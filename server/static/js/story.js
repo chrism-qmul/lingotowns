@@ -50,7 +50,7 @@ var music = {
  }),
   scene3: new Howl({
     src: [
-      '/story/scene3.wav'
+      '/story/scene3.mp3'
     ]
   })
 }
