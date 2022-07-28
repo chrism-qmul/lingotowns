@@ -89,20 +89,19 @@ function playAnimation() {
 //listens to slideChange and starts function
 swiper.on('slideChange', function() {
   playAnimation();
+  hideReplay();
 });
 
 //Reload button functions
 
 function displayReload(){
   replayButton.classList.add('active-animation');
+  replayButton.style.display = 'block';
 }
 
 function hideReplay(){
   replayButton.classList.remove('active-animation');
-}
-
-function noReplay(){
-  replayButton.style.animation = "none";
+  replayButton.style.display = 'none';
 }
 
 //reload settings
@@ -116,8 +115,8 @@ player2.addEventListener('complete', displayReload);
 player2.addEventListener('frame', hideReplay);
 
 //for player 3
-player3.addEventListener('complete', noReplay);
-player3.addEventListener('frame', noReplay);
+player3.addEventListener('complete',hideReplay);
+// player3.addEventListener('frame', noReplay);
 
 
 //loops scenes for reload button
@@ -127,6 +126,14 @@ function loopScene (){
   player2.seek(0);
   player2.play();
 }
+
+// function loopLastScene (){
+//   player3.setDirection(-1);
+//   player3.seek(200);
+//   player3.play();
+//   player3.setDirection(1);
+// }
+
 
 // function reverseAnimation (){
 //   player3.setDirection(-1);
