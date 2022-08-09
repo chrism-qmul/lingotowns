@@ -62,7 +62,7 @@
 
 
     <div class="buttoncontainer">
-    <button class="playbutton" onclick="window.location.href='intro'">play</button>
+    <button class="playbutton" id="homepagePlayButton" onclick="">play</button>
     </div>
     <!-- Header -->
     <header class="w3-container w3-red w3-center" style="padding:0px 0px"><div class="lingobannerwrapper">
@@ -148,17 +148,15 @@
         </div>
     </footer>
 
-    <script>
-        // Used to toggle the menu on small screens when clicking on the menu button
-        function myFunction() {
-            var x = document.getElementById("navDemo");
-            if (x.className.indexOf("w3-show") == -1) {
-                x.className += " w3-show";
-            } else {
-                x.className = x.className.replace(" w3-show", "");
-            }
+    <script type='text/javascript'>
+        function setCookie(key, value) {
+            document.cookie = key + "=" + value + "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
         }
-    </script>
+        $("#homepagePlayButton").click(function() {
+          setCookie("intro_complete", "animated");
+          window.location.href='https://lingotowns.com/play';
+        });
+      </script>
 
 </body>
 
