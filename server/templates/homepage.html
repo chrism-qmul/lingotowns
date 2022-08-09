@@ -32,11 +32,21 @@
         .fa-coffee {
             font-size: 200px
         }
+
+	#logout {
+		position:absolute;
+		top:20px;
+		left:20px;
+		height:3em;
+	}	
     </style>
 </head>
 
 <body>
     
+{% if logged_in %}
+    <a id='logout' class="playbutton" href='https://auth.tileattack.com/logout?redirect=https://lingotowns.com/'>logout</a>
+{% endif %}
 
     <!-- Navbar -->
     <!-- <div class="w3-top">
