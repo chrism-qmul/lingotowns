@@ -204,6 +204,8 @@ def lingotowns():
 
 @app.route("/intro")
 def intro():
+    if "intro_complete" in request.cookies:
+        return redirect("/play")
     session['seen_intro'] = True
     return render_template("story/index.html")
 
