@@ -212,7 +212,12 @@ def intro():
 @app.route("/")
 def homepage():
     session['seen_homepage'] = True
-    return render_template("homepage.html")
+
+    username = session.get('auth',{}).get('username')
+    auth_missing = username is None
+    is_guest = username == "Guest"
+    logged_in = not auth_missing and not is_guest
+    return render_template("homepage.html", logged_in=logged_in)
 
 @app.route("/intro-text")
 def intro_text():
@@ -221,6 +226,8 @@ def intro_text():
 
 @app.route("/game-animated")
 def tutorial_animated():
+    if "intro_complete" in request.cookies:
+        return redirect("/playgame")
     session['seen_tutorial'] = True
     return render_template("game-tutorial-animated/index.html")
 
