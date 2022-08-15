@@ -18,13 +18,14 @@ services:
     build: server
     image: registry.phd.madg.es/lingtowns-server:0.0.9
     restart: unless-stopped
+    ports:
+      - 8081:5000
     volumes:
       - ./server/:/app
      #- /Users/chrismadge/PhD/PhraseDetectivesCorpora/:/data
     environment:
       #- EXT_URL:https://lingotowns.com
-      #- EXT_URL=http://localhost:8081
-      - EXT_URL=https://lingotowns.com
+      - EXT_URL=http://localhost:8081
       - REDIS_HOST=redis
       - FLASK_DEBUG=True
       - FLASK_ENV=development
@@ -37,6 +38,6 @@ services:
       - ./server/nginx.conf:/etc/nginx/conf.d/default.conf
       - ./server/static:/app/
     ports:
-      - 8025:80
+      - 8080:80
     depends_on:
       - server
