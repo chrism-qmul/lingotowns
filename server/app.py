@@ -61,13 +61,20 @@ def create_random_next_level_for(uuid, level):
     db.session.commit()
 
 def create_mpa_next_level_for(uuid, level):
-    doc_hash = requests.get("https://recommender.tileattack.com/task/" + uuid).text
+    urls = [("food", "https://dev.cafeclicker.com"), ("farm", "https://dev.phrasefarm.org"), ("library", "https://dev.lingotorium.com")]
+    games = []
+    for game, url in urls:
+        result = requests.get(url + "/api/document_selection?uuid=" + uuid).json()
+        games.append(game)
+        if not result['skill_completed']:
+            doc_hash = result['document_id']
+            doc = persistence.get(db.session, persistence.Document, doc_hash=doc_hash)
+            if not doc:
+                return create_random_next_level_for(uuid, level)
+            persistence.add_level(db.session, uuid, [(doc.author, doc.title)], games, level)
+            db.session.commit()
+            break
     #persiste
-    doc = persistence.get(db.session, persistence.Document, doc_hash=doc_hash)
-    if not doc:
-        return create_random_next_level_for(uuid, level)
-    persistence.add_level(db.session, uuid, [(doc.author, doc.title)], ["farm", "library", "food"], level)
-    db.session.commit()
 
 def send_update(update, user):
     app.logger.info("[%s] %s", user, update)
