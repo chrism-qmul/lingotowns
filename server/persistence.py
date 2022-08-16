@@ -56,12 +56,10 @@ def create_update(*levels, documents_completed, document_points):
     "levels": list(levels)}
 
 #engine = create_engine('sqlite:///:memory:', echo=True)
-engine = create_engine("postgresql://game:game_pass@db/game", 
-        echo=False#, 
-        #connect_args={'detect_types':
-        #    sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES}, 
-        #native_datetime=True
-        )
+engine = create_engine('sqlite:///file.db', 
+        echo=False, 
+        connect_args={'detect_types':
+            sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES}, native_datetime=True)
 Session = sessionmaker(bind=engine)
 
 def create_session():
@@ -318,7 +316,7 @@ def load_data_for_user(username, townid=None, session=None):
     LEFT JOIN completion ON completion.town_id=towns.id 
     LEFT JOIN games on completion.game_id=games.id 
     WHERE 
-    games.name IS NOT NULL
+    game_name IS NOT NULL
     AND
     users.name=:username
     """
