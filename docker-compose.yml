@@ -1,13 +1,22 @@
 version: '2' 
 
 services:
+  db:
+    image: "postgres:11.2-alpine"
+    command: -c 'log_min_duration_statement=100'
+    restart: unless-stopped
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+      - ./data/db-startup:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_DB: game
+      POSTGRES_USER: game
+      POSTGRES_PASSWORD: game_pass
   redis:
     image: redis:6-alpine
-    ports:
-      - 6379:6379
   server:
     build: server
-    image: registry.phd.madg.es/lingtowns-server:0.0.8
+    image: registry.phd.madg.es/lingtowns-server:0.0.9
     restart: unless-stopped
     ports:
       - 8081:5000
@@ -22,6 +31,7 @@ services:
       - FLASK_ENV=development
     depends_on:
       - redis
+      - db
   http:
     image: nginx
     volumes:
