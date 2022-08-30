@@ -2,6 +2,15 @@
 <html lang="en">
 
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-X1Z33FZBD9"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-X1Z33FZBD9');
+  </script>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.min.js"
@@ -17,8 +26,7 @@
 
 <body>
   <div class="mute-button-wrapper">
-    <div class="music-icon"><input type="checkbox"
-        name="un-mute" id="un-mute">
+    <div class="music-icon"><input type="checkbox" name="un-mute" id="un-mute">
       <label for="un-mute" class="unmute" onclick="musicPlays()">
         <img src="http://upload.wikimedia.org/wikipedia/commons/3/3f/Mute_Icon.svg" alt="Mute_Icon.svg"
           title="Mute icon" style="height: 25px;">
@@ -39,7 +47,7 @@
       <div class="game-button-container"><button id="new-game-button" class="game-button" onclick="startStory()">New
           Game</button></div>
       <div class="game-button-container"><button class="game-button"
-          onclick="window.location.href='https://auth.tileattack.com/login?redirect=https://lingotowns.com'">Continue
+          onclick="window.location.href='https://auth.tileattack.com/login?redirect=https://lingotowns.com/play'">Continue
           Game</button></div>
     </div>
     <div id="swiper-container" class="swiper-container">

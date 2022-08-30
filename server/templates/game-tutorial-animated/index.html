@@ -3,6 +3,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X1Z33FZBD9"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-X1Z33FZBD9');
+    </script>
     <meta charset="UTF-8">
     <link rel="stylesheet" src="/css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
@@ -38,7 +47,7 @@
     }
 
     .towninformation {
-        max-width: 15vw;
+        max-width: 70vw;
     }
 
     .towninformation .content table.detail {
@@ -480,7 +489,7 @@
         }
     }
 
-    @media screen and (max-width: 375px) {
+    @media screen and (max-width: 480px) {
         p.slider-item-text {
             font-size: 12px;
             line-height: 18px;
@@ -523,7 +532,7 @@
         }
     }
 
-    @media screen and (max-width: 375px) {
+    @media screen and (max-width: 480px) {
         .swiper-container {
             bottom: 20%;
             max-width: 100%;
@@ -569,8 +578,8 @@
             padding-top: 5%;
         }
     }
-    
-    @media screen and (max-width: 375px) {
+
+    @media screen and (max-width: 480px) {
         .slider-image-wrapper {
             width: 30%;
             padding-left: 9%;
@@ -652,38 +661,38 @@
             margin-bottom: -10%;
         } */
 
-        .swiper-pagination-bullet {
-            border-radius: 0;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            line-height: 30px;
-            font-size: 12px;
-            opacity: 1;
-            background: #96b5ec;
-            display: inline-block;
-            margin-right: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+    .swiper-pagination-bullet {
+        border-radius: 0;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        line-height: 30px;
+        font-size: 12px;
+        opacity: 1;
+        background: #96b5ec;
+        display: inline-block;
+        margin-right: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
 
-        .swiper-pagination-bullet-active {
-            background: #4354d0;
-            width: 20px;
-            border-radius: 10px;
-        }
+    .swiper-pagination-bullet-active {
+        background: #4354d0;
+        width: 20px;
+        border-radius: 10px;
+    }
 
-        .slider-buttons {
-            position: absolute;
-            display: flex;
-            justify-content: flex-end;
-            width: 105%;
-            margin-left: -8%;
-            padding-top: 2%;
-        }
+    .slider-buttons {
+        position: absolute;
+        display: flex;
+        justify-content: flex-end;
+        width: 105%;
+        margin-left: -8%;
+        padding-top: 2%;
+    }
 
-    
-    
+
+
     @media screen and (max-width: 600px) {
         .slider-buttons {
             margin-left: -5%;
@@ -822,17 +831,22 @@
 
 
     @media screen and (max-width: 1500px) {
-        .tutorial-img {margin-top: 10%;
-            
-        }
-
-    @media screen and (max-width: 375px) {
         .tutorial-img {
-            padding-right: 80%; padding-top: 50%; margin: 1%; margin-bottom: -15%; margin-top: 10%;
-        }
-    }
+            margin-top: 10%;
 
-}
+        }
+
+        @media screen and (max-width: 480px) {
+            .tutorial-img {
+                padding-right: 80%;
+                padding-top: 50%;
+                margin: 1%;
+                margin-bottom: -15%;
+                margin-top: 10%;
+            }
+        }
+
+    }
 </style>
 
 <body>
@@ -866,7 +880,8 @@
                             background="transparent" speed="1" style="height: 100%; width: 100%; margin-left: -5%;">
                         </lottie-player>
                     </div>
-                    <p class="slider-item-text">Welcome to LingoTowns! This is the map of the world. You can explore different towns and find games in each building.</p>
+                    <p class="slider-item-text">Welcome to LingoTowns! This is the map of the world. You can explore
+                        different towns and find games in each building.</p>
                 </div>
             </div>
             <div class="slider-item swiper-slide">
@@ -876,7 +891,8 @@
                         <img class="tutorial-img" src="/images/towns/Lakes.png"
                             style="height: 50%; margin-top: 5%; margin-left: 1%;"></img>
                     </div>
-                    <p class="slider-item-text">This is an example of a town icon. Once you enter a town, you will find several buildings where you can play minigames.</p>
+                    <p class="slider-item-text">This is an example of a town icon. By clicking it you will begin playing
+                        one of the minigames. There are three minigames</p>
                 </div>
             </div>
             <div class="slider-item swiper-slide">
@@ -886,7 +902,8 @@
                         <img class="tutorial-img" src="/images/building-icon/orig/farm.png"
                             style="height: 70%; margin-top: 5%; margin-left: 1%;"></img>
                     </div>
-                    <p class="slider-item-text"> One of the buildings is the farm where you can start harvesting crops for the town by selecting the correct noun phrases.</p>
+                    <p class="slider-item-text"> One of the buildings is the farm where you can start harvesting crops
+                        for the town by selecting the correct noun phrases.</p>
                 </div>
             </div>
             <div class="slider-item swiper-slide">
@@ -896,7 +913,8 @@
                         <img class="tutorial-img" src="/images/building-icon/orig/food.png"
                             style="height: 70%; margin-top: 5%; margin-left: 1%;"></img>
                     </div>
-                    <p class="slider-item-text">The next building is the bakery where you can bake goods for the town by labeling part of speech in a text.</p>
+                    <p class="slider-item-text">The next building is the bakery where you can bake goods for the town by
+                        labeling part of speech in a text.</p>
                 </div>
             </div>
 
@@ -907,7 +925,8 @@
                         <img class="tutorial-img" src="/images/building-icon/orig/library.png"
                             style="height: 70%; margin-top: 5%; margin-left: 1%;"></img>
                     </div>
-                    <p class="slider-item-text">The last building is the library where you can help the town understand archived documents  by filling in the blank and completing word puzzles</p>
+                    <p class="slider-item-text">The last building is the library where you can help the town understand
+                        archived documents by filling in the blank and completing word puzzles</p>
                 </div>
             </div>
             <div class="slider-item swiper-slide">
@@ -918,7 +937,8 @@
                             background="transparent" speed="1" style="height: 100%; width: 100%; margin-left: -5%;">
                         </lottie-player>
                     </div>
-                    <p class="slider-item-text">That's it for now! Enjoy exploring LingoTowns and help our people understand your language.</p>
+                    <p class="slider-item-text">That's it for now! Enjoy exploring LingoTowns and help our people
+                        understand your language.</p>
                 </div>
 
             </div>
@@ -927,8 +947,7 @@
             <button id="swiper-button-prev" class="swiper-button-prev"
                 style="transform: rotate(180deg);">&#10142;</button>
             <button class="swiper-button-next">&#10142;</button>
-            <div class="play-button-container"> <button id="playbutton" class="playbutton"
-                    onclick="window.location.href='https://lingotowns.com'">Play</button>
+            <div class="play-button-container"> <button id="playbutton" class="playbutton" onclick="">Start</button>
             </div>
         </div>
 
@@ -943,8 +962,27 @@
     <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"
         integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
         crossorigin="anonymous"></script>
+
+    <script type='text/javascript'>
+        function setCookie(key, value) {
+            document.cookie = key + "=" + value + "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+        }
+        $("#playbutton").click(function () {
+            setCookie("intro_complete", "animated");
+            window.location.href = 'https://lingotowns.com/play';
+        });
+    </script>
     <script type="module" src="/js/game.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+    <script type='text/javascript'>
+      function setCookie(key, value) {
+          document.cookie = key + "=" + value + "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+      }
+      $("#playbutton").click(function() {
+        setCookie("intro_complete", "animated");
+        window.location.href='https://lingotowns.com/play';
+      });
+    </script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.4.5/swiper-bundle.min.js'></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-interactivity@latest/dist/lottie-interactivity.min.js"></script>
