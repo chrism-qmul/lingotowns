@@ -453,8 +453,8 @@
     }
 
     p.slider-item-text {
-        font-size: 18px;
-        line-height: 28px;
+        /* font-size: 18px; */
+        /* line-height: 28px; */
 
         color: black;
         transform: translateY(20px);
@@ -465,33 +465,32 @@
         overflow: hidden;
         text-overflow: ellipsis;
         float: right;
-        padding-left: 5%;
+        /* padding-left: 5%; */
+        font-size: 15px;
+        line-height: 24px;
+        position: fixed;
+        padding: 5%;
 
 
 
-        /* from innnertext */
         margin-left: 20%;
-        margin-top: -12%;
+        /* margin-top: -12%; */
         margin-right: 5%;
-        padding-bottom: 5%;
-        padding-right: 5%;
-        padding-top: 2%;
+        /* padding-bottom: 5%;
+        padding-right: 5%; */
+        /* padding-top: 2%; */
 
     }
 
-    @media screen and (max-width: 1500px) {
+    /* @media screen and (max-width: 1500px) {
         p.slider-item-text {
             font-size: 15px;
             line-height: 24px;
-            /* margin-top: -50%;
-            margin-left: 25%;
-            padding-bottom: 10%; */
-        }
-    }
+        } */
 
     @media screen and (max-width: 480px) {
         p.slider-item-text {
-            font-size: 12px;
+            font-size: 10px;
             line-height: 18px;
             margin-left: 25%;
         }
@@ -513,7 +512,6 @@
         background: linear-gradient(270deg, #f7f9ff 0%, #f2f6ff 100%);
         box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
         position: fixed;
-        max-width: 50%;
         max-height: 10%;
         border-radius: 10px;
         z-index: 999;
@@ -522,12 +520,12 @@
         bottom: 20%;
         margin-bottom: -1%;
         filter: drop-shadow(0 0 2.5rem rgba(0, 0, 0, 0.5));
+        bottom: 20%;
+        max-width: 50%;
     }
 
     @media screen and (max-width: 1500px) {
         .swiper-container {
-            bottom: 20%;
-            max-width: 50%;
             margin-bottom: 5%;
         }
     }
@@ -562,22 +560,26 @@
 
     .slider-image-wrapper {
         height: 150px;
-        width: 100%;
+        /* width: 100%; */
         overflow: hidden;
         padding: 2%;
         padding-right: 5%;
-        padding-top: 10%;
+        /* padding-top: 10%; */
         margin-bottom: -5%;
+
+        width: 30%;
+        padding-left: 8%;
+        padding-top: 5%;
     }
 
 
-    @media screen and (max-width: 1500px) {
+    /* @media screen and (max-width: 1500px) {
         .slider-image-wrapper {
             width: 30%;
             padding-left: 8%;
             padding-top: 5%;
         }
-    }
+    } */
 
     @media screen and (max-width: 480px) {
         .slider-image-wrapper {
@@ -585,6 +587,8 @@
             padding-left: 9%;
             /* padding-bottom: -15%; */
             margin-bottom: -20%;
+            padding-top: 0%;
+            padding-bottom: 5%;
         }
     }
 
@@ -801,7 +805,7 @@
         animation-duration: 2s;
         animation-iteration-count: infinite;
         float: bottom;
-        /* padding-top: 10%; */
+        padding-top: 10%;
         -webkit-filter: drop-shadow(0 0 0.90rem rgba(10, 255, 128, 1));
     }
 
@@ -830,11 +834,11 @@
 
 
 
-    @media screen and (max-width: 1500px) {
+    /* @media screen and (max-width: 1500px) {
         .tutorial-img {
             margin-top: 10%;
 
-        }
+        } */
 
         @media screen and (max-width: 480px) {
             .tutorial-img {
@@ -846,7 +850,7 @@
             }
         }
 
-    }
+
 </style>
 
 <body>
@@ -877,7 +881,7 @@
                 <div class="slider-item-content">
                     <div class="slider-image-wrapper">
                         <lottie-player src="/story/closeup_pinkcharac.json" autoplay loop mode="bounce"
-                            background="transparent" speed="1" style="height: 100%; width: 100%; margin-left: -5%;">
+                            background="transparent" speed="1" style="height: 70%; width: 100%; margin-left: -5%;">
                         </lottie-player>
                     </div>
                     <p class="slider-item-text">Welcome to LingoTowns! This is the map of the world. You can explore
@@ -934,7 +938,7 @@
                 <div class="slider-item-content">
                     <div class="slider-image-wrapper">
                         <lottie-player src="/story/closeup_orangecharac.json" autoplay loop mode="bounce"
-                            background="transparent" speed="1" style="height: 100%; width: 100%; margin-left: -5%;">
+                            background="transparent" speed="1" style="height: 70%; width: 100%; margin-left: -5%;">
                         </lottie-player>
                     </div>
                     <p class="slider-item-text">That's it for now! Enjoy exploring LingoTowns and help our people
