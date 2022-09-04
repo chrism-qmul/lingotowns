@@ -23,13 +23,22 @@
 </head>
 
 <body>
-  <div id="maintitle">LingoTowns</div>
-  <div class="title">
-    <h2> The story</h2>
-  </div>
-  <div id="Page1">
+  <div class="pagewrapper" id="Page1">
+    <div id="maintitle">LingoTowns</div>
+    <div id="game-container" class="game-container">
+      <div class="game-button-container"><button id="new-game-button" class="game-button" onclick="startStory()">New
+          Game</button></div>
+      <div class="game-button-container"><button class="game-button"
+          onclick="window.location.href='https://auth.tileattack.com/login?redirect=https://lingotowns.com/play'">Continue
+          Game</button></div>
+    </div>
 
-    <div class="swiper-container">
+    <!-- <div class="title">
+      <h2> The story</h2>
+    </div> -->
+
+
+    <div id="swiper-container" class="swiper-container">
       <div class="swiper-wrapper">
         <div class="slider-item swiper-slide">
           <div class="slider-image-wrapper">

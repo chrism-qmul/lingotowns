@@ -1,5 +1,6 @@
 
-
+let newGameButton = document.querySelector('#new-game-button');
+let swiperContainer = document.querySelector('#swiper-container');
 
 var swiper = new Swiper('.swiper-container', {
   slidesPerView: 1,
@@ -23,6 +24,25 @@ var swiper = new Swiper('.swiper-container', {
   }
 
 });
+
+
+//displays Swiper and starts story after player clicks 'new game'
+function startStory(){
+  document.getElementById('game-container').style.display='none';
+  swiperContainer.style.display='block';
+}
+
+//adds startStory function to button
+newGameButton.onclick = function() {
+  startStory();
+  swiper.update();
+};
+
+
+
+
+
+
 
 
 // function typewritereffect($el) {
