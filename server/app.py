@@ -221,18 +221,22 @@ def homepage():
 
 @app.route("/intro-text")
 def intro_text():
+    if "intro_complete" in request.cookies:
+         return redirect("/play")
     session['seen_intro'] = True
     return render_template("story-text/index.html")
 
 @app.route("/game-animated")
 def tutorial_animated():
     if "intro_complete" in request.cookies:
-        return redirect("/playgame")
+        return redirect("/play")
     session['seen_tutorial'] = True
     return render_template("game-tutorial-animated/index.html")
 
 @app.route("/game-text")
 def tutorial_text():
+    if "intro_complete" in request.cookies:
+        return redirect("/play")
     session['seen_tutorial'] = True
     return render_template("game-tutorial-text/index.html")
 
