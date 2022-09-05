@@ -974,17 +974,17 @@
     <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"
         integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
         crossorigin="anonymous"></script>
+    <script type="module" src="/js/game.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
     <script type='text/javascript'>
         function setCookie(key, value) {
             document.cookie = key + "=" + value + "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
         }
         $("#playbutton").click(function () {
-            setCookie("intro_complete", "text");
+            setCookie("intro_complete");
             window.location.href = 'https://lingotowns.com/play';
         });
     </script>
-    <script type="module" src="/js/game.js"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.4.5/swiper-bundle.min.js'></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-interactivity@latest/dist/lottie-interactivity.min.js"></script>
