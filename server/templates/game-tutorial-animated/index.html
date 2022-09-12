@@ -3,6 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <head>
+    <script src="https://www.googleoptimize.com/optimize.js?id=OPT-MPCCLF3"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-X1Z33FZBD9"></script>
     <script>
@@ -12,6 +13,8 @@
 
         gtag('config', 'G-X1Z33FZBD9');
     </script>
+    <script src="/js/riveted.min.js"></script>
+    <script>riveted.init();</script>
     <meta charset="UTF-8">
     <link rel="stylesheet" src="/css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
@@ -23,7 +26,7 @@
     <script src="/js/array.polyfill.js"></script>
 
 
-    <title>Lingotowns</title>
+    <title>Onboarding Animation</title>
 </head>
 
 <style>
@@ -962,16 +965,6 @@
     <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"
         integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
         crossorigin="anonymous"></script>
-
-    <script type='text/javascript'>
-        function setCookie(key, value) {
-            document.cookie = key + "=" + value + "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
-        }
-        $("#playbutton").click(function () {
-            setCookie("intro_complete", "animated");
-            window.location.href = 'https://lingotowns.com/play';
-        });
-    </script>
     <script type="module" src="/js/game.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
     <script type='text/javascript'>
@@ -979,7 +972,7 @@
           document.cookie = key + "=" + value + "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
       }
       $("#playbutton").click(function() {
-        setCookie("intro_complete", "animated");
+        setCookie("intro_complete");
         window.location.href='https://lingotowns.com/play';
       });
     </script>
