@@ -44,33 +44,48 @@
             font-size: 200px
         }
 
-        #logout {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            height: 3em;
-        }
+	#logout {
+		position:absolute;
+		top:20px;
+		left:20px;
+		height:3em;
+	}	
     </style>
 </head>
 
 <body>
 
+    
+{% if logged_in %}
+    <a id='logout' class="playbutton" href='https://auth.tileattack.com/logout?redirect=https://lingotowns.com/'>logout</a>
+{% endif %}
 
-    {% if logged_in %}
-    <a id='logout' class="playbutton"
-        href='https://auth.tileattack.com/logout?redirect=https://lingotowns.com/'>logout</a>
-    {% endif %}
+    <!-- Navbar -->
+    <!-- <div class="w3-top">
+        <div class="w3-bar w3-red w3-card w3-left-align w3-large">
+            <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red"
+                href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i
+                    class="fa fa-bars"></i></a>
+            <a href="#" class="w3-bar-item w3-button w3-padding-large w3-white"><div id="maintitle"></div>Home</a>
+            <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 1</a>
+            <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 2</a>
+            <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 3</a>
+            <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 4</a>
+        </div> -->
 
+        <!-- Navbar on small screens -->
+        <!-- <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
+            <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 1</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 2</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 3</a>
+            <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 4</a>
+        </div> -->
+    <!-- </div> -->
 
 
     <div class="buttoncontainer">
         <button class="playbutton" onclick="window.location.href='intro'">play</button>
-        <div class="space"></div>
-
-        <div class="learn-more-container"><button class="learn-more-button"><a class="scroll" data-speed="1000" href="#about" style="text-decoration: none;">Learn
-                    more</a></button></div>
     </div>
-
     <!-- Header -->
     <header class="w3-container w3-red w3-center" style="padding:0px 0px">
         <div class="lingobannerwrapper">
@@ -83,98 +98,85 @@
     <div class="container">
 
         <!-- Second Grid -->
-        <div class="w3-row-padding w3-padding-64 w3-container">
+        <div class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
             <div class="w3-content">
+                <h1>About</h1>
                 <!-- <h5 class="w3-padding-32">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.</h5> -->
-                    
-                <div class="w3-twothird">
-                    <h1>Updates</h1>
-                    <div class="twitterfeed">
-                        <a class="twitter-timeline" href="https://twitter.com/GamesNlp?ref_src=twsrc%5Etfw">Tweets by
-                            GamesNlp</a>
-                        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-                    </div>
-                    <!-- <h5 class="w3-padding-32">11/07/22</h5>
-                    <ul class="w3-text-grey1">
-                        <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                            incididunt ut labore et dolore magna aliqua</li>
-                        <li>Excepteur sint
-                            occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
-                            consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
-                        </li>
-                        <li>Ut
-                            enim ad minim veniam, quis nostrud exercitation ullamco
-                            laboris nisi ut aliquip ex ea commodo consequat</li>
-                    </ul> -->
-    
-    
-    
-                    <!-- <p class="w3-text-grey">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                        ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint
-                        occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
-                        consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                        enim ad minim veniam, quis nostrud exercitation ullamco
-                        laboris nisi ut aliquip ex ea commodo consequat.</p> -->
-                </div>
-    
-                <div class="w3-third w3-center">
-                    <!-- <div class="twitterfeed">
-                        <a class="twitter-timeline" href="https://twitter.com/GamesNlp?ref_src=twsrc%5Etfw">Tweets by
-                            GamesNlp</a>
-                        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-                    </div> -->
+                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                ullamco laboris nisi ut aliquip ex ea commodo consequat.</h5> -->
+
+                <p class="w3-text-grey2">Lingotowns, a new gaming platform targeting language learners developed by the
+                    DALI team.
+                    Lingotowns provides a unified experience integrating games for multiple aspects of lexical and
+                    grammatical experience in a single virtual world, whilst simultaneously collecting judgements. Both
+                    Lingotowns and its constituent games are designed to provide more engagement to the players/
+                    learners than normal GWAPs. The platform also incorporates knowledge tracing methods ensuring that
+                    the players' progress in terms of understanding of grammatical concepts is tracked both at the
+                    individual game level and overall.</p>
+                <div class="youtubevideo">
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/d3a0i1RkYv0" allow='autoplay'
+                        title="YouTube video player" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
                 </div>
             </div>
-        </div>
-        <div id="about" class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
-            <div class="w3-content">
-                <div class="about-section">
-                    <h1>About</h1>
 
-                    <p class="w3-text-grey2">Lingotowns, a new gaming platform targeting language learners developed by
-                        the
-                        DALI team.
-                        Lingotowns provides a unified experience integrating games for multiple aspects of lexical and
-                        grammatical experience in a single virtual world, whilst simultaneously collecting judgements.
-                        Both
-                        Lingotowns and its constituent games are designed to provide more engagement to the players/
-                        learners than normal GWAPs. The platform also incorporates knowledge tracing methods ensuring
-                        that
-                        the players' progress in terms of understanding of grammatical concepts is tracked both at the
-                        individual game level and overall.</p>
-                        <div class="youtubevideo">
-                            <iframe width="560" height="315" src="https://www.youtube.com/embed/d3a0i1RkYv0" allow='autoplay'
-                                title="YouTube video player" frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowfullscreen></iframe>
-                        </div>
-
-                </div>
-                
-
-            </div>
-
-        </div>
-
-        <div class="w3-twothird">
-            <div class="w3-third w3-center">
-            </div>
+            <!-- <div class="w3-twothird">
+                <div class="w3-third w3-center"> 
+            </div> -->
 
 
         </div>
     </div>
     <!-- First Grid -->
 
-    
+    <div class="w3-row-padding w3-padding-64 w3-container">
+        <div class="w3-content">
+            <div class="w3-twothird">
+                <h1>Updates</h1>
+                <div class="twitterfeed">
+                    <a class="twitter-timeline" href="https://twitter.com/GamesNlp?ref_src=twsrc%5Etfw">Tweets by
+                        GamesNlp</a>
+                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                </div>
+                <!-- <h5 class="w3-padding-32">11/07/22</h5>
+                <ul class="w3-text-grey1">
+                    <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        incididunt ut labore et dolore magna aliqua</li>
+                    <li>Excepteur sint
+                        occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+                        consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
+                    </li>
+                    <li>Ut
+                        enim ad minim veniam, quis nostrud exercitation ullamco
+                        laboris nisi ut aliquip ex ea commodo consequat</li>
+                </ul> -->
+
+
+
+                <!-- <p class="w3-text-grey">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                    ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint
+                    occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+                    consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                    enim ad minim veniam, quis nostrud exercitation ullamco
+                    laboris nisi ut aliquip ex ea commodo consequat.</p> -->
+            </div>
+
+            <div class="w3-third w3-center">
+                <!-- <div class="twitterfeed">
+                    <a class="twitter-timeline" href="https://twitter.com/GamesNlp?ref_src=twsrc%5Etfw">Tweets by
+                        GamesNlp</a>
+                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                </div> -->
+            </div>
+        </div>
+    </div>
 
 
 
     <div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
-        <h1 class="w3-margin w3-xlarge">Find out more about DALI <a href="https://dali.eecs.qmul.ac.uk/" target="_blank">here</a>
-        </h1>
+        <h1 class="w3-margin w3-xlarge">Find out more about DALI <a href="https://dali.eecs.qmul.ac.uk/">here</a></h1>
     </div>
     </div>
     <!-- Footer -->
@@ -186,7 +188,7 @@
             <!-- <i class="fa fa-linkedin w3-hover-opacity"></i> -->
         </div>
     </footer>
-    <script src="/js/homescreen.js"></script>
+
 </body>
 
 </html>
