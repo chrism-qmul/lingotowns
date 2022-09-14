@@ -92,10 +92,12 @@
             </div>
             <div class="menu-footer"> 
                 <!-- <p style="float: left; padding-left: 10%;">Guest</p><p style="float: right; padding-right: 15%;">Login</p> -->
-                 {% if logged_in %}
-                <a id='logout' class="playbutton"
+                <div style="float:right; height: 100%; width: 50%;">
+                {% if logged_in %}
+                <a id='logout' class="logout-button"
                     href='https://auth.tileattack.com/logout?redirect=https://lingotowns.com/'>logout</a>
                 {% endif %}
+                </div>
             </div>
         </div>
     </div>
