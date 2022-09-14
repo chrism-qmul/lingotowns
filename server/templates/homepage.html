@@ -19,6 +19,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/css/homepage.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+    <link rel="stylesheet" href="https://use.typekit.net/frj5pjr.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
     <link href="https://fonts.googleapis.com/css2?family=Mouse+Memoirs&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -44,61 +45,93 @@
             font-size: 200px
         }
 
-	#logout {
-		position:absolute;
-		top:20px;
-		left:20px;
-		height:3em;
-	}	
+        #logout {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            height: 3em;
+        }
     </style>
 </head>
 
 <body>
 
-    
-{% if logged_in %}
-    <a id='logout' class="playbutton" href='https://auth.tileattack.com/logout?redirect=https://lingotowns.com/'>logout</a>
-{% endif %}
-
-    <!-- Navbar -->
-    <!-- <div class="w3-top">
-        <div class="w3-bar w3-red w3-card w3-left-align w3-large">
-            <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red"
-                href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i
-                    class="fa fa-bars"></i></a>
-            <a href="#" class="w3-bar-item w3-button w3-padding-large w3-white"><div id="maintitle"></div>Home</a>
-            <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 1</a>
-            <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 2</a>
-            <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 3</a>
-            <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Link 4</a>
-        </div> -->
-
-        <!-- Navbar on small screens -->
-        <!-- <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
-            <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 1</a>
-            <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 2</a>
-            <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 3</a>
-            <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 4</a>
-        </div> -->
-    <!-- </div> -->
 
 
-    <div class="buttoncontainer">
-        <button class="playbutton" onclick="window.location.href='intro'">play</button>
-    </div>
+
+
     <!-- Header -->
-    <header class="w3-container w3-red w3-center" style="padding:0px 0px">
+    <!-- navbar -->
+
+    <div id="nav-bar-expanded-wrapper" class="nav-bar-expanded-wrapper">
+        <div class="nav-bar-expanded">
+            <div class="close-wrapper"><button id="close-button" onclick="hideMenu()"><svg id="close-icon"
+                        class="close-icon" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="m88.854 85.845-33.487-34.785 33.487-34.785c1.8399-1.906 1.8399-4.8604 0-6.7665-1.8399-1.906-4.6919-1.906-6.5318 0l-33.487 34.785-33.487-34.69c-1.8399-1.906-4.6919-1.906-6.5318 0-1.8399 1.906-1.8399 4.8604 0 6.7665l33.487 34.69-33.487 34.785c-1.8399 1.906-1.8399 4.8604 0 6.7665 1.8399 1.906 4.6919 1.906 6.5318 0l33.487-34.785 33.579 34.785c1.8399 1.906 4.6919 1.906 6.5318 0 1.748-1.906 1.748-4.9557-0.092-6.7665z"
+                            stroke-width=".93635" />
+                    </svg></button></div>
+            <div class="menu-items-wrapper">
+                <ul><h5>Menu</h5>
+                    <div class="Line-2-Copy-3"></div>
+                <a id="menu-about-link" href="#about"><div class="menu-items">
+                    <li>About<img class="menu-next" src="http://phrasefarm.org/img/menu-next.svg" alt="Speaker_Icon.svg"
+                    title="menu next icon"></li>
+                </div></a>
+                <a id="menu-updates-link" href="#updates"><div class="menu-items">
+                    <li>Updates<img class="menu-next" src="http://phrasefarm.org/img/menu-next.svg" alt="Speaker_Icon.svg"
+                        title="menu next icon"></li>
+                </div></a>
+                <!-- <a id="menu-section-link" href="#contact"><div class="menu-items">
+                    <li>Contact<img class="menu-next" src="http://phrasefarm.org/img/menu-next.svg" alt="Speaker_Icon.svg"
+                        title="menu next icon"></li>
+                </div></a> -->
+            </ul>
+
+
+            </div>
+            <div class="menu-footer"> 
+                <!-- <p style="float: left; padding-left: 10%;">Guest</p><p style="float: right; padding-right: 15%;">Login</p> -->
+                 {% if logged_in %}
+                <a id='logout' class="playbutton"
+                    href='https://auth.tileattack.com/logout?redirect=https://lingotowns.com/'>logout</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    </div>
+    <div id="overlay" class="overlay" onclick="hideMenu()"></div>
+    <div class="nav-bar">
+        <div class="menu-wrapper"><button id="menu-button" onclick="showMenu()"><svg id="menu-icon" class="menu-icon"
+                    version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="matrix(1.2076 0 0 1.331 -9.584 -1285.7)">
+                        <path
+                            d="m16 979.37c-1.6568 0-3 1.3431-3 3 0 1.6568 1.3432 3 3 3h68c1.6568 0 3-1.3432 3-3 0-1.6569-1.3432-3-3-3zm0 21c-1.6568 0-3 1.3431-3 3 0 1.6568 1.3432 3 3 3h68c1.6568 0 3-1.3432 3-3 0-1.6569-1.3432-3-3-3zm0 21c-1.6568 0-3 1.3431-3 3 0 1.6568 1.3432 3 3 3h68c1.6568 0 3-1.3432 3-3 0-1.6569-1.3432-3-3-3z"
+                            color="#000000" overflow="visible" style="text-indent:0;text-transform:none" />
+                    </g>
+                </svg></button></div>
+    </div>
+    <header class="w3-container w3-red w3-center">
         <div class="lingobannerwrapper">
             <h1 class="w3-margin w3-jumbo">LingoTowns</h1>
-            <!-- <p class="w3-xlarge">Template by w3.css</p> -->
+            <p class="w3-xlarge">Help us with our research in Natural Language Processing. Your fun becomes our data as
+                we uncover ambiguities in natural expression.</p>
+            <!-- <h1 class="ml6">
+                    <span class="text-wrapper">
+                      <span class="letters">Help us with our research in Natural Language Processing.</span>
+                    </span>
+                  </h1> -->
 
+            <div class="buttoncontainer">
+                <button class="playbutton" onclick="window.location.href='intro'">play</button>
+            </div>
             <img class="lingobanner" src="/story/lingobanner.png" alt="banner">
         </div>
     </header>
     <div class="container">
 
         <!-- Second Grid -->
-        <div class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
+        <div id="about" class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
             <div class="w3-content">
                 <h1>About</h1>
                 <!-- <h5 class="w3-padding-32">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
@@ -130,7 +163,7 @@
     </div>
     <!-- First Grid -->
 
-    <div class="w3-row-padding w3-padding-64 w3-container">
+    <div id="updates" class="w3-row-padding w3-padding-64 w3-container">
         <div class="w3-content">
             <div class="w3-twothird">
                 <h1>Updates</h1>
@@ -189,6 +222,8 @@
         </div>
     </footer>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+    <script src="/js/homepage.js"></script>
 </body>
 
 </html>
