@@ -1675,6 +1675,7 @@ a {
     background-color: rgba(245, 245, 245, 0);
     border: none;
     cursor: pointer;
+    overflow: visible;
 
 
 }
@@ -1684,7 +1685,7 @@ a {
     height: 40px;
     padding-top: 5%;
     float: left;
-    margin-left: 20%;
+    margin-left: 0%;
     padding-bottom: 5%;
     fill: rgba(0, 0, 0, 0.664);
     overflow: visible;
@@ -1694,7 +1695,7 @@ a {
     position: fixed;
     width: 20em;
     height: 30em;
-    z-index: 9999999;
+    z-index: 99999999;
     top: 0%;
     /* margin-top: -50%; */
     border-radius: 0% 2% 2% 0%;
