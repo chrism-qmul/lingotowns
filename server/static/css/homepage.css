@@ -1874,7 +1874,7 @@ a {
   width: auto;
   will-change: transform,opacity;
   z-index: 0;
-  padding-left: 40%;
+  margin-left: 60%;
 }
 
 .logout-button:hover {
