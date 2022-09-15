@@ -243,6 +243,12 @@ def tutorial_complete(uuid, level, game, session):
     print("tutorial_complete", user, game)
     return get_or_create(session, TutorialCompletion, user=user, level=level, game=game, complete=True)
 
+def current_collection(session):
+    sql = "select collection_id from experiments order by created_at DESC"
+    results = session.execute(sql)
+    for result in results:
+        return result['collection_id']
+
 def is_tutorial_complete(uuid, level, game, session):
     user = get(session, User, name=uuid)
     game = get(session, Game, name=game)
@@ -276,9 +282,11 @@ def update_progress(user, dochash, game, progress, session=None):
     s.commit()
     return resp.rowcount
 
-def unseen_documents_for_user(s, username):
+def unseen_documents_for_user(s, username, collection=None):
     sql = """
-    select documents.author as document_author, documents.title as document_title from documents where id NOT IN 
+    select documents.author as document_author, 
+    documents.title as document_title, 
+    documents.collection_id as collection_id from documents where id NOT IN 
         (select 
             documents.id as id
         from towns 
@@ -295,6 +303,8 @@ def unseen_documents_for_user(s, username):
     results = s.execute(sql, params)
     docs = set()
     for result in results:
+        if collection and result['collection_id'] != collection:
+            continue
         docs.add((result['document_author'], result['document_title']))
     return docs
 

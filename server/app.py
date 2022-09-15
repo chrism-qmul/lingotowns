@@ -54,19 +54,23 @@ def next_level(update):
         return 0
     return len(update.get("levels", []))
 
-def create_random_next_level_for(uuid, level):
-    # TODO: this calls the task recommender and updates the database
-    documents = list(persistence.unseen_documents_for_user(db.session, uuid))[:random.randint(1, 3)]
-    persistence.add_level(db.session, uuid, documents, ["farm", "food"], level)
-    db.session.commit()
+def get_random_next_level_for(uuid):
+    collection = persistence.current_collection(db.session)
+    documents = list(persistence.unseen_documents_for_user(db.session, uuid, collection))[:random.randint(1, 3)]
+    return documents
 
-def create_mpa_next_level_for(uuid, level):
+def get_mpa_next_level_for(uuid):
     doc_hash = requests.get("https://recommender.tileattack.com/task/" + uuid).text
-    #persiste
-    doc = persistence.get(db.session, persistence.Document, doc_hash=doc_hash)
-    if not doc:
-        return create_random_next_level_for(uuid, level)
-    persistence.add_level(db.session, uuid, [(doc.author, doc.title)], ["farm", "library", "food"], level)
+    return [persistence.get(db.session, persistence.Document, doc_hash=doc_hash)]
+    
+def get_next_level_for(uuid):
+    #return get_mpa_next_level_for(uuid) or get_random_next_level_for(uuid)
+    return get_random_next_level_for(uuid)
+
+def create_next_level_for(uuid, level):
+    docs = get_next_level_for(uuid)
+    for doc in docs:
+        persistence.add_level(db.session, uuid, [(doc.author, doc.title)], ["farm", "library", "food"], level)
     db.session.commit()
 
 def send_update(update, user):
@@ -81,7 +85,7 @@ def send_update_for_user(user_id):
     user_update = persistence.load_data_for_user(user_id, session=db.session)
     tutorials_complete = tutorials_completed_for_level(0, user_id).values()
     if all(tutorials_complete) and is_ready_for_new_level(user_update):
-        create_mpa_next_level_for(user_id, next_level(user_update))
+        create_next_level_for(user_id, next_level(user_update))
     user_update = persistence.load_data_for_user(user_id, session=db.session)
     send_update(user_update, user_id)
 
@@ -169,6 +173,15 @@ def auth_from_token(token):
 def info():
     return json.dumps({k:v for k,v in session.items()})
 
+@app.route("/next-level")
+def nextlevel():
+    auth = session['auth']
+    if auth:
+        return str(get_next_level_for(auth['uuid']))
+    else:
+        return "No user information"
+    
+
 # @app.route("/")
 # def lingotowns():
 #     auth_token = request.args.get("auth_token")
@@ -184,6 +197,10 @@ def info():
 #             return redirect("/intro")
 #     else:
 #         return redirect(AUTH_SERVER + "/login-as-guest?redirect=" + HOSTNAME)
+
+@app.route("/current-collection")
+def currentcollection():
+    return "collection: {}".format(persistence.current_collection(db.session))
 
 @app.route("/play")
 def lingotowns():
@@ -254,14 +271,14 @@ def tutorial_complete():
     level = int(request.args.get("level"))
     uuid = session['auth']['uuid']
     persistence.tutorial_complete(uuid, level, game, session=db.session)
-    create_mpa_next_level_for(uuid, next_level(user_update))
+    create_next_level_for(uuid, next_level(user_update))
     return redirect("/")
 
 @app.route("/forcelevelup")
 def forcelevelup():
     uuid = session['auth']['uuid']
     user_update = persistence.load_data_for_user(uuid, session=db.session)
-    create_mpa_next_level_for(uuid, next_level(user_update))
+    create_next_level_for(uuid, next_level(user_update))
     return redirect("/")
 
 @app.route("/play-game")
