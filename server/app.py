@@ -61,7 +61,8 @@ def get_random_next_level_for(uuid):
 
 def get_mpa_next_level_for(uuid):
     doc_hash = requests.get("https://recommender.tileattack.com/task/" + uuid).text
-    return [persistence.get(db.session, persistence.Document, doc_hash=doc_hash)]
+    doc = persistence.get(db.session, persistence.Document, doc_hash=doc_hash)
+    return [(doc.author, doc.title)]
     
 def get_next_level_for(uuid):
     #return get_mpa_next_level_for(uuid) or get_random_next_level_for(uuid)
@@ -70,7 +71,7 @@ def get_next_level_for(uuid):
 def create_next_level_for(uuid, level):
     docs = get_next_level_for(uuid)
     for doc in docs:
-        persistence.add_level(db.session, uuid, [(doc.author, doc.title)], ["farm", "library", "food"], level)
+        persistence.add_level(db.session, uuid, [doc], ["farm", "library", "food"], level)
     db.session.commit()
 
 def send_update(update, user):
