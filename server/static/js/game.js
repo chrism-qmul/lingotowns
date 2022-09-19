@@ -1847,14 +1847,6 @@ function highlight_town() {
   }
 }
 
-// if (highlight_town() === true) {
-//   console.log('building is highlighted');
-// }
-
-// if (highlight_town() === false) {
-//   console.log('building is not highlighted');
-// }
-
 swiper.on('slideChange', highlight_town);
 
 function showPlay (){
@@ -1874,4 +1866,16 @@ document.getElementById('swiper-button-prev').onclick = function() {hidePlay()};
 // swiper.on('slideChange', hidePlay); 
 swiper.on('reachEnd', showPlay); 
 
+
+function checkHighlight() {
+  if (highlight_town() === true) {
+    console.log('building is highlighted');
+  }
+
+  if (highlight_town() === false) {
+    console.log('building is not highlighted');
+  }
+}
+
+document.getElementById("app").addEventListener("load", checkHighlight);
 
