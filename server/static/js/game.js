@@ -1853,13 +1853,13 @@ function highlight_town() {
   }
 }
 
-if (highlight_town() === true) {
-  console.log('building is highlighted');
-}
+// if (highlight_town() === true) {
+//   console.log('building is highlighted');
+// }
 
-if (highlight_town() === false) {
-  console.log('building is not highlighted');
-}
+// if (highlight_town() === false) {
+//   console.log('building is not highlighted');
+// }
 
 swiper.on('slideChange', highlight_town);
 
