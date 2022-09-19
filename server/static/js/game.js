@@ -1838,26 +1838,20 @@ function highlight_town() {
     game.removeHighlightFromBuilding(0, "b1")
     game.removeHighlightFromBuilding(0, "b2")
     game.highlightBuilding(0, "b0")
-    return true;
   } else if (this.activeIndex === 2) {
     game.removeHighlightFromBuilding(0, "b0")
     game.removeHighlightFromBuilding(0, "b2")
-    game.highlightBuilding(0, "b1")
-    return true; 
+    game.highlightBuilding(0, "b1") 
   } else if (this.activeIndex === 4) {
     game.removeHighlightFromBuilding(0, "b0")
     game.removeHighlightFromBuilding(0, "b1")
-    game.highlightBuilding(0, "b2")
-    return true;
+    game.highlightBuilding(0, "b2") 
    } else {
     game.removeHighlightFromBuilding(0, "b0")
     game.removeHighlightFromBuilding(0, "b1")
     game.removeHighlightFromBuilding(0, "b2") 
-    return false;
   }
 }
-
-swiper.on('slideChange', highlight_town);
 
 if (highlight_town() === true) {
   console.log('building is highlighted');
@@ -1867,6 +1861,7 @@ if (highlight_town() === false) {
   console.log('building is not highlighted');
 }
 
+swiper.on('slideChange', highlight_town);
 
 function showPlay (){
   document.getElementById('playbutton').style.display = "block" ;
