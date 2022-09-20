@@ -3,6 +3,7 @@ let menuButton = document.querySelector('#menu-button');
 let closeButton = document.querySelector('#close-button');
 let menuAboutLink = document.querySelector('#menu-about-link');
 let menuUpdatesLink = document.querySelector('#menu-updates-link');
+let menuDALILink = document.querySelector('#menu-DALI-link');
 
 
 function showMenu() {
@@ -38,6 +39,9 @@ menuUpdatesLink.onclick = function () {
     hideMenu()
 };
 
+menuDALILink.onclick = function () {
+    hideMenu()
+};
 
 // Wrap every letter in a span
 // var textWrapper = document.querySelector('.ml6 .letters');
@@ -148,4 +152,19 @@ menuUpdatesLink.onclick = function () {
     }
 
 })();
+
+window.addEventListener("scroll", appear);
+
+function appear(){
+  if (document.documentElement.scrollTop > 20)
+    {document.getElementById("back-top-button").style = "display: block;"}
+  else
+    {document.getElementById("back-top-button").style = "display: none;"}
+};
+
+function goToTop(){
+  document.documentElement.scrollTop = 0
+};
+
+document.getElementById("back-top-button").addEventListener("click", goToTop);
 
