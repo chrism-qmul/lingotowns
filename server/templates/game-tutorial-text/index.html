@@ -3,15 +3,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <head>
+    <script src="https://www.googleoptimize.com/optimize.js?id=OPT-MPCCLF3"></script>
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X1Z33FZBD9"></script>
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-X1Z33FZBD9"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
 
         gtag('config', 'G-X1Z33FZBD9');
-    </script>
+    </script> -->
+    <!-- <script src="/js/riveted.min.js"></script>
+    <script>riveted.init();</script> -->
+    <!-- Google Tag Manager -->
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-N7B3K6B');</script>
+    <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <link rel="stylesheet" src="/css/style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
@@ -23,7 +36,7 @@
     <script src="/js/array.polyfill.js"></script>
 
 
-    <title>Lingotowns</title>
+    <title>Onboarding Text</title>
 </head>
 
 <style>
@@ -763,7 +776,7 @@
         /* margin: 2%; */
         /* box-sizing: border-box; */
         text-decoration: none;
-        font-family: din-round,sans-serif;
+        font-family: din-round, sans-serif;
         text-transform: uppercase;
         font-weight: 400;
         color: #FFFFFF;
@@ -855,12 +868,16 @@
             }
         }
 
-        
+
 
     }
 </style>
 
 <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N7B3K6B" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <!-- <h1 id="maintitle" class="beforeload">LingoTowns</h1> -->
     <canvas id="app" width="500" height="500"></canvas>
     <canvas style="border:1px solid black;position:absolute;bottom:2vh;right:2vh;background:white;z-index:100;"
@@ -971,17 +988,17 @@
     <script src="https://cdn.socket.io/3.1.3/socket.io.min.js"
         integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh"
         crossorigin="anonymous"></script>
+    <script type="module" src="/js/game.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
     <script type='text/javascript'>
         function setCookie(key, value) {
             document.cookie = key + "=" + value + "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
         }
         $("#playbutton").click(function () {
-            setCookie("intro_complete", "text");
+            setCookie("intro_complete");
             window.location.href = 'https://lingotowns.com/play';
         });
     </script>
-    <script type="module" src="/js/game.js"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.4.5/swiper-bundle.min.js'></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-interactivity@latest/dist/lottie-interactivity.min.js"></script>
