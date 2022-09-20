@@ -1873,15 +1873,15 @@ document.getElementById('swiper-button-prev').onclick = function() {hidePlay()};
 swiper.on('reachEnd', showPlay); 
 
 
-function checkHighlight() {
-  if (highlight_town() === true) {
-    console.log('building is highlighted');
-  }
+// function checkHighlight() {
+//   if (highlight_town() === true) {
+//     console.log('building is highlighted');
+//   }
 
-  if (highlight_town() === false) {
-    console.log('building is not highlighted');
-  }
-}
+//   if (highlight_town() === false) {
+//     console.log('building is not highlighted');
+//   }
+// }
 
-document.getElementById("app").addEventListener("load", checkHighlight);
+// document.getElementById("app").addEventListener("load", checkHighlight);
 
