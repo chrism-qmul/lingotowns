@@ -24,11 +24,12 @@
 
         gtag('config', 'G-X1Z33FZBD9');
     </script> -->
-    <script src="/js/riveted.min.js"></script>
-    <script>riveted.init();</script>
+    <!-- <script src="/js/riveted.min.js"></script>
+    <script>riveted.init();</script> -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/css/homepage.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
     <link rel="stylesheet" href="https://use.typekit.net/frj5pjr.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
@@ -92,13 +93,19 @@
                     <a id="menu-about-link" href="#about">
                         <div class="menu-items">
                             <li>About<img class="menu-next" src="http://phrasefarm.org/img/menu-next.svg"
-                                    alt="Speaker_Icon.svg" title="menu next icon"></li>
+                                     title="menu next icon"></li>
                         </div>
                     </a>
                     <a id="menu-updates-link" href="#updates">
                         <div class="menu-items">
                             <li>Updates<img class="menu-next" src="http://phrasefarm.org/img/menu-next.svg"
-                                    alt="Speaker_Icon.svg" title="menu next icon"></li>
+                                     title="menu next icon"></li>
+                        </div>
+                    </a>
+                    <a id="menu-DALI-link" href="#DALI">
+                        <div class="menu-items">
+                            <li>The Science of DALI<img class="menu-next" src="http://phrasefarm.org/img/menu-next.svg"
+                                     title="menu next icon"></li>
                         </div>
                     </a>
                     <!-- <a id="menu-section-link" href="#contact"><div class="menu-items">
@@ -132,6 +139,7 @@
                     </g>
                 </svg></button></div>
     </div>
+    <a id="back-top-button"></a>
     <header class="w3-container w3-red w3-center">
         <div class="lingobannerwrapper">
             <div class="lingobanner-text-wrapper">
@@ -229,12 +237,54 @@
 
 
 
-    <div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
-        <h1 class="w3-margin w3-xlarge">Find out more about DALI <a href="https://dali.eecs.qmul.ac.uk/">here</a></h1>
+    <div id="DALI" class="w3-row-padding w3-padding-64 w3-container">
+        <div class="w3-content">
+            <h1>DALI: Disagreements and Language Interpretation</h1>
+            <!-- <h5 class="w3-padding-32">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+            ullamco laboris nisi ut aliquip ex ea commodo consequat.</h5> -->
+
+            <p class="w3-text-grey2">Natural language expressions are supposed to be unambiguous in context. Yet more
+                and more examples of use of expressions that are ambiguous in context, yet felicitous and rhetorically
+                unmarked, are emerging. In previous work, we demonstrated that ambiguity in anaphoric reference is
+                ubiquitous, through the study of disagreements in annotation, that we pioneered in CL. Since then,
+                additional cases of ambiguous anaphoric reference have been found; and similar findings have been made
+                for other aspects of language interpretation, including wordsense disambiguation, and even
+                part-of-speech tagging. Using the Phrase Detectives Game-With-A-Purpose to collect massive amounts of
+                judgments online, we found that up to 30% of anaphoric expressions in our data are ambiguous. These
+                findings raise a serious challenge for computational linguistics (CL), as assumptions about the
+                existence of a single interpretation in context are built in the dominant methodology, that depends on a
+                reliably annotated gold standard.
+                <br>
+                <br>
+
+                The goal of DALI is to tackle this fundamental issue of disagreements in interpretation by using
+                computational methods for collecting and analysing such disagreements, some of which already exist but
+                have never before been applied in linguistics on a large scale, some we will develop from scratch. First
+                of all, we will develop more advanced games-with-a-purpose to collect massive amounts of data about
+                anaphora from people playing a game.
+                Secondly, we will use Bayesian models of annotation, widely used in epidemiology but not in linguistics,
+                to analyse such data and identify genuine ambiguities; doing this for anaphora will require novel
+                methods. Third, we will use these data to revisit current theories about anaphoric expressions that do
+                not seem to cause infelicitousness when ambiguous. Finally, we intend to develop the first supervised
+                approach to anaphora resolution that does not require a gold standard as a blueprint for other areas.
+
+            </p>
+            <h1 class="w3-margin w3-large">Find out more about DALI <a href="https://dali.eecs.qmul.ac.uk/"
+                    style="text-decoration: underline;">here</a></h1>
+        </div>
+
     </div>
     </div>
     <!-- Footer -->
-    <footer class="w3-container w3-padding-64 w3-center w3-opacity">
+    
+    <footer class="footer">
+        <div class="footer-logos">
+            <a href="https://erc.europa.eu/" target="_blank"><img src="http://dali.eecs.qmul.ac.uk/img/logo_EU.png"></a>
+            <a href="https://erc.europa.eu/" target="_blank"><img src="http://dali.eecs.qmul.ac.uk/img/logo_ERC.png"></a>
+            <a href="https://www.qmul.ac.uk/" class="mobile-hidden" target="_blank"><img class="logoQMUL" src="http://dali.eecs.qmul.ac.uk/img/logoQMUL_black.png"></a>
+            <a href="https://www.essex.ac.uk/" class="mobile-hidden" target="_blank"><img class="logoEssex" src="http://dali.eecs.qmul.ac.uk/img/logoEssex_black.png"></a>
+        </div>
         <div class="w3-xlarge w3-padding-32">
             <a class="fa fa-facebook-official w3-hover-opacity" href="https://www.facebook.com/gamesandnlp"></a>
             <!-- <a class="fa fa-instagram w3-hover-opacity" href=""></a> -->
