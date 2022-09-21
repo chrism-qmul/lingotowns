@@ -280,6 +280,9 @@ def forcelevelup():
     uuid = session['auth']['uuid']
     user_update = persistence.load_data_for_user(uuid, session=db.session)
     create_next_level_for(uuid, next_level(user_update))
+    user_update = persistence.load_data_for_user(uuid, session=db.session)
+    send_update(user_update, uuid)
+    #send_update_for_user(uuid)
     return redirect("/")
 
 @app.route("/play-game")

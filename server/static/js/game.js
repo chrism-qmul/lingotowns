@@ -1799,6 +1799,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   game.onUpdateData(update_progression);
+  var last_level_count = null;
+  game.onUpdateData(function(data) {
+    console.log("level change", last_level_count, data.levels.length);
+    last_level_count = data.levels.length
+  });
   window.game = game;
   document.addEventListener('regionchange', function(ev) {
     update_progression();
