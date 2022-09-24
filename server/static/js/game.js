@@ -1699,7 +1699,7 @@ class Game {
             for(var building = 0; building < this.world.locations[level].towns[town].buildings.length; building++) {
               if (level > 0 && position.equals(this.world.locations[level].towns[town].buildings[building].position)) {
                 //console.log("the data", this.world, this.data, level, town);
-                return this.data.levels[level-1].towns[town];
+                return this.data.levels[level].towns[town];
               }
             }
           }
