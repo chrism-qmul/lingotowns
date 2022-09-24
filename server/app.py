@@ -129,6 +129,16 @@ game_url_builders = {"farm": lambda auth_token, doc_id: "https://phrasefarm.org/
         "food": lambda auth_token, doc_id:  "https://cafeclicker.com/?auth_token={auth_token}&from=lingotowns#/game/{doc_id}".format(auth_token=auth_token, doc_id=doc_id),
         "detectives": lambda a,b:  "https://anawiki.essex.ac.uk/phrasedetectives/"}
 
+@socketio.on('forcelevelup')
+def socket_force_level_up(auth=None):
+    app.logger.info("force level up requested " + request.sid)
+    app.logger.info("***** do we have session?? %s",session.get("auth"))
+    auth = session['auth']
+    if auth:
+        uuid = auth['uuid']
+        if uuid:
+            force_level_up(uuid)
+
 @socketio.on('connect')
 def connect(auth=None):
     print("someone connected! " + request.sid)
@@ -142,6 +152,7 @@ def connect(auth=None):
         if uuid:
             join_room(uuid)
             send_update_for_user(uuid)
+
 
 @socketio.on('disconnect')
 def disconnect():
@@ -275,13 +286,15 @@ def tutorial_complete():
     create_next_level_for(uuid, next_level(user_update))
     return redirect("/")
 
-@app.route("/forcelevelup")
-def forcelevelup():
-    uuid = session['auth']['uuid']
+def force_level_up(uuid):
     user_update = persistence.load_data_for_user(uuid, session=db.session)
     create_next_level_for(uuid, next_level(user_update))
     user_update = persistence.load_data_for_user(uuid, session=db.session)
     send_update(user_update, uuid)
+
+@app.route("/forcelevelup")
+def forcelevelup():
+    force_level_up(session['auth']['uuid'])
     #send_update_for_user(uuid)
     return redirect("/")
 

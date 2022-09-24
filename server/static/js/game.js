@@ -1128,14 +1128,14 @@ class Game {
 
   connectToServer() {
     //const socket = io("wss://lingotowns.com/");
-    const socket = io();
+    this.socket = io();
     var on_data_loaded;
     const data_loaded = new Promise(function(resolve, reject) { 
       on_data_loaded = resolve;
     });
     const game = this;
-    socket.on("connect", () => {
-      socket.on("message", data => {
+    this.socket.on("connect", () => {
+      this.socket.on("message", data => {
           game.updateData(data);
           on_data_loaded(); 
 //          this.addLevel(2);
@@ -1143,7 +1143,7 @@ class Game {
     });
 
     // handle the event sent with socket.emit()
-    socket.on("greetings", (elem1, elem2, elem3) => {
+    this.socket.on("greetings", (elem1, elem2, elem3) => {
         console.log(elem1, elem2, elem3);
         });
     return data_loaded;
@@ -1434,6 +1434,9 @@ class Game {
         case 68: //d
           game.toggleDebug();
           break;
+        case 85: //u
+          game.forceLevelUp();
+          break;
         case 219: //[
           game.increaseFog();
           break;
@@ -1441,8 +1444,8 @@ class Game {
           game.liftFog();
           break;
         default:
-          if (game.unbound_key_alert) {
-            console.log("unbound key: " + ev.keyCode);
+          if (game.debug) {
+            console.warn("unbound key: " + ev.keyCode);
           }
       }
     });
@@ -1494,6 +1497,14 @@ class Game {
     this.context.fillStyle = "#FFFFFF";
     this.context.fillText("Level: " + this.data.levels.length, this.canvas.width-20, 50);
     this.context.restore();
+  }
+
+  forceLevelUp() {
+    if (this.debug) {
+      this.socket.emit('forcelevelup');
+    } else {
+      console.warn("attempted debug function outside debug mode")
+    }
   }
 
   drawDebugInfo(elapsed) {
