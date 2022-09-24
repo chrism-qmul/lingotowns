@@ -1519,9 +1519,9 @@ class Game {
       var s = this.toScreen(coords);
       lines.push("");
       lines.push("TRANSLATIONS")
-      lines.push("World Translate: " + this.worldTranslate.x + "x" + this.worldTranslate.y);
+      lines.push("World Translate: " + this.worldTranslate.x.toFixed(2) + "x" + this.worldTranslate.y.toFixed(2));
       var screenTranslate = this.toScreen(this.worldTranslate);
-      lines.push("Screen Translate: " + screenTranslate.x + "x" + screenTranslate.y);
+      lines.push("Screen Translate: " + screenTranslate.x.toFixed(2) + "x" + screenTranslate.y.toFixed(2));
       lines.push("");
       lines.push("WORLD COORDINATES")
       var worldTopLeft = this.worldTranslate.clone().mult(-1);
