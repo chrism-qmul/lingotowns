@@ -1066,11 +1066,17 @@ class Game {
     this.on_update_data.push(fn);
   }
 
-  updateData(data) {
+  updateData(d) {
     this.world = new World("testa", true);
-    this.data = data;
-    this.data.levels.unshift({"towns": [this.tutorialTownInfo()]});
-    console.log(data);
+    this.data = d;
+    try {
+       if (this.data.levels[0].towns[0].document_id != "tutorial") {
+         throw 'Missing tutorial';
+       }
+    } catch(err) {
+      this.data.levels.unshift({"towns": [this.tutorialTownInfo()]});
+    }
+    console.log(d);
     //for(var level_idx = this.world.levels()-1; level_idx < this.data.levels.length; level_idx++) {
     for(var level_idx = 0; level_idx < this.data.levels.length; level_idx++) {
       const towns = this.data.levels[level_idx].towns;
@@ -1793,6 +1799,11 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   game.onUpdateData(update_progression);
+  var last_level_count = null;
+  game.onUpdateData(function(data) {
+    console.log("level change", last_level_count, data.levels.length);
+    last_level_count = data.levels.length
+  });
   window.game = game;
   document.addEventListener('regionchange', function(ev) {
     update_progression();
