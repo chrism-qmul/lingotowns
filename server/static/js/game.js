@@ -11,7 +11,7 @@ minimapcanvas.height = Math.min(smallestdim, 200);
 var worldWidth = 20;
 var worldHeight = 20;
 var prng = new PRNG("test1ab");
-console.log("random", prng.random(), prng.random());
+const debugString = "🐞 debug mode";
 
 function easeInEaseOut(t) {
   return (t*t)/(2.0 * (t*t - t) + 1.0);
@@ -452,7 +452,6 @@ class Game {
     this.locations = [];
     this.world = new World("uuid?");
     //this.world.addLevel(1);
-    console.log(this.world.regions);
     //highlight buildings for tutorial
     this.highlighted_buildings = [];
     //this.building_placement = 
@@ -588,14 +587,21 @@ class Game {
   }
 
   selectobject() {
+    const debugSelectObjectString = "👆 select object";
     if (this.mouseGridPosition) {
       const mousepos = this.mouseGridPosition.floor();
       const tile = this.world.get(mousepos);
-      console.log("no action clicking on", this.mouseGridPosition, tile);
+      //console.log("no action clicking on", this.mouseGridPosition, tile);
+    }
+    const townPosition = this.nearCompass(this.mouseScreenPosition);
+    if (townPosition) {
+      this.updateFocus(townPosition, 1.5);
+      return;
     }
     if (this.mouseGridPosition) {
       const building = this.isNearBuilding(this.mouseGridPosition);
       if(building) {
+        console.groupCollapsed(debugSelectObjectString);
         const town = this.findTownForBuildingPosition(building.position);
         let game = null;
         var complete = false;
@@ -614,17 +620,28 @@ class Game {
             break;
         }
         if (town.document_id == "tutorial") {
-          window.location.assign("/play-tutorial?game=" + game)
+          if (this.debug) {
+            console.info("would redirect to tutorial ", game);
+          } else {
+            window.location.assign("/play-tutorial?game=" + game)
+          }
         } else {
           if (!complete) {
-            window.location.assign("/play-game?game=" + game + "&document_id=" + town.document_id)
+            if (this.debug) {
+              console.info("would redirect to game ", game);
+              console.dir(town);
+            } else {
+              window.location.assign("/play-game?game=" + game + "&document_id=" + town.document_id)
+            }
+          } else {
+            if (this.debug) {
+              console.info("asked to play, but already complete ", game);
+              console.dir(town)
+            }
           }
         }
+        console.groupEnd(debugSelectObjectString);
       }
-    }
-    const townPosition = this.nearCompass(this.mouseScreenPosition);
-    if (townPosition) {
-      this.updateFocus(townPosition, 1.5);
     }
   }
 
@@ -646,6 +663,8 @@ class Game {
 
   toggleDebug() {
     this.debug = !this.debug;
+    this.requireDraw();
+    console.info(debugString + ": " + (this.debug ? "on" : "off"));
   }
 
   async preload() {
@@ -857,8 +876,15 @@ class Game {
     const midpoint = this.worldPointAtScreenCenter();
     const currentregion = this.world.regions.get(midpoint);
     if (this.lastregion != currentregion) {
+      const changing = "🚀 changing region";
+      const changinglbl = changing + ": " + this.lastregion + " → " + currentregion;
+      console.groupCollapsed(changinglbl);
+      if (this.lastregion !== null) {
+        this.logTownInformation(this.lastregion);
+      }
+      this.logTownInformation(currentregion);
+      console.groupEnd(changinglbl);
       this.lastregion = currentregion;
-      console.log(this.lastregion);
       document.dispatchEvent(new CustomEvent('regionchange', {detail: {region: currentregion}}));
     }
     region = this.regions[currentregion%this.regions.length];
@@ -1041,8 +1067,9 @@ class Game {
     let previous_world_position = this.worldPointAtScreenCenter();
     const currentWorldPosition = new Vec2(game.worldTranslate);
 
-    console.log("", previous_world_position,"->",worldTarget);
+    const compassMoveLbl = "🧭 compass move: " + previous_world_position + " → "  + worldTarget;
  //   this.dragging = true;
+    console.groupCollapsed(compassMoveLbl);
     document.body.classList.add('dragging');
     animate(1000, function(pc) {
       game.screenScale = previous_scale.lerp(game.zoomLevel(0.75), pc);
@@ -1059,7 +1086,9 @@ class Game {
 //    this.dragging = false;
     document.body.classList.remove('dragging');
       game.updateNearEdgeOfPlayArea();
-    game.requireDraw();}); //show buildings when zoomed in
+    game.requireDraw();
+    console.groupEnd(compassMoveLbl);
+}); //show buildings when zoomed in
   }
 
   onUpdateData(fn) {
@@ -1076,32 +1105,37 @@ class Game {
     } catch(err) {
       this.data.levels.unshift({"towns": [this.tutorialTownInfo()]});
     }
-    console.log(d);
+    const updateLabel = "⬇ update received";
+    const townDataLabel = "🏘 town data";
+    console.groupCollapsed(updateLabel);
+    console.groupCollapsed(townDataLabel);
+    game.logTownInformation();
+    console.groupEnd(townDataLabel);
     //for(var level_idx = this.world.levels()-1; level_idx < this.data.levels.length; level_idx++) {
     for(var level_idx = 0; level_idx < this.data.levels.length; level_idx++) {
       const towns = this.data.levels[level_idx].towns;
       this.world.addLevel(towns.length);
     }
+    this.world.calculate();
     this.updateTownOverlays();
     this.updateFogLevel(10 + (22*(this.data.levels.length)));
     for(var i = 0; i < this.on_update_data.length; i++) {
       this.on_update_data[i](this.data);
     }
+    console.groupEnd(updateLabel);
     this.requireDraw();
   }
 
   connectToServer() {
     //const socket = io("wss://lingotowns.com/");
-    const socket = io();
+    this.socket = io();
     var on_data_loaded;
     const data_loaded = new Promise(function(resolve, reject) { 
       on_data_loaded = resolve;
     });
     const game = this;
-    socket.on("connect", () => {
-      socket.on("message", data => {
-        console.log("loaded data", data);
-        //console.log(data);
+    this.socket.on("connect", () => {
+      this.socket.on("message", data => {
           game.updateData(data);
           on_data_loaded(); 
 //          this.addLevel(2);
@@ -1109,7 +1143,7 @@ class Game {
     });
 
     // handle the event sent with socket.emit()
-    socket.on("greetings", (elem1, elem2, elem3) => {
+    this.socket.on("greetings", (elem1, elem2, elem3) => {
         console.log(elem1, elem2, elem3);
         });
     return data_loaded;
@@ -1175,7 +1209,8 @@ class Game {
     const worldTopRight = this.screenToMiniMap(new Vec2(this.canvas.width, 0));
     const worldBottomRight = this.screenToMiniMap(new Vec2(this.canvas.width, this.canvas.height));
     const worldBottomLeft = this.screenToMiniMap(new Vec2(0, this.canvas.height));
-
+/*
+    this.minimapcontext.save();
     this.minimapcontext.strokeStyle = "#FF0000";
     this.minimapcontext.beginPath();
     this.minimapcontext.moveTo(worldTopLeft.x, worldTopLeft.y);
@@ -1184,7 +1219,8 @@ class Game {
     this.minimapcontext.lineTo(worldBottomLeft.x, worldBottomLeft.y);
     this.minimapcontext.lineTo(worldTopLeft.x, worldTopLeft.y);
     this.minimapcontext.stroke();
-    this.minimapcontext.strokeStyle = "#000000";
+    this.minimapcontext.restore();
+*/
   }
 
 
@@ -1351,7 +1387,6 @@ class Game {
     addEventListener('mousedown', function(ev){
       //klass.onMouseMove(ev);
       klass.dragging = true;
-      console.log("mouse down!");
       document.body.classList.add('dragging');
     });
     addEventListener('click', function(ev){
@@ -1366,7 +1401,9 @@ class Game {
     addEventListener('wheel', function(ev) {
       const movement = new Vec2(ev.deltaX, ev.deltaY).toCartesian().mult(-1);
       game.screenMove(movement);
-      ev.preventDefault();
+      try {
+        ev.preventDefault();
+      } catch {}
     });
     addEventListener('keydown', function(ev)  {
       switch(ev.keyCode) {
@@ -1397,6 +1434,9 @@ class Game {
         case 68: //d
           game.toggleDebug();
           break;
+        case 85: //u
+          game.forceLevelUp();
+          break;
         case 219: //[
           game.increaseFog();
           break;
@@ -1404,7 +1444,9 @@ class Game {
           game.liftFog();
           break;
         default:
-          console.log("unbound key: " + ev.keyCode);
+          if (game.debug) {
+            console.warn("unbound key: " + ev.keyCode);
+          }
       }
     });
   }
@@ -1457,39 +1499,55 @@ class Game {
     this.context.restore();
   }
 
+  forceLevelUp() {
+    if (this.debug) {
+      this.socket.emit('forcelevelup');
+    } else {
+      console.warn("attempted debug function outside debug mode")
+    }
+  }
+
   drawDebugInfo(elapsed) {
     var lines = [];
+    const panelWidth = 200;
     this.context.save()
     this.context.fillStyle = "rgba(0, 0, 0, 0.8)";
-    this.context.fillRect(this.canvas.width-150, 0, 150, this.canvas.height);
+    this.context.fillRect(this.canvas.width-panelWidth, 0, panelWidth, this.canvas.height);
     this.context.restore();
-    lines.push("DEBUG (d to close)");
+    lines.push(debugString + " (d to close)");
+      lines.push("");
+    lines.push("FPS: " + Math.round(1/(elapsed / 1000.0)));
     if (this.mouseGridPosition) {
       this.context.textAlign = "right";
       let coords = this.mouseGridPosition.floor();
+      lines.push("");
+      lines.push("MOUSE COORDINATES")
       lines.push("Mouse World Position: " + coords.x + "x" + coords.y);
-      lines.push("Mouse World Mag: " + coords.magnitude());
+      lines.push("Mouse World Mag: " + coords.magnitude().toFixed(2));
       var scr = this.toScreen(coords);
       this.drawCircle(scr);
-      lines.push("Mouse Screen Position: " + scr.x + "x" + scr.y);
+      lines.push("Mouse Screen Position: " + scr.x.toFixed(2) + "x" + scr.y.toFixed(2));
       var s = this.toScreen(coords);
-      lines.push("World Translate: " + this.worldTranslate.x + "x" + this.worldTranslate.y);
+      lines.push("");
+      lines.push("TRANSLATIONS")
+      lines.push("World Translate: " + this.worldTranslate.x.toFixed(2) + "x" + this.worldTranslate.y.toFixed(2));
       var screenTranslate = this.toScreen(this.worldTranslate);
-      lines.push("Screen Translate: " + screenTranslate.x + "x" + screenTranslate.y);
+      lines.push("Screen Translate: " + screenTranslate.x.toFixed(2) + "x" + screenTranslate.y.toFixed(2));
+      lines.push("");
+      lines.push("WORLD COORDINATES")
       var worldTopLeft = this.worldTranslate.clone().mult(-1);
-      lines.push("TL World: " + worldTopLeft.x + "x" + worldTopLeft.y);
+      lines.push("TL World: " + worldTopLeft.x.toFixed(2) + "x" + worldTopLeft.y.toFixed(2));
       var worldBottomRight = this.toWorld(new Vec2(this.canvas.width, this.canvas.height));
       //var worldRight = this.toWorld(screenTranslate.clone().add(new Vec2(this.canvas.width, 0)))
-      lines.push("BR World: " + worldBottomRight.x + "x" + worldBottomRight.y);
+      lines.push("BR World: " + worldBottomRight.x.toFixed(2) + "x" + worldBottomRight.y.toFixed(2));
       var worldTopRight = this.toWorld(new Vec2(this.canvas.width, 0));
-      lines.push("TR World: " + worldTopRight.x + "x" + worldTopRight.y);
+      lines.push("TR World: " + worldTopRight.x.toFixed(2) + "x" + worldTopRight.y.toFixed(2));
       //this.context.strokeRect(s.x-25, s.y, 50, 25);
     }
-    lines.push("FPS: " + Math.round(1/(elapsed / 1000.0)));
     this.context.save();
     this.context.fillStyle = "#FFFFFF";
     for(var i = 0; i < lines.length; i++) {
-      this.context.fillText(lines[i], this.canvas.width-5, (i+1)*15, 130);
+      this.context.fillText(lines[i], this.canvas.width-5, (i+1)*15, panelWidth-20);
     }
     this.context.restore();
   }
@@ -1555,7 +1613,6 @@ class Game {
   addTownSummary(townInformation, townposition) {
     const game = this;
     const gameoverlay = document.createElement("div");
-    console.log(townInformation);
     //this.region_by_name[townInformation.region]
     const regionIdx = this.world.regions.get(townposition,0);
     const regionname = townInformation.region;
@@ -1653,7 +1710,7 @@ class Game {
             for(var building = 0; building < this.world.locations[level].towns[town].buildings.length; building++) {
               if (level > 0 && position.equals(this.world.locations[level].towns[town].buildings[building].position)) {
                 //console.log("the data", this.world, this.data, level, town);
-                return this.data.levels[level-1].towns[town];
+                return this.data.levels[level].towns[town];
               }
             }
           }
@@ -1669,7 +1726,6 @@ class Game {
     for(var i = 0; i < towns.length; i++) {
       var townInformation = this.getTownInformation(i);
       if (townInformation) {
-        console.log("town information: ", townInformation);
         const townSummaryElement = this.addTownSummary(townInformation, towns[i].position);
         game.elementTracksWorld(townSummaryElement, towns[i].position);
       }
@@ -1681,6 +1737,29 @@ class Game {
     if (!this.isLoaded) {
       document.body.classList.add("loaded");
       this.isLoaded = true;
+    }
+  }
+
+  logTownInformation(regionFilter) {
+    const columns = ["level", "document_id", "author", "document_name", "total_completion", "food_completion", "farm_completion", "library_completion", "region", "regionIdx"];
+    var tableData = this.data.levels.reduce(function(acc, cur, idx) {
+        return acc.concat(cur.towns.map(function(town) {
+              try {
+              town.farm_completion = town.games.farm.completion;
+              } catch  {}
+              try {
+              town.food_completion = town.games.food.completion;
+              } catch  {}
+              try {
+              town.library_completion = town.games.library.completion;
+              } catch  {}
+              town.level = idx; 
+              return town}));}, []);
+    tableData = tableData.map(function(town, idx) {town.regionIdx = idx;return town;});
+    if (regionFilter === null || regionFilter === undefined) {
+      console.table(tableData, columns);
+    } else {
+      console.table(tableData.filter(function(region) {return (region.regionIdx == regionFilter);}), columns);
     }
   }
 
@@ -1717,11 +1796,9 @@ class Game {
       this.drawCircle(this.toScreen(new Vec2(-16, 22)));
       */
     }
-    /*
     if (this.debug) {
       this.drawDebugInfo(elapsed); 
     }
-    */
     this.lastTS = ts;
     window.requestAnimationFrame(this.draw.bind(this));
   }
@@ -1801,8 +1878,10 @@ document.addEventListener('DOMContentLoaded', function() {
   game.onUpdateData(update_progression);
   var last_level_count = null;
   game.onUpdateData(function(data) {
-    console.log("level change", last_level_count, data.levels.length);
-    last_level_count = data.levels.length
+    if (last_level_count != data.levels.length) {
+      console.log("🏆 level change", last_level_count, data.levels.length);
+      last_level_count = data.levels.length
+    }
   });
   window.game = game;
   document.addEventListener('regionchange', function(ev) {
@@ -1836,7 +1915,7 @@ var swiper = new Swiper('.swiper-container', {
   }
 });
 
-swiper.mousewheel.disable();
+//swiper.mousewheel.disable();
 
 function highlight_town() {
   if (this.activeIndex === 3) {
@@ -1872,7 +1951,7 @@ function hidePlay (){
 }
 
 
-document.getElementById('swiper-button-prev').onclick = function() {hidePlay()};
+//document.getElementById('swiper-button-prev').onclick = function() {hidePlay()};
 
 // swiper.on('slideChange', hidePlay); 
 swiper.on('reachEnd', showPlay); 
