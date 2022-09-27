@@ -25,10 +25,15 @@
     })(window, document, 'script', 'dataLayer', 'GTM-N7B3K6B');</script>
   <!-- End Google Tag Manager -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.min.js"
+    integrity="sha512-L6Z/YtIPQ7eU3BProP34WGU5yIRk7tNHk7vaC2dB1Vy1atz6wl9mCkTPPZ2Rn1qPr+vY2mZ9odZLdGYuaBk7dQ=="
+    crossorigin="anonymous"></script>
   <meta charset="UTF-8">
   <title>Onboarding Animation</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
   <link rel="stylesheet" href="/css/story.css">
+  <link href="https://fonts.googleapis.com/css2?family=Mouse+Memoirs&display=swap" rel="stylesheet">
+
 </head>
 
 <body>
@@ -36,21 +41,117 @@
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N7B3K6B" height="0" width="0"
       style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
-  <div id="playgame">
-    <div class="gamewrapper">
-      <div class="gameanimation">
-        <lottie-player id="player4" class="animation" src="/story/scene3.json" style="
-                --lottie-player-seeker-track-color: #f2f6ff;
-                --lottie-player-seeker-thumb-color: #f2f6ff;
-              " autoplay background="transparent" speed="1.5"></lottie-player>
-      </div>
+  <div class="mute-button-wrapper">
+    <div class="music-icon"><input type="checkbox" name="un-mute" id="un-mute">
+      <label for="un-mute" class="unmute" onclick="musicPlays()">
+        <img src="http://upload.wikimedia.org/wikipedia/commons/3/3f/Mute_Icon.svg" alt="Mute_Icon.svg"
+          title="Mute icon" style="height: 25px;">
+      </label>
+      <label for="un-mute" class="mute" onclick="musicStops()">
+        <img src="http://upload.wikimedia.org/wikipedia/commons/2/21/Speaker_Icon.svg" alt="Speaker_Icon.svg"
+          title="Unmute/speaker icon" style="height: 25px; fill:white;">
+      </label>
     </div>
   </div>
+  <div class="pagewrapper" id="Page1">
+    <div id="maintitle">LingoTowns</div>
 
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.4.5/swiper-bundle.min.js'></script>
-  <script src="/js/playgame.js"></script>
-  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-  <script src="https://unpkg.com/@lottiefiles/lottie-interactivity@latest/dist/lottie-interactivity.min.js"></script>
+    <!-- <audio>
+  <source src="/story/background.wav" type="audio/wav"> 
+  </audio> -->
+    <div id="game-container" class="game-container">
+      <div class="game-button-container"><button id="new-game-button" class="game-button" onclick="startStory()">New
+          Game</button></div>
+      <div class="game-button-container"><button class="game-button"
+          onclick="window.location.href='https://auth.tileattack.com/login?redirect=https://lingotowns.com/play'">Continue
+          Game</button></div>
+    </div>
+    <div id="swiper-container" class="swiper-container">
+      <div id="swiper-wrapper" class="swiper-wrapper">
+        <div class="slider-item swiper-slide">
+          <div class="slider-image-wrapper" id="image-wrapper1">
+            <lottie-player class="animation-player" id="player1" src="/story/scene1.json" style=" height: 100%; width: 100%; padding-top: 5%;
+                --lottie-player-seeker-track-color: #f2f6ff;
+                --lottie-player-seeker-thumb-color: #f2f6ff;
+              " background="transparent" speed="1" autoplay></lottie-player>
+          </div>
+          <div class="slider-item-content">
+            <h1 style="padding-bottom: 15%; padding-left: 5%;">Larunda</h1>
+            <div class="closeup-charac">
+              <lottie-player src="/story/closeup_pinkcharac.json" style=" height: 50%; width: 50%;
+            " background="transparent" speed="1.5"></lottie-player>
+            </div>
+            <span>
+              <p class="typewriter">Greetings! We are scientists from the future. The future world has significantly
+                regressed. Luckily, we discovered documents from the 21st century and we need your help in understanding
+                them.</p>
+            </span>
+          </div>
+        </div>
+        <div class="slider-item swiper-slide">
+          <div class="slider-image-wrapper" id="image-wrapper2">
+            <lottie-player class="animation-player" id="player2" src="/story/scene2.json" style=" height: 100%; width: 100%; padding-top: 5%;
+                --lottie-player-seeker-track-color: #f2f6ff;
+                --lottie-player-seeker-thumb-color: #f2f6ff;
+              " background="transparent" speed="1"></lottie-player>
+          </div>
+          <div class="slider-item-content">
+            <h1 style="padding-bottom: 15%; padding-left: 7%;">Echo</h1>
+            <div class="closeup-charac">
+              <lottie-player src="/story/closeup_orangecharac.json" style=" height: 50%; width: 50%;
+            " background="transparent" speed="1" autoplay bounce loop></lottie-player>
+            </div>
+            <p class="typewriter">Those documents are scattered all around our towns. We don't know what they mean but
+              we believe they hold valuable information to help our society progress.</p>
+          </div>
+        </div>
+        <div class="slider-item swiper-slide">
+          <div class="slider-image-wrapper" id="image-wrapper3">
+            <lottie-player class="animation-player" id="player3" src="/story/scene1.json" style=" height: 100%; width: 100%; padding-top: 5%;
+                --lottie-player-seeker-track-color: #f2f6ff;
+                --lottie-player-seeker-thumb-color: #f2f6ff;
+              " background="transparent" speed="1"></lottie-player>
+          </div>
+          <div class="slider-item-content">
+            <h1 style="padding-bottom: 15%; padding-left: 5%;">Larunda</h1>
+            <div class="closeup-charac">
+              <lottie-player src="/story/closeup_pinkcharac.json" style=" height: 50%; width: 50%; padding-bottom: 0%;
+            " background="transparent" speed="1.5" loop></lottie-player>
+            </div>
+            <p class="typewriter">Will you come and help us understand those documents?</p>
+          </div>
+
+          <div class="dialogueanswer">
+            <!-- <div class="no">
+              <button class="nobutton" onclick="window.location.href='/'">No</button>
+            </div> -->
+            <div class="yes">
+              <button class="yesbutton" onclick="window.location.href='playgame'">Yes</button>
+              <!-- <button class="yesbutton" id="yesButton" onclick="window.location.href='playgame'">Yes</button> -->
+
+            </div>
+          </div>
+        </div>
+
+        <div class="slider-buttons">
+          <button id="swiper-button-prev" class="swiper-button-prev"> &#10142; </button>
+          <button id="swiper-button-next" class="swiper-button-next"> &#10142; </button>
+        </div>
+        <div id="replay-icon" class="replay-icon">
+          <button class="replay-button" onclick="loopScene()">
+            <img src="/story/replay_icon.svg" alt="replay icon" height="50" width="50" />
+          </button>
+        </div>
+        <div class="swiper-pagination"></div>
+
+      </div>
+    </div>
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.4.5/swiper-bundle.min.js'></script>
+    <script src="/js/story.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-interactivity@latest/dist/lottie-interactivity.min.js"></script>
+
 </body>
 
 </html>
