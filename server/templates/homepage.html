@@ -93,19 +93,19 @@
                     <a id="menu-about-link" href="#about">
                         <div class="menu-items">
                             <li>About<img class="menu-next" src="http://phrasefarm.org/img/menu-next.svg"
-                                     title="menu next icon"></li>
+                                    title="menu next icon"></li>
                         </div>
                     </a>
                     <a id="menu-updates-link" href="#updates">
                         <div class="menu-items">
                             <li>Updates<img class="menu-next" src="http://phrasefarm.org/img/menu-next.svg"
-                                     title="menu next icon"></li>
+                                    title="menu next icon"></li>
                         </div>
                     </a>
                     <a id="menu-DALI-link" href="#DALI">
                         <div class="menu-items">
                             <li>The Science of DALI<img class="menu-next" src="http://phrasefarm.org/img/menu-next.svg"
-                                     title="menu next icon"></li>
+                                    title="menu next icon"></li>
                         </div>
                     </a>
                     <!-- <a id="menu-section-link" href="#contact"><div class="menu-items">
@@ -122,7 +122,13 @@
                     {% if logged_in %}
                     <a id='logout' class="logout-button"
                         href='https://auth.tileattack.com/logout?redirect=https://lingotowns.com/'>logout</a>
+                    {% else %}
+                    <a id='logout' class="logout-button"
+                        onclick="window.location.href='https://auth.tileattack.com/login?redirect=https://lingotowns.com/play'">login</a>
                     {% endif %}
+
+
+
                 </div>
             </div>
         </div>
@@ -277,13 +283,15 @@
     </div>
     </div>
     <!-- Footer -->
-    
+
     <footer class="footer">
         <div class="footer-logos">
             <a href="https://erc.europa.eu/" target="_blank"><img src="images/logo_EU.png"></a>
             <a href="https://erc.europa.eu/" target="_blank"><img src="images//logo_ERC.png"></a>
-            <a href="https://www.qmul.ac.uk/" class="mobile-hidden" target="_blank"><img class="logoQMUL" src="images/logoQMUL_black.png"></a>
-            <a href="https://www.essex.ac.uk/" class="mobile-hidden" target="_blank"><img class="logoEssex" src="images/logoEssex_black.png"></a>
+            <a href="https://www.qmul.ac.uk/" class="mobile-hidden" target="_blank"><img class="logoQMUL"
+                    src="images/logoQMUL_black.png"></a>
+            <a href="https://www.essex.ac.uk/" class="mobile-hidden" target="_blank"><img class="logoEssex"
+                    src="images/logoEssex_black.png"></a>
         </div>
         <div class="w3-xlarge w3-padding-32">
             <a class="fa fa-facebook-official w3-hover-opacity" href="https://www.facebook.com/gamesandnlp"></a>
