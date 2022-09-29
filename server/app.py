@@ -298,6 +298,11 @@ def forcelevelup():
     #send_update_for_user(uuid)
     return redirect("/")
 
+@app.route("/logout")
+def logout():
+    session.pop('auth', None)
+    return redirect("https://auth.tileattack.com/logout?redirect=https://lingotowns.com/")
+
 @app.route("/play-game")
 def playgame():
     game = request.args.get("game")
