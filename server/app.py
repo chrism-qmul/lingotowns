@@ -189,14 +189,10 @@ def info():
 def lingotowns():
     auth_token = request.args.get("auth_token")
     session_auth = session.get('auth')
-    username = session.get('auth',{}).get('username')
-    auth_missing = username is None
-    is_guest = username == "Guest"
-    logged_in = not auth_missing and not is_guest
     if auth_token:
         session['auth'] = auth_from_token(auth_token)
         session['auth_token'] = auth_token
-        return redirect("/", logged_in=logged_in)
+        return redirect("/")
     elif session_auth:
         if True:#session.get('seen_intro'):
             return render_template("game.html", auth_server=AUTH_SERVER, is_guest=(session_auth['username'] == "Guest"))
@@ -204,6 +200,13 @@ def lingotowns():
             return redirect("/intro")
     else:
         return redirect(AUTH_SERVER + "/login-as-guest?redirect=" + HOSTNAME)
+
+def lingotowns_menu():
+    username = session.get('auth',{}).get('username')
+    auth_missing = username is None
+    is_guest = username == "Guest"
+    logged_in = not auth_missing and not is_guest
+    return render_template("game.html", logged_in=logged_in)
     
 
 @app.route("/intro")
