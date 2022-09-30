@@ -743,7 +743,7 @@
             <div class="menu-footer">
                 <div style="padding-top: 3%; padding-left: 5%; height: 100%; width: 80%; position: relative;">
                     {% if logged_in %}
-                        <h6 style="margin-top: 5%; width: 20%; display: inline-block;">{{username}}</h6><a id='logout' class="logout-button" href='/logout'>logout</a>
+                        <h6 style="margin-top: 5%; width: 20%; display: inline-block;">{{auth.username}}</h6><a id='logout' class="logout-button" href='/logout'>logout</a>
                         {% else %}
                         <h6 style="margin-top: 5%; width: 20%; display: inline-block;">Guest</h6><a id='logout' class="logout-button"
                             onclick="window.location.href='https://auth.tileattack.com/login?redirect=https://lingotowns.com/play'">login</a>
