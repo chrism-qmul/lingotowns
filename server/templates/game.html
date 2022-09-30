@@ -75,6 +75,11 @@
         line-height: 1.5; */
     }
 
+    h6 {
+        font-family: "Lato", sans-serif;
+        font-weight: 400;
+        font-size: 15px;
+    }
 
 
     .towninformation {
@@ -728,14 +733,13 @@
 
             </div>
             <div class="menu-footer">
-                <div style="padding-top: 3%; padding-left: 5%; height: 100%; width: 100%; position: relative;">
+                <div style="padding-top: 3%; padding-left: 5%; height: 100%; width: 80%; position: relative;">
                     {% if logged_in %}
-                    <a id='logout' class="logout-button" href='/logout'>logout</a>
-                    {% else %}
-                    <a id='logout' class="logout-button"
-                        onclick="window.location.href='https://auth.tileattack.com/login?redirect=https://lingotowns.com/play'">login</a>
-                    {% endif %}
-
+                        <h6 style="margin-top: 5%; width: 20%; display: inline-block;">{{username}}</h6><a id='logout' class="logout-button" href='/logout'>logout</a>
+                        {% else %}
+                        <h6 style="margin-top: 5%; width: 20%; display: inline-block;">Guest</h6><a id='logout' class="logout-button"
+                            onclick="window.location.href='https://auth.tileattack.com/login?redirect=https://lingotowns.com/play'">login</a>
+                        {% endif %}
                 </div>
             </div>
         </div>
