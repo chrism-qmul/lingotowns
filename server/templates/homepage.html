@@ -120,6 +120,7 @@
                 <!-- <p style="float: left; padding-left: 10%;">Guest</p><p style="float: right; padding-right: 15%;">Login</p> -->
                 <div style="padding-left: 60%; height: 100%; width: 100%; position: relative;">
                     {% if logged_in %}
+                    <h6 style="margin-top: 5%; width: 20%; display: inline-block;">{{username}}</h6>
                     <a id='logout' class="logout-button" href='/logout'>logout</a>
                     {% else %}
                     <a id='logout' class="logout-button"

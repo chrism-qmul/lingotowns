@@ -228,7 +228,7 @@ def lingotowns():
         return redirect("/")
     elif session_auth:
         if True:#session.get('seen_intro'):
-            return render_template("game.html", auth_server=AUTH_SERVER, is_guest=(session_auth['username'] == "Guest"), logged_in=logged_in)
+            return render_template("game.html", auth_server=AUTH_SERVER, is_guest=(session_auth['username'] == "Guest"), logged_in=logged_in, username=session_auth['username'])
         else:
             return redirect("/intro")
     else:
@@ -268,7 +268,7 @@ def homepage():
     auth_missing = username is None
     is_guest = username == "Guest"
     logged_in = not auth_missing and not is_guest
-    return render_template("homepage.html", logged_in=logged_in)
+    return render_template("homepage.html", logged_in=logged_in, username=username)
 
 @app.route("/intro-text")
 def intro_text():
