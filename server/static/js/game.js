@@ -1881,8 +1881,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (last_level_count != data.levels.length) {
       console.log("🏆 level change", last_level_count, data.levels.length);
       last_level_count = data.levels.length
-    }
-    if (last_level_count > data.levels.length) {
+    } else if (last_level_count > data.levels.length) {
       console.log("🏆 level up");
     }
   });
