@@ -1882,6 +1882,9 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log("🏆 level change", last_level_count, data.levels.length);
       last_level_count = data.levels.length
     }
+    if (last_level_count > data.levels.length) {
+      console.log("🏆 level up");
+    }
   });
   window.game = game;
   document.addEventListener('regionchange', function(ev) {
