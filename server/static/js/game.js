@@ -1878,16 +1878,15 @@ document.addEventListener('DOMContentLoaded', function() {
   game.onUpdateData(update_progression);
   var last_level_count = null;
   game.onUpdateData(function(data) {
-    if (last_level_count != null) {
-      console.log("🏆 level up");
-   } else if (last_level_count != data.levels.length) {
+    if (last_level_count != data.levels.length) {
       console.log("🏆 level change", last_level_count, data.levels.length);
       last_level_count = data.levels.length
     }
-    // else if (last_level_count > data.levels.length) {
-    //   console.log("🏆 level up");
-    // }
   });
+//   if (last_level_count != null) {
+//     console.log("🏆 level up");
+//  } else 
+
 
   window.game = game;
   document.addEventListener('regionchange', function(ev) {
