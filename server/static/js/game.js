@@ -1114,9 +1114,6 @@ class Game {
     gtag("event", "level_start", {
       level_name: "The journey begins..."
     });
-    window.dataLayer.push(function() {
-      this.set("test_data_point", (Math.floor(math.random()*10)));
-    });
     // gtag("event", "some_event", {
     //   test_data_point: Math.floor(math.random()*10)
     // });
