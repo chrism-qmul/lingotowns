@@ -1111,6 +1111,9 @@ class Game {
     console.groupCollapsed(townDataLabel);
     game.logTownInformation();
     console.groupEnd(townDataLabel);
+    gtag("event", "level_start", {
+      level_name: "The journey begins..."
+    });
     //for(var level_idx = this.world.levels()-1; level_idx < this.data.levels.length; level_idx++) {
     for(var level_idx = 0; level_idx < this.data.levels.length; level_idx++) {
       const towns = this.data.levels[level_idx].towns;
