@@ -1114,9 +1114,12 @@ class Game {
     gtag("event", "level_start", {
       level_name: "The journey begins..."
     });
-    gtag("event", "some_event", {
-      test_data_point: Math.floor(math.random()*10)
+    window.dataLayer.push(function() {
+      this.set("test_data_point", (Math.floor(math.random()*10)));
     });
+    // gtag("event", "some_event", {
+    //   test_data_point: Math.floor(math.random()*10)
+    // });
     //for(var level_idx = this.world.levels()-1; level_idx < this.data.levels.length; level_idx++) {
     for(var level_idx = 0; level_idx < this.data.levels.length; level_idx++) {
       const towns = this.data.levels[level_idx].towns;
