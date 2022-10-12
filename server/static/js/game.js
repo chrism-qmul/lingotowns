@@ -1892,6 +1892,7 @@ document.addEventListener('DOMContentLoaded', function() {
       last_level_count = data.levels.length
     }
     dataLayer.push({
+      'event': 'level',
       'last_level': last_level_count,
       'current_level': data.levels.length,
   })
