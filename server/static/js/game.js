@@ -1114,9 +1114,9 @@ class Game {
     console.groupCollapsed(townDataLabel);
     game.logTownInformation();
     console.groupEnd(townDataLabel);
-    gtag("event", "level_start", {
-      level_name: "The journey begins..."
-    });
+    // gtag("event", "level_start", {
+    //   level_name: "The journey begins..."
+    // });
     // gtag("event", "some_event", {
     //   test_data_point: Math.floor(math.random()*10)
     // });
@@ -1891,7 +1891,12 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log("🏆 level change", last_level_count, data.levels.length);
       last_level_count = data.levels.length
     }
+    gtag("event", "player_level", {
+      'last_level': last_level_count,
+      'current_level': data.levels.length,
+    });
   });
+  
 //   if (last_level_count != null) {
 //     console.log("🏆 level up");
 //  } else 
