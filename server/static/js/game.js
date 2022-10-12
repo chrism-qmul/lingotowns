@@ -609,14 +609,17 @@ class Game {
           case "b0":
             complete = (town.games.food.completion == 100);
             game = "food"
+            dataLayer.push({'event': 'clicked_bakery'});
             break;
           case "b1":
             complete = (town.games.farm.completion == 100);
             game = "farm"
+            dataLayer.push({'event': 'clicked_farm'});
             break;
           case "b2":
             complete = (town.games.library.completion == 100);
             game = "library"
+            dataLayer.push({'event': 'clicked_library'});
             break;
         }
         if (town.document_id == "tutorial") {
