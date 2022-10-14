@@ -54,24 +54,34 @@ def next_level(update):
         return 0
     return len(update.get("levels", []))
 
-def create_random_next_level_for(uuid, level):
-    # TODO: this calls the task recommender and updates the database
-    documents = list(persistence.unseen_documents_for_user(db.session, uuid))[:random.randint(1, 3)]
-    persistence.add_level(db.session, uuid, documents, ["farm", "food"], level)
-    db.session.commit()
+def get_random_next_level_for(uuid):
+    collection = persistence.current_collection(db.session)
+    documents = list(persistence.unseen_documents_for_user(db.session, uuid, collection))[:random.randint(1, 3)]
+    return documents
 
-def create_mpa_next_level_for(uuid, level):
+def get_mpa_next_level_for(uuid):
     doc_hash = requests.get("https://recommender.tileattack.com/task/" + uuid).text
-    #persiste
     doc = persistence.get(db.session, persistence.Document, doc_hash=doc_hash)
-    if not doc:
-        return create_random_next_level_for(uuid, level)
-    persistence.add_level(db.session, uuid, [(doc.author, doc.title)], ["farm", "library", "food"], level)
+    return [(doc.author, doc.title)]
+    
+def get_next_level_for(uuid):
+    #return get_mpa_next_level_for(uuid) or get_random_next_level_for(uuid)
+    return get_random_next_level_for(uuid)
+
+def create_next_level_for(uuid, level):
+    send_analytics({"level": level}, uuid)
+    docs = get_next_level_for(uuid)
+    for doc in docs:
+        persistence.add_level(db.session, uuid, [doc], ["farm", "library", "food"], level)
     db.session.commit()
 
 def send_update(update, user):
     app.logger.info("[%s] %s", user, update)
-    socketio.send(update, to=str(user))
+    socketio.emit("game-update", update, to=str(user))
+
+def send_analytics(analytics, user):
+    app.logger.info("analytics: [%s] %s", user, analytics)
+    socketio.emit("game-analytics", analytics, to=str(user))
 
 def tutorials_completed_for_level(level, user_id):
     games = ["farm", "library", "food"]
@@ -81,7 +91,7 @@ def send_update_for_user(user_id):
     user_update = persistence.load_data_for_user(user_id, session=db.session)
     tutorials_complete = tutorials_completed_for_level(0, user_id).values()
     if all(tutorials_complete) and is_ready_for_new_level(user_update):
-        create_mpa_next_level_for(user_id, next_level(user_update))
+        create_next_level_for(user_id, next_level(user_update))
     user_update = persistence.load_data_for_user(user_id, session=db.session)
     send_update(user_update, user_id)
 
@@ -124,6 +134,16 @@ game_url_builders = {"farm": lambda auth_token, doc_id: "https://phrasefarm.org/
         "food": lambda auth_token, doc_id:  "https://cafeclicker.com/?auth_token={auth_token}&from=lingotowns#/game/{doc_id}".format(auth_token=auth_token, doc_id=doc_id),
         "detectives": lambda a,b:  "https://anawiki.essex.ac.uk/phrasedetectives/"}
 
+@socketio.on('forcelevelup')
+def socket_force_level_up(auth=None):
+    app.logger.info("force level up requested " + request.sid)
+    app.logger.info("***** do we have session?? %s",session.get("auth"))
+    auth = session['auth']
+    if auth:
+        uuid = auth['uuid']
+        if uuid:
+            force_level_up(uuid)
+
 @socketio.on('connect')
 def connect(auth=None):
     print("someone connected! " + request.sid)
@@ -137,6 +157,7 @@ def connect(auth=None):
         if uuid:
             join_room(uuid)
             send_update_for_user(uuid)
+
 
 @socketio.on('disconnect')
 def disconnect():
@@ -169,6 +190,15 @@ def auth_from_token(token):
 def info():
     return json.dumps({k:v for k,v in session.items()})
 
+@app.route("/next-level")
+def nextlevel():
+    auth = session['auth']
+    if auth:
+        return str(get_next_level_for(auth['uuid']))
+    else:
+        return "No user information"
+    
+
 # @app.route("/")
 # def lingotowns():
 #     auth_token = request.args.get("auth_token")
@@ -185,6 +215,10 @@ def info():
 #     else:
 #         return redirect(AUTH_SERVER + "/login-as-guest?redirect=" + HOSTNAME)
 
+@app.route("/current-collection")
+def currentcollection():
+    return "collection: {}".format(persistence.current_collection(db.session))
+
 @app.route("/play")
 def lingotowns():
     auth_token = request.args.get("auth_token")
@@ -199,7 +233,7 @@ def lingotowns():
         return redirect("/")
     elif session_auth:
         if True:#session.get('seen_intro'):
-            return render_template("game.html", auth_server=AUTH_SERVER, is_guest=(session_auth['username'] == "Guest"), logged_in=logged_in)
+            return render_template("game.html", auth_server=AUTH_SERVER, is_guest=(session_auth['username'] == "Guest"), logged_in=logged_in, username=session_auth['username'])
         else:
             return redirect("/intro")
     else:
@@ -239,7 +273,7 @@ def homepage():
     auth_missing = username is None
     is_guest = username == "Guest"
     logged_in = not auth_missing and not is_guest
-    return render_template("homepage.html", logged_in=logged_in)
+    return render_template("homepage.html", logged_in=logged_in, username=username)
 
 @app.route("/intro-text")
 def intro_text():
@@ -276,15 +310,25 @@ def tutorial_complete():
     level = int(request.args.get("level"))
     uuid = session['auth']['uuid']
     persistence.tutorial_complete(uuid, level, game, session=db.session)
-    create_mpa_next_level_for(uuid, next_level(user_update))
+    create_next_level_for(uuid, next_level(user_update))
     return redirect("/")
+
+def force_level_up(uuid):
+    user_update = persistence.load_data_for_user(uuid, session=db.session)
+    create_next_level_for(uuid, next_level(user_update))
+    user_update = persistence.load_data_for_user(uuid, session=db.session)
+    send_update(user_update, uuid)
 
 @app.route("/forcelevelup")
 def forcelevelup():
-    uuid = session['auth']['uuid']
-    user_update = persistence.load_data_for_user(uuid, session=db.session)
-    create_mpa_next_level_for(uuid, next_level(user_update))
+    force_level_up(session['auth']['uuid'])
+    #send_update_for_user(uuid)
     return redirect("/")
+
+@app.route("/logout")
+def logout():
+    session.pop('auth', None)
+    return redirect("https://auth.tileattack.com/logout?redirect=https://lingotowns.com/")
 
 @app.route("/play-game")
 def playgame():
