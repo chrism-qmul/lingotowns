@@ -69,7 +69,7 @@ def get_next_level_for(uuid):
     return get_random_next_level_for(uuid)
 
 def create_next_level_for(uuid, level):
-    send_analytics({level}, uuid)
+    send_analytics({"level": level}, uuid)
     docs = get_next_level_for(uuid)
     for doc in docs:
         persistence.add_level(db.session, uuid, [doc], ["farm", "library", "food"], level)
