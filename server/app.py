@@ -69,6 +69,7 @@ def get_next_level_for(uuid):
     return get_random_next_level_for(uuid)
 
 def create_next_level_for(uuid, level):
+    send_analytics({"level": level}, uuid)
     docs = get_next_level_for(uuid)
     for doc in docs:
         persistence.add_level(db.session, uuid, [doc], ["farm", "library", "food"], level)
@@ -76,7 +77,11 @@ def create_next_level_for(uuid, level):
 
 def send_update(update, user):
     app.logger.info("[%s] %s", user, update)
-    socketio.send(update, to=str(user))
+    socketio.emit("game-update", update, to=str(user))
+
+def send_analytics(analytics, user):
+    app.logger.info("analytics: [%s] %s", user, analytics)
+    socketio.emit("game-analytics", analytics, to=str(user))
 
 def tutorials_completed_for_level(level, user_id):
     games = ["farm", "library", "food"]

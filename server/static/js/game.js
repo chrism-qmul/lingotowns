@@ -1135,6 +1135,11 @@ class Game {
     this.requireDraw();
   }
 
+  recordAnalytics(data) {
+    //GOOGLE ANALYTICS CODE HERE
+    console.log("analytics from server", data);
+  }
+
   connectToServer() {
     //const socket = io("wss://lingotowns.com/");
     this.socket = io();
@@ -1144,10 +1149,13 @@ class Game {
     });
     const game = this;
     this.socket.on("connect", () => {
-      this.socket.on("message", data => {
+      this.socket.on("game-update", data => {
           game.updateData(data);
           on_data_loaded(); 
 //          this.addLevel(2);
+          });
+      this.socket.on("game-analytics", data => {
+          game.recordAnalytics(data);
           });
     });
 
