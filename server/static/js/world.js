@@ -27,11 +27,16 @@ export class World {
   }
 
   calculate() {
+    console.groupCollapsed("🌎 world calculation");
+    const timerLbl = "world calculation time";
+    console.time(timerLbl);
     this.calculateTownLocations();
     this.updateBoundingBox();
     this.calculateRoad();
     this.updateGrid();
     this.updateRegions();
+    console.timeEnd(timerLbl);
+    console.groupEnd();
   }
 
   calculateTownLocations() {
@@ -169,7 +174,7 @@ export class World {
         if (!edgeoftown.isZero()) {
           result = search.search(this.home,edgeoftown);
           if (!Array.isArray(result)) {
-            console.log("unable to get path to town", this.home, edgeoftown);
+            console.warn("unable to get path to town", this.home, edgeoftown);
           }
         }
         if (Array.isArray(result)) {
@@ -204,7 +209,6 @@ export class World {
 
   addLevel(number){
     this.number_of_towns.push(number);
-    this.calculate();
   }
 
   levels() {

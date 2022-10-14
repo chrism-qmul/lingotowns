@@ -18,13 +18,12 @@ export class AStarGrid {
 
   search(start, goal) {
     if (!this.available(start)) {
-      console.log("start point not accessible:", start);
+      console.warn("start point not accessible:", start);
       return;
     }
     if (!this.available(goal)) {
-      console.log("goal point not accessible:", goal, this.onGrid(goal));
+      console.warn("goal point not accessible:", goal, this.onGrid(goal));
       this.available(goal, true);
-      console.log("____");
       return;
     }
     var gScore = new Grid(this.width);
