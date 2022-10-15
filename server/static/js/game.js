@@ -1910,9 +1910,10 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log("🏆 level change", last_level_count, data.levels.length);
       last_level_count = data.levels.length
     }
-    dataLayer.push("event", "player_level",{
-    'current_level': data.levels.length,
-     })
+    dataLayer.push({
+      'event': 'player_level',
+      'current_level': data.levels.length,
+    });
    });
   
 //   if (last_level_count != null) {
