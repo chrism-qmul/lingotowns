@@ -1138,7 +1138,7 @@ class Game {
   recordAnalytics(data) {
     //GOOGLE ANALYTICS CODE HERE
     gtag("event", "level_up", {
-        'level': this.data.levels.length});
+        'level': data});
     console.log("analytics from server", data);
   }
 
