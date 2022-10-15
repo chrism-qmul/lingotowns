@@ -1135,10 +1135,11 @@ class Game {
     this.requireDraw();
   }
 
-  recordAnalytics(data) {
+  recordAnalytics(data, d) {
     //GOOGLE ANALYTICS CODE HERE
+    this.data = d;
     gtag("event", "level_up", {
-        'level': data});
+        'level': this.data.levels.length});
     console.log("analytics from server", data);
   }
 
