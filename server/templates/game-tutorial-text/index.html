@@ -984,6 +984,9 @@
         }
         $("#playbutton").click(function () {
             setCookie("intro_complete");
+            gtag("event", "tutorial_complete", {
+                success: true,
+            });
             window.location.href = 'https://lingotowns.com/play';
         });
     </script>

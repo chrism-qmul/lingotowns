@@ -1135,11 +1135,10 @@ class Game {
     this.requireDraw();
   }
 
-  recordAnalytics(data, d) {
+  recordAnalytics(data) {
     //GOOGLE ANALYTICS CODE HERE
-    this.data = d;
     gtag("event", "level_up", {
-        'level': this.data.levels.length});
+        level: data});
     console.log("analytics from server", data);
   }
 
@@ -1911,12 +1910,10 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log("🏆 level change", last_level_count, data.levels.length);
       last_level_count = data.levels.length
     }
-  //   dataLayer.push({
-  //     'event': 'level',
-  //     'last_level': last_level_count,
-  //     'current_level': data.levels.length,
-  // })
-  });
+    dataLayer.push({
+    'current_level': data.levels.length,
+     })
+   });
   
 //   if (last_level_count != null) {
 //     console.log("🏆 level up");
