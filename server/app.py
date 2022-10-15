@@ -84,6 +84,7 @@ def send_analytics(analytics, user):
     socketio.emit("game-analytics", analytics, to=str(user))
 
 def tutorials_completed_for_level(level, user_id):
+    send_analytics({"tutorial_complete": level}, user_id)
     games = ["farm", "library", "food"]
     return {game:persistence.is_tutorial_complete(user_id, 0, game, session=db.session) for game in games}
 
