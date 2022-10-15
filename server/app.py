@@ -82,6 +82,8 @@ def send_update(update, user):
 def send_analytics(analytics, user):
     app.logger.info("analytics: [%s] %s", user, analytics)
     socketio.emit("game-analytics", analytics, to=str(user))
+    socketio.emit("tutorial-game-analytics", analytics, to=str(user))
+
 
 def tutorials_completed_for_level(level, user_id):
     send_analytics({"tutorial_complete": level}, user_id)
