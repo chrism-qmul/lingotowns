@@ -1138,7 +1138,7 @@ class Game {
   recordAnalytics(data) {
     //GOOGLE ANALYTICS CODE HERE
     gtag("event", "level_up", {
-        level: data.levels.length});
+        level: this.data.levels.length});
     console.log("analytics from server", data);
   }
 
@@ -1911,11 +1911,11 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log("🏆 level change", last_level_count, data.levels.length);
       last_level_count = data.levels.length
     }
-    dataLayer.push({
-      'event': 'level',
-      'last_level': last_level_count,
-      'current_level': data.levels.length,
-  })
+  //   dataLayer.push({
+  //     'event': 'level',
+  //     'last_level': last_level_count,
+  //     'current_level': data.levels.length,
+  // })
   });
   
 //   if (last_level_count != null) {
