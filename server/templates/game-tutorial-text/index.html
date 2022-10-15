@@ -987,10 +987,10 @@
         }
         $("#playbutton").click(function () {
             setCookie("intro_complete");
-            // gtag("event", "tutorial_complete", {
-            //     success: true,
-            // });
             window.location.href = 'https://lingotowns.com/play';
+            gtag("event", "tutorial_complete", {
+                success: true,
+            });
         });
     </script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.4.5/swiper-bundle.min.js'></script>
