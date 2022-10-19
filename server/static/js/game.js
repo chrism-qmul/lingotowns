@@ -1143,9 +1143,9 @@ class Game {
   }
 
   // recordAnalyticsTutorial(data) {
-  //   gtag("event", "tutorial_complete", {
-  //     success: true});
-  //   console.log("tutorial analytics from server", data);
+    // gtag("event", "tutorial_complete", {
+    //   success: true});
+  //   console.log("tutorial town", data);
   // }
 
   connectToServer() {
