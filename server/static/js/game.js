@@ -1142,11 +1142,11 @@ class Game {
     console.log("analytics from server", data);
   }
 
-  recordAnalyticsTutorial(data) {
+  // recordAnalyticsTutorial(data) {
     // gtag("event", "tutorial_complete", {
     //   success: true});
-    console.log("tutorial town", data);
-  }
+  //   console.log("tutorial town", data);
+  // }
 
   connectToServer() {
     //const socket = io("wss://lingotowns.com/");
@@ -1165,9 +1165,9 @@ class Game {
       this.socket.on("game-analytics", data => {
           game.recordAnalytics(data);
           });
-      this.socket.on("game-analytics-tutorial", data => {
-          game.recordAnalyticsTutorial(data);
-          });
+      // this.socket.on("game-analytics-tutorial", data => {
+      //     game.recordAnalyticsTutorial(data);
+      //     });
     });
 
     // handle the event sent with socket.emit()
