@@ -82,8 +82,6 @@ def send_update(update, user):
 def send_analytics(analytics, user):
     app.logger.info("analytics: [%s] %s", user, analytics)
     socketio.emit("game-analytics", analytics, to=str(user))
-    # socketio.emit("game-analytics-tutorial", analytics, to=str(user))
-
 
 def tutorials_completed_for_level(level, user_id):
     # send_analytics({"tutorial_complete": level}, user_id)
@@ -95,6 +93,7 @@ def send_update_for_user(user_id):
     tutorials_complete = tutorials_completed_for_level(0, user_id).values()
     if all(tutorials_complete) and is_ready_for_new_level(user_update):
         create_next_level_for(user_id, next_level(user_update))
+        send_analytics({"tutorial town complete!"}, user_id)
     user_update = persistence.load_data_for_user(user_id, session=db.session)
     send_update(user_update, user_id)
 
