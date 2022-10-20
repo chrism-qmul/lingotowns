@@ -92,6 +92,7 @@ def send_update_for_user(user_id):
     tutorials_complete = tutorials_completed_for_level(0, user_id).values()
     if all(tutorials_complete) and is_ready_for_new_level(user_update):
         create_next_level_for(user_id, next_level(user_update))
+        send_analytics({"tutorial town complete"}, user_id)
     user_update = persistence.load_data_for_user(user_id, session=db.session)
     send_update(user_update, user_id)
 
