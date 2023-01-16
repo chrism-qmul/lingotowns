@@ -389,7 +389,7 @@ def manage_login():
     if auth_token:
         session['auth'] = auth_from_token(auth_token)
         session['auth_token'] = auth_token
-        return redirect(request.base_url)
+        return redirect(HOSTNAME + request.full_path)
     elif session_auth:
         # this should be in its own handler, but...
         # flask middleware can't be ordered??? ...so this has to go here
@@ -407,7 +407,7 @@ def manage_login():
             app.logger.info("not playing tutorial")
         return None
     else:
-        return redirect(AUTH_SERVER + "/login-as-guest?redirect=" + request.base_url)
+        return redirect(AUTH_SERVER + "/login-as-guest?redirect=" + HOSTNAME + request.full_path)
 
 if __name__ == '__main__':
    #result = create_game("library", 40)
