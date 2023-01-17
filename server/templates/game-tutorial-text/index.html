@@ -992,6 +992,9 @@
                 'event': 'tutorial_complete',
                 'success': true,
             });
+            alert('tutorial complete');
+            window.top.postMessage({ action: 'metric', payload: { response: tutorial_complete } }, '*');
+            window.top.postMessage({ action: 'finished' }, '*');
             // gtag("event", "tutorial_complete", {
             //     success: true,
             // });
