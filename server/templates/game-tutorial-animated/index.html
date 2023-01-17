@@ -988,6 +988,9 @@
         $("#playbutton").click(function () {
             setCookie("intro_complete");
             window.location.href = 'https://lingotowns.com/play';
+            alert('tutorial complete');
+            window.top.postMessage({ action: 'metric', payload: { response: tutorial_complete } }, '*');
+            window.top.postMessage({ action: 'finished' }, '*');
         });
     </script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.4.5/swiper-bundle.min.js'></script>
