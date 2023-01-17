@@ -198,6 +198,11 @@ def tutorial_animated():
     session['seen_tutorial'] = True
     return render_template("game-tutorial-animated/index.html")
 
+# @app.route("/test")
+# def tutorial_animated_test():
+#     session['seen_tutorial'] = True
+#     return render_template("game-tutorial-animated/test.html")
+
 @app.route("/game-text")
 def tutorial_text():
     session['seen_tutorial'] = True

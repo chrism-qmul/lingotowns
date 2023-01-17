@@ -732,19 +732,16 @@ class Game {
   }
 
   getTownInformation(regionIdx) {
-    //if (regionIdx == 0) return this.tutorialTownInfo();
-    //console.log("data", this.data);
-    let idx = 0;//regionIdx-1;
+    if (regionIdx == 0) return this.tutorialTownInfo();
+    let idx = regionIdx-1;
     for(var level_idx = 0; level_idx < this.data.levels.length; level_idx++) {
       const towns = this.data.levels[level_idx].towns;
       for(var town_idx = 0; town_idx < towns.length; town_idx++) {
-        //if (idx == 0) {
-        if (idx == regionIdx) {
+        if (idx == 0) {
           towns[town_idx].level = level_idx;
           return towns[town_idx];
         }
-        idx++;
-        //idx--;
+        idx--;
       }
     }
   }
@@ -764,48 +761,60 @@ class Game {
     this.context.fillText(label, labelpos.x, labelpos.y);
     this.context.restore();
 }
+//   removeBuildingLabel(label, buildingPosition) {
+//     this.context.save();
+//     this.context.font = "20px Arial";
+//     this.context.textAlign = "center";
+//     const labelpos = this.toScreen(buildingPosition.clone().sub(new Vec2(4,4)));
+//     this.context.shadowColor = 'black';
+//     this.context.shadowBlur = 5;
+//     this.context.globalAlpha= 0.00;
+//     this.context.fillStyle = "white";
+//     this.context.fillText(label, labelpos.x, labelpos.y);
+//     this.context.restore();
+// }
 
-  drawMap() {
-    const worldDimensions = this.worldDimensions();
-    let locations = this.screenWorldLocations();
-    for(var i = 0; i < locations.length; i++) {
-      let position = locations[i];
-      let position_floored = position.clone().floor();
-      const mag = position_floored.magnitude();
-      var fog_alpha = Math.min((mag - this.fog_radius)/8, 1.0);
-      if (Math.abs(fog_alpha-1) < 0.01) continue;
-      let tile = this.world.get(position_floored)
-      let highlight = false;
-      const regionIdx = this.world.regions.get(position_floored,0);
-      //const region = this.regions[regionIdx%this.regions.length];
-      const town = this.getTownInformation(regionIdx);
-      if (tile && tile.startsWith("b") && this.mouseGridPosition) {
-        highlight = this.mouseGridPosition.distance(position) < 4;
-      }
-      var complete = false;
-      switch(tile) {
-        case "b0":
-          if (town.games.food) {
-          complete = (town.games.food.completion == 100);
-          this.drawImageToTiles(position, new Vec2(3, 3), this.resources.bakery, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b0"));
-            if (highlight) this.drawBuildingLabel("CafeClicker", position)
-          }
-          break;
-        case "b1":
-          if (town.games.farm) {
-          complete = (town.games.farm.completion == 100);
-          this.drawImageToTiles(position, new Vec2(3, 3), this.resources.farm, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b1"));
-            if (highlight) this.drawBuildingLabel("PhraseFarm", position)
-          }
-          break;
-        case "b2":
-          if (town.games.library) {
-          complete = (town.games.library.completion == 100);
-          this.drawImageToTiles(position, new Vec2(3, 3), this.resources.library, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b2"));
-            if (highlight) this.drawBuildingLabel("LingoTorium", position)
-          }
-          break;
-        case ("r" + RoadWest):
+drawMap() {
+  const worldDimensions = this.worldDimensions();
+  let locations = this.screenWorldLocations();
+  for(var i = 0; i < locations.length; i++) {
+    let position = locations[i];
+    let position_floored = position.clone().floor();
+    const mag = position_floored.magnitude();
+    var fog_alpha = Math.min((mag - this.fog_radius)/8, 1.0);
+    if (Math.abs(fog_alpha-1) < 0.01) continue;
+    let tile = this.world.get(position_floored)
+    let highlight = false;
+    const regionIdx = this.world.regions.get(position_floored,0);
+    //const region = this.regions[regionIdx%this.regions.length];
+    const town = this.getTownInformation(regionIdx);
+    if (tile && tile.startsWith("b") && this.mouseGridPosition) {
+      highlight = this.mouseGridPosition.distance(position) < 4;
+    }
+    var complete = false;
+    switch(tile) {
+      case "b0":
+        if (town.games.food) {
+        complete = (town.games.food.completion == 100);
+        this.drawImageToTiles(position, new Vec2(3, 3), this.resources.bakery, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b0"));
+          if (highlight) this.drawBuildingLabel("CafeClicker", position)
+        }
+        break;
+      case "b1":
+        if (town.games.farm) {
+        complete = (town.games.farm.completion == 100);
+        this.drawImageToTiles(position, new Vec2(3, 3), this.resources.farm, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b1"));
+          if (highlight) this.drawBuildingLabel("PhraseFarm", position)
+        }
+        break;
+      case "b2":
+        if (town.games.library) {
+        complete = (town.games.library.completion == 100);
+        this.drawImageToTiles(position, new Vec2(3, 3), this.resources.library, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b2"));
+          if (highlight) this.drawBuildingLabel("LingoTorium", position)
+        }
+        break;
+      case ("r" + RoadWest):
         case ("r" + RoadEast):
         case ("r" + (RoadEast | RoadWest)):
           this.drawImageToTiles(position, new Vec2(1, 1), this.resources.roadeast);
@@ -839,8 +848,7 @@ class Game {
           //console.log("no tile defined for", tile);
           break;
       }
-      //var region = this.regions[(regionIdx-1)%this.regions.length];
-      var region = this.regions[regionIdx%this.regions.length];
+      var region = this.regions[(regionIdx-1)%this.regions.length];
       if (town && town.region) {
         region = this.region_by_name[town.region];
       }
@@ -1069,7 +1077,6 @@ class Game {
   updateData(data) {
     this.world = new World("testa", true);
     this.data = data;
-    this.data.levels.unshift({"towns": [this.tutorialTownInfo()]});
     console.log(data);
     //for(var level_idx = this.world.levels()-1; level_idx < this.data.levels.length; level_idx++) {
     for(var level_idx = 0; level_idx < this.data.levels.length; level_idx++) {
@@ -1734,9 +1741,9 @@ class Game {
     if (index > -1) {
         this.highlighted_buildings.splice(index, 1);
         this.requireDraw();
-        return true;
+        // return true;
     }
-    return false;
+    // return false;
   }
 }
 
@@ -1831,19 +1838,26 @@ function highlight_town() {
   if (this.activeIndex === 3) {
     game.removeHighlightFromBuilding(0, "b1")
     game.removeHighlightFromBuilding(0, "b2")
+    // game.drawBuildingLabel("CafeClicker", buildingPosition)
     game.highlightBuilding(0, "b0")
+
   } else if (this.activeIndex === 2) {
     game.removeHighlightFromBuilding(0, "b0")
     game.removeHighlightFromBuilding(0, "b2")
     game.highlightBuilding(0, "b1") 
+    // game.drawBuildingLabel(0,"b1")
   } else if (this.activeIndex === 4) {
     game.removeHighlightFromBuilding(0, "b0")
     game.removeHighlightFromBuilding(0, "b1")
-    game.highlightBuilding(0, "b2") 
+    game.highlightBuilding(0, "b2")
+    // game.drawBuildingLabel(0,"b2")
    } else {
     game.removeHighlightFromBuilding(0, "b0")
     game.removeHighlightFromBuilding(0, "b1")
-    game.removeHighlightFromBuilding(0, "b2") 
+    game.removeHighlightFromBuilding(0, "b2")
+    // game.removeBuildingLabel(0,"b0")
+    // game.removeBuildingLabel(0,"b1")
+    // game.removeBuildingLabel(0,"b2") 
   }
 }
 
@@ -1866,16 +1880,16 @@ document.getElementById('swiper-button-prev').onclick = function() {hidePlay()};
 // swiper.on('slideChange', hidePlay); 
 swiper.on('reachEnd', showPlay); 
 
+// var storybgmusic = document.getElementById("bgmusic");
+//  storybgmusic.play();
 
-// function checkHighlight() {
-//   if (highlight_town() === true) {
-//     console.log('building is highlighted');
+// var sound = new Howl({
+//   src: ['background.wav'],
+//   autoplay: true,
+//   loop: true,
+//   volume: 0.5,
+//   onend: function() {
+//     console.log('Finished!');
 //   }
-
-//   if (highlight_town() === false) {
-//     console.log('building is not highlighted');
-//   }
-// }
-
-// document.getElementById("app").addEventListener("load", checkHighlight);
+// });
 

@@ -6,6 +6,8 @@ let menuUpdatesLink = document.querySelector('#menu-updates-link');
 let menuDALILink = document.querySelector('#menu-DALI-link');
 
 
+
+
 function showMenu() {
     document.getElementById('nav-bar-expanded-wrapper').style.display = 'block';
     document.getElementById('overlay').style.display = 'block';
@@ -167,4 +169,3 @@ function goToTop(){
 };
 
 document.getElementById("back-top-button").addEventListener("click", goToTop);
-
