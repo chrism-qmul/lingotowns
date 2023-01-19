@@ -630,8 +630,8 @@ class Game {
             game = "food"
             dataLayer.push({'event': 'clicked_bakery'});
             // alert('clicked bakery');
-            this.setTimer();
-            window.top.postMessage({ action: 'metric', payload: { timer: this.setTimer } }, '*');
+            let timer = this.setTimer();
+            window.top.postMessage({ action: 'metric', payload: { timer: timer } }, '*');
             window.top.postMessage({ action: 'finished' }, '*');
             
             break;
