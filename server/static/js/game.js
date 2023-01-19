@@ -610,8 +610,9 @@ class Game {
             complete = (town.games.food.completion == 100);
             game = "food"
             dataLayer.push({'event': 'clicked_bakery'});
-            alert('clicked bakery');
+            // alert('clicked bakery');
             window.top.postMessage({ action: 'finished' }, '*');
+            performance.now()
             break;
           case "b1":
             complete = (town.games.farm.completion == 100);
