@@ -466,6 +466,8 @@ class Game {
     //window.addEventListener("closeframe", this.
     this.toclose = [];
     window.addEventListener("message", this.messagedispatch.bind(this));
+    //timer for Gorilla task 2
+    this.timer = null;
   }
   
   loginNag() {
@@ -612,7 +614,6 @@ class Game {
             dataLayer.push({'event': 'clicked_bakery'});
             // alert('clicked bakery');
             window.top.postMessage({ action: 'finished' }, '*');
-            performance.now()
             break;
           case "b1":
             complete = (town.games.farm.completion == 100);
@@ -1768,7 +1769,14 @@ class Game {
     if (!this.isLoaded) {
       document.body.classList.add("loaded");
       this.isLoaded = true;
+      this.timer = performance.now();
     }
+  }
+
+  //timer function for Gorilla 
+  setTimer() {
+    let timeOut = performance.now();
+    console.log(`Task 2 took ${timeOut - this.timer} milliseconds.`);
   }
 
   logTownInformation(regionFilter) {
