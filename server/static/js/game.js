@@ -588,6 +588,20 @@ class Game {
       }
   }
 
+  loaded() {
+    if (!this.isLoaded) {
+      document.body.classList.add("loaded");
+      this.isLoaded = true;
+      this.timer = performance.now();
+    }
+  }
+
+  //timer function for Gorilla 
+  setTimer() {
+    let timeOut = performance.now();
+    console.log(`Task 2 took ${timeOut - this.timer} milliseconds.`);
+  }
+  
   selectobject() {
     const debugSelectObjectString = "👆 select object";
     if (this.mouseGridPosition) {
@@ -614,6 +628,7 @@ class Game {
             dataLayer.push({'event': 'clicked_bakery'});
             // alert('clicked bakery');
             window.top.postMessage({ action: 'finished' }, '*');
+            this.setTimer();
             break;
           case "b1":
             complete = (town.games.farm.completion == 100);
@@ -1765,19 +1780,7 @@ class Game {
     }
   }
 
-  loaded() {
-    if (!this.isLoaded) {
-      document.body.classList.add("loaded");
-      this.isLoaded = true;
-      this.timer = performance.now();
-    }
-  }
 
-  //timer function for Gorilla 
-  setTimer() {
-    let timeOut = performance.now();
-    console.log(`Task 2 took ${timeOut - this.timer} milliseconds.`);
-  }
 
   logTownInformation(regionFilter) {
     const columns = ["level", "document_id", "author", "document_name", "total_completion", "food_completion", "farm_completion", "library_completion", "region", "regionIdx"];
