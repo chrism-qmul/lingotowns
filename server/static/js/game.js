@@ -599,9 +599,12 @@ class Game {
   //timer function for Gorilla 
   setTimer() {
     let timeOut = performance.now();
-    console.log(`Task 2 took ${timeOut - this.timer} milliseconds.`);
+    let result = timeOut - this.timer;
+    console.log(`Task 2 took ${result} milliseconds.`);
+    return result;
+    // console.log(`Task 2 took ${timeOut - this.timer} milliseconds.`);
   }
-  
+
   selectobject() {
     const debugSelectObjectString = "👆 select object";
     if (this.mouseGridPosition) {
@@ -627,8 +630,10 @@ class Game {
             game = "food"
             dataLayer.push({'event': 'clicked_bakery'});
             // alert('clicked bakery');
-            window.top.postMessage({ action: 'finished' }, '*');
             this.setTimer();
+            window.top.postMessage({ action: 'metric', payload: { timer: this.setTimer } }, '*');
+            window.top.postMessage({ action: 'finished' }, '*');
+            
             break;
           case "b1":
             complete = (town.games.farm.completion == 100);
