@@ -989,7 +989,11 @@
             setCookie("intro_complete");
             window.location.href = 'https://lingotowns.com/play';
             dataLayer.push({
-                'event': 'tutorial_complet_text',
+                'event': 'tutorial_complete_text',
+                'success': true,
+            });
+            dataLayer.push({
+                'event': 'tutorial_complete',
                 'success': true,
             });
             // alert('tutorial complete');

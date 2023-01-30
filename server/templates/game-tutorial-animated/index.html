@@ -985,6 +985,10 @@
                 'event': 'tutorial_complete_animated',
                 'success': true,
             });
+            dataLayer.push({
+                'event': 'tutorial_complete',
+                'success': true,
+            });
             // alert('tutorial complete');
             window.top.postMessage({ action: 'finished' }, '*');
             // gtag("event", "tutorial_complete", {
