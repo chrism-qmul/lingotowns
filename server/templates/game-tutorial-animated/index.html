@@ -997,7 +997,7 @@
         }
 
         $("#playbutton").click(function () {
-            let timer = this.setTimer2();
+            let timer = setTimer2();
             setCookie("intro_complete");
             window.location.href = 'https://lingotowns.com/play';
             dataLayer.push({
