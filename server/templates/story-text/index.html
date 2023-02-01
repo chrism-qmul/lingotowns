@@ -84,7 +84,7 @@
           </div>
 
           <div class="dialogueanswer">
-            <a onclick="window.location.href='game-text'" class="button6"> Play </a>
+            <a id="playbutton" onclick="" class="button6"> Play </a>
           </div>
         </div>
 
@@ -105,6 +105,34 @@
     <script src="/js/story-text.js"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-interactivity@latest/dist/lottie-interactivity.min.js"></script>
+
+    <script type='text/javascript'>
+
+      let timer1 = null;
+
+      window.onload = function () {
+          this.timer1 = performance.now();
+      }
+
+      function setTimer1() {
+          let timeOut = performance.now();
+          let result = timeOut - this.timer1;
+          console.log(`Onboarding task took ${result} milliseconds.`);
+          return result;
+      }
+
+
+
+      $("#playbutton").click(function () {
+          let timer1 = setTimer1();
+          window.location.href='https://lingotowns.com/game-text';
+          // alert('tutorial complete');
+          // gtag("event", "tutorial_complete", {
+          //     success: true,
+          // });
+          window.top.postMessage({ action: 'metric', payload: { timer1: timer1 } }, '*');
+      });
+  </script>
 
 </body>
 
