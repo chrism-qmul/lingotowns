@@ -980,14 +980,14 @@
         }
 
 
-        this.timer2 = performance.now();
+        // this.timer2 = performance.now();
 
-        function setTimer2() {
-            let timeOut = performance.now();
-            let result = timeOut - this.timer2;
-            console.log(`Task 1.2 took ${result} milliseconds.`);
-            return result;
-        }
+        // function setTimer2() {
+        //     let timeOut = performance.now();
+        //     let result = timeOut - this.timer2;
+        //     console.log(`Task 1.2 took ${result} milliseconds.`);
+        //     return result;
+        // }
 
         $("#playbutton").click(function () {
             setCookie("intro_complete");
@@ -1001,8 +1001,8 @@
                 'success': true,
             });
             // alert('tutorial complete');
-            let timer = this.setTimer2();
-            window.top.postMessage({ action: 'metric', payload: { timer: timer } }, '*');
+            // let timer = this.setTimer2();
+            // window.top.postMessage({ action: 'metric', payload: { timer: timer } }, '*');
             window.top.postMessage({ action: 'finished' }, '*');
             // gtag("event", "tutorial_complete", {
             //     success: true,
