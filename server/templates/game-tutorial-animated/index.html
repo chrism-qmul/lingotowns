@@ -975,6 +975,13 @@
     <script type="module" src="/js/game.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
     <script type='text/javascript'>
+        
+        let timer2 = null;
+
+        window.onload = function () {
+            this.timer2 = performance.now();
+        }
+
         function setCookie(key, value) {
             document.cookie = key + "=" + value + "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
         }
@@ -982,14 +989,15 @@
 
         // this.timer2 = performance.now();
 
-        // function setTimer2() {
-        //     let timeOut = performance.now();
-        //     let result = timeOut - this.timer2;
-        //     console.log(`Task 1.2 took ${result} milliseconds.`);
-        //     return result;
-        // }
+        function setTimer2() {
+            let timeOut = performance.now();
+            let result = timeOut - this.timer2;
+            console.log(`Onboarding task took ${result} milliseconds.`);
+            return result;
+        }
 
         $("#playbutton").click(function () {
+            let timer = this.setTimer2();
             setCookie("intro_complete");
             window.location.href = 'https://lingotowns.com/play';
             dataLayer.push({
@@ -1001,8 +1009,7 @@
                 'success': true,
             });
             // alert('tutorial complete');
-            // let timer = this.setTimer2();
-            // window.top.postMessage({ action: 'metric', payload: { timer: timer } }, '*');
+            window.top.postMessage({ action: 'metric', payload: { timer: timer } }, '*');
             window.top.postMessage({ action: 'finished' }, '*');
             // gtag("event", "tutorial_complete", {
             //     success: true,
