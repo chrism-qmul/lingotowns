@@ -997,7 +997,7 @@
         }
 
         $("#playbutton").click(function () {
-            let timer = setTimer2();
+            let timer2 = setTimer2();
             setCookie("intro_complete");
             window.location.href = 'https://lingotowns.com/play';
             dataLayer.push({
@@ -1009,7 +1009,7 @@
                 'success': true,
             });
             // alert('tutorial complete');
-            window.top.postMessage({ action: 'metric', payload: { timer: timer } }, '*');
+            window.top.postMessage({ action: 'metric', payload: { timer2: timer2 } }, '*');
             window.top.postMessage({ action: 'finished' }, '*');
             // gtag("event", "tutorial_complete", {
             //     success: true,
