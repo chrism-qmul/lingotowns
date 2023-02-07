@@ -52,6 +52,57 @@
             left: 20px;
             height: 3em;
         }
+
+        .info-dialog {
+            height: 100vh;
+            width: 100vw;
+            display: block;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(95, 100, 127, 0.7);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1000000;
+            opacity: 0;
+            -webkit-transition: opacity 400ms ease-in;
+            -moz-transition: opacity 400ms ease-in;
+            transition: opacity 400ms ease-in;
+        }
+
+        .info-dialog:target {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .info-text {
+            background-color: #ffffff;
+            padding: 4vh 3vw;
+            top: 20vh;
+            left: 25vw;
+            width: 50vw;
+            position: relative;
+            border-radius: 15px;
+            font-size: min(2.5vw, 15px);
+        }
+
+        .button-wrapper {
+            display: flex;
+            margin-top: 20px;
+            padding-top: 2%;
+            margin-left: 25%;
+
+        }
+
+        #notAcceptBtn {
+            padding: 1% 2%;
+            margin-right: 5%;
+        }
+
+        #acceptBtn {
+            padding: 1% 2%;
+        }
     </style>
 </head>
 
@@ -61,9 +112,26 @@
             style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
 
+    <div id="infoDialog" class="info-dialog">
+        <div class="info-text">Welcome to LingoTowns. By participating in our online game, you agree that you are over
+            the age of 18 and your
+            participation is voluntary and can be used for research purposes. The goal
+            of this project is to understand player engagement in language learning and linguistic games.
+            If you agree to participate, we will collect analytical data based on your interactions in the game. The
+            data collected is anonymised upon collection and no personal data is stored. This data may be released
+            publicly in the future
+            for research purposes. As a user you can decide to end your participation in the study at any moment (no
+            minimum participation time is required). You will not be paid for playing our games.
+            <br>
+            <br>
+            This proposal has been reviewed and approved by the QMUL EECS Devolved School Research Ethics Committee.
+            In case of questions, contact <a href="f.althani@qmul.ac.uk"
+                style="color: rgb(6, 78, 186); text-decoration: underline;">f.althani@qmul.ac.uk</a>
+            <div class="button-wrapper"><button id="notAcceptBtn"><a href="#DALI">Do not accept</a></button><button
+                    id="acceptBtn">Accept</button></div>
+        </div>
 
-    <!-- Header -->
-    <!-- navbar -->
+    </div>
 
     <div id="nav-bar-expanded-wrapper" class="nav-bar-expanded-wrapper">
         <div class="nav-bar-expanded">
@@ -95,19 +163,13 @@
                                     title="menu next icon"></li>
                         </div>
                     </a>
-                    <!-- <a id="menu-section-link" href="#contact"><div class="menu-items">
-                    <li>Contact<img class="menu-next" src="http://phrasefarm.org/img/menu-next.svg" alt="Speaker_Icon.svg"
-                        title="menu next icon"></li>
-                </div></a> -->
                 </ul>
 
 
             </div>
             <div class="menu-footer">
-                <!-- <p style="float: left; padding-left: 10%;">Guest</p><p style="float: right; padding-right: 15%;">Login</p> -->
                 <div style="padding-left: 60%; height: 100%; width: 100%; position: relative;">
                     {% if logged_in %}
-                    <h6 style="margin-top: 5%; width: 20%; display: inline-block;">{{username}}</h6>
                     <a id='logout' class="logout-button" href='/logout'>logout</a>
                     {% else %}
                     <a id='logout' class="logout-button"
@@ -119,7 +181,6 @@
                 </div>
             </div>
         </div>
-    </div>
     </div>
     <div id="overlay" class="overlay" onclick="hideMenu()"></div>
     <div class="nav-bar">
@@ -157,10 +218,6 @@
         <div id="about" class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
             <div class="w3-content">
                 <h1>About</h1>
-                <!-- <h5 class="w3-padding-32">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                ullamco laboris nisi ut aliquip ex ea commodo consequat.</h5> -->
-
                 <p class="w3-text-grey2">Lingotowns, a new gaming platform targeting language learners developed by the
                     DALI team.
                     Lingotowns provides a unified experience integrating games for multiple aspects of lexical and
@@ -175,12 +232,6 @@
                         allowfullscreen></iframe>
                 </div>
             </div>
-
-            <!-- <div class="w3-twothird">
-                <div class="w3-third w3-center"> 
-            </div> -->
-
-
         </div>
     </div>
     <!-- First Grid -->
@@ -194,36 +245,9 @@
                         GamesNlp</a>
                     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                 </div>
-                <!-- <h5 class="w3-padding-32">11/07/22</h5>
-                <ul class="w3-text-grey1">
-                    <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                        incididunt ut labore et dolore magna aliqua</li>
-                    <li>Excepteur sint
-                        occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
-                        consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
-                    </li>
-                    <li>Ut
-                        enim ad minim veniam, quis nostrud exercitation ullamco
-                        laboris nisi ut aliquip ex ea commodo consequat</li>
-                </ul> -->
-
-
-
-                <!-- <p class="w3-text-grey">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint
-                    occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
-                    consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                    enim ad minim veniam, quis nostrud exercitation ullamco
-                    laboris nisi ut aliquip ex ea commodo consequat.</p> -->
             </div>
 
             <div class="w3-third w3-center">
-                <!-- <div class="twitterfeed">
-                    <a class="twitter-timeline" href="https://twitter.com/GamesNlp?ref_src=twsrc%5Etfw">Tweets by
-                        GamesNlp</a>
-                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-                </div> -->
             </div>
         </div>
     </div>
@@ -233,9 +257,6 @@
     <div id="DALI" class="w3-row-padding w3-padding-64 w3-container">
         <div class="w3-content">
             <h1>DALI: Disagreements and Language Interpretation</h1>
-            <!-- <h5 class="w3-padding-32">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-            ullamco laboris nisi ut aliquip ex ea commodo consequat.</h5> -->
 
             <p class="w3-text-grey2">Natural language expressions are supposed to be unambiguous in context. Yet more
                 and more examples of use of expressions that are ambiguous in context, yet felicitous and rhetorically
@@ -282,14 +303,38 @@
         </div>
         <div class="w3-xlarge w3-padding-32">
             <a class="fa fa-facebook-official w3-hover-opacity" href="https://www.facebook.com/gamesandnlp"></a>
-            <!-- <a class="fa fa-instagram w3-hover-opacity" href=""></a> -->
             <a class="fa fa-twitter w3-hover-opacity" href="https://twitter.com/GamesNlp"></a>
-            <!-- <i class="fa fa-linkedin w3-hover-opacity"></i> -->
         </div>
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
     <script src="/js/homepage.js"></script>
+    <script>
+        const clickBtn = document.getElementById("dialogBtn");
+        const popup = document.getElementById("infoDialog");
+        const acceptBtn = document.getElementById("acceptBtn");
+        const notAcceptBtn = document.getElementById("notAcceptBtn");
+
+        function setCookie(key, value) {
+            document.cookie = key + "=" + value + "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+        }
+
+        function openPopup() {
+            window.location.hash = 'infoDialog';
+            setCookie("viewed_info_dialog");
+        }
+
+        window.onload = openPopup;
+
+        acceptBtn.addEventListener('click', () => {
+            popup.style.display = 'none';
+            setCookie("accepted_info_dialog");
+        });
+        notAcceptBtn.addEventListener('click', () => {
+            popup.style.display = 'none';
+        });
+
+    </script>
 </body>
 
 </html>
