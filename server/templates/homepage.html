@@ -195,7 +195,7 @@
     </div>
     <a id="back-top-button"></a>
     <header class="w3-container w3-red w3-center">
-        <div id="play" class="lingobannerwrapper">
+        <div class="lingobannerwrapper">
             <div class="lingobanner-text-wrapper">
                 <h1 class="w3-margin w3-jumbo">LingoTowns</h1>
                 <p class="w3-xlarge">Help us with our research in Natural Language Processing. Your fun becomes our data
@@ -319,12 +319,30 @@
             document.cookie = key + "=" + value + "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
         }
 
-        function openPopup() {
-            window.location.hash = 'infoDialog';
-            setCookie("viewed_info_dialog");
+        function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
         }
 
-        window.onload = openPopup;
+
+
+        // function openPopup() {
+        //     window.location.hash = 'infoDialog';
+        //     setCookie("viewed_info_dialog");
+        // }
+
+        // window.onload = openPopup;
 
         acceptBtn.addEventListener('click', () => {
             popup.style.display = 'none';
@@ -332,7 +350,14 @@
         });
         notAcceptBtn.addEventListener('click', () => {
             popup.style.display = 'none';
-        });
+        });        
+        
+        let cookie_consent = getCookie("accepted_info_dialog");
+        if (cookie_consent != "") {
+            popup.style.display = "none";
+        } else {
+            popup.style.display = "block";
+        }
 
     </script>
 </body>
