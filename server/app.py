@@ -268,9 +268,8 @@ def intro():
 
 @app.route("/")
 def homepage():
-    if "accepted_info_dialog" in request.cookies:
-        return redirect("/#play")
     session['seen_homepage'] = True
+
     username = session.get('auth',{}).get('username')
     auth_missing = username is None
     is_guest = username == "Guest"
