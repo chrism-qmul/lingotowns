@@ -65,16 +65,16 @@
             top: 0;
             left: 0;
             z-index: 1000000;
-            opacity: 0;
+            /* opacity: 0;
             -webkit-transition: opacity 400ms ease-in;
             -moz-transition: opacity 400ms ease-in;
-            transition: opacity 400ms ease-in;
+            transition: opacity 400ms ease-in; */
         }
 
-        .info-dialog:target {
+        /* .info-dialog:target {
             opacity: 1;
             pointer-events: auto;
-        }
+        } */
 
         .info-text {
             background-color: #ffffff;
@@ -350,13 +350,13 @@
         });
         notAcceptBtn.addEventListener('click', () => {
             popup.style.display = 'none';
-        });        
-        
+        });
+
         let cookie_consent = getCookie("accepted_info_dialog");
         if (cookie_consent != "") {
-            popup.style.display = "none";
+            popup.style.display = 'none';
         } else {
-            popup.style.display = "block";
+            popup.style.display = 'block';
         }
 
     </script>
