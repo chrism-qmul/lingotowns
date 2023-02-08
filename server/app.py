@@ -269,7 +269,7 @@ def intro():
 @app.route("/")
 def homepage():
     session['seen_homepage'] = True
-    
+
     username = session.get('auth',{}).get('username')
     auth_missing = username is None
     is_guest = username == "Guest"
