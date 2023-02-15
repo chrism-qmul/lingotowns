@@ -41,9 +41,9 @@ def create_town(*games, document_id, document_name, region, author, subject_type
         "total_completion": total_completion,
         "games": all_games}
 
-def create_game(name, completion):
+def create_game(name, completion, locked):
     result = {}
-    result[name] = {"completion": completion}
+    result[name] = {"completion": completion, "locked":bool(locked)}
     return result
 
 def create_level(*towns):
@@ -57,7 +57,9 @@ def create_update(*levels, documents_completed, document_points):
 
 #engine = create_engine('sqlite:///:memory:', echo=True)
 engine = create_engine("postgresql://game:game_pass@db/game", 
-        echo=False#, 
+        echo=False,#, 
+        max_overflow=0,
+        pool_size=20
         #connect_args={'detect_types':
         #    sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES}, 
         #native_datetime=True
@@ -282,6 +284,22 @@ def update_progress(user, dochash, game, progress, session=None):
     s.commit()
     return resp.rowcount
 
+def lock(town_id, game, locked=True, session=None):
+    s = session or create_session()
+    sql = """
+    update completion set pc=:lock
+    where completion.id IN (select completion.id from completion
+    LEFT JOIN towns ON completion.town_id=towns.id 
+    LEFT JOIN games ON completion.game_id=games.id 
+    where games.name = :game 
+        AND completion.town_id =:town_id)
+    """
+    params = {'town_id':town_id, 'game':game, 'lock': -1 if locked else 0}
+    resp = s.execute(sql, params)
+    #return resp
+    s.commit()
+    return resp.rowcount
+
 def unseen_documents_for_user(s, username, collection=None):
     sql = """
     select documents.author as document_author, 
@@ -319,7 +337,8 @@ def load_data_for_user(username, townid=None, session=None):
         town_names.region as region,
         towns.level as level, 
         town_names.name as town_name,
-        completion.pc as pc, 
+        GREATEST(0, completion.pc) as pc, 
+        SIGN(SIGN(completion.pc)+1) as unlocked,
         games.name as game_name 
     from towns 
     LEFT JOIN users ON users.id=towns.user_id 
@@ -342,7 +361,7 @@ def load_data_for_user(username, townid=None, session=None):
     results = s.execute(sql, params)
     unpacked_results = []
     for result in results:
-        town_id, document_title, document_author, document_subject, region, level, town_name, pc, game_name = result
+        town_id, document_title, document_author, document_subject, region, level, town_name, pc, unlocked, game_name = result
         unpacked_results.append({"town_id": town_id,
                 "document_title": document_title,
                 "document_author": document_author,
@@ -353,6 +372,7 @@ def load_data_for_user(username, townid=None, session=None):
                 "region": region,
                 "town_name": town_name,
                 "pc": pc,
+                "locked": not unlocked,
                 "game_name": game_name})
     unpacked_results.sort(key=lambda x: (x['level'], x['town_id']))
     levels = []
@@ -361,7 +381,7 @@ def load_data_for_user(username, townid=None, session=None):
         for town_id, town_games in groupby(towns_in_level, key=lambda x: x['town_id']):
             town_games = [x for x in town_games]
             pp.pprint((level, "town_games", town_games))
-            games = [create_game(game['game_name'], game['pc']) for game in town_games]
+            games = [create_game(game['game_name'], game['pc'], game['locked']) for game in town_games]
             total_completion = sum([game['pc'] for game in town_games])/float(len([game['pc'] for game in town_games]))
             town = town_games[0]
             towns.append(create_town(*games, region=town['region'], document_id=town['document_id'], document_name=town['document_title'], subject_type=town['document_subject'], author=town['document_author'], town_id=town['town_id'], town_name=town['town_name'], total_completion=total_completion, available=True))
@@ -375,6 +395,9 @@ def town_naming(document):
     areas = ["City", "Town", "Village"]
     area = random.choice(areas)
     return document.author + " " + area
+
+def remove_top_level(session, uuid):
+    pass
 
 def add_level(session, uuid, documents, games, level):
     user = get_or_create(session, User, name=uuid)

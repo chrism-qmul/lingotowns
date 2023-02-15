@@ -135,6 +135,9 @@ game_url_builders = {"farm": lambda auth_token, doc_id: "https://phrasefarm.org/
         "food": lambda auth_token, doc_id:  "https://cafeclicker.com/?auth_token={auth_token}&from=lingotowns#/game/{doc_id}".format(auth_token=auth_token, doc_id=doc_id),
         "detectives": lambda a,b:  "https://anawiki.essex.ac.uk/phrasedetectives/"}
 
+def uuid_from_session(session):
+    return session.get('auth', {}).get('uuid', None)
+
 @socketio.on('forcelevelup')
 def socket_force_level_up(auth=None):
     app.logger.info("force level up requested " + request.sid)
@@ -144,6 +147,14 @@ def socket_force_level_up(auth=None):
         uuid = auth['uuid']
         if uuid:
             force_level_up(uuid)
+
+@socketio.on('lock')
+def socket_lock(x):
+    app.logger.info("lock requested x"+str(x))
+    persistence.lock(**x, session=db.session)
+    uuid = uuid_from_session(session)
+    if uuid:
+        send_update_for_user(uuid)
 
 @socketio.on('connect')
 def connect(auth=None):
@@ -158,6 +169,8 @@ def connect(auth=None):
         if uuid:
             join_room(uuid)
             send_update_for_user(uuid)
+
+
 
 
 @socketio.on('disconnect')

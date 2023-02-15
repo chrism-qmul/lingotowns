@@ -12,6 +12,17 @@ var worldWidth = 20;
 var worldHeight = 20;
 var prng = new PRNG("test1ab");
 const debugString = "🐞 debug mode";
+const debugLockString = "🔒 debug mbuilding lock mode";
+const building_to_game = {
+  "b0": "food",
+  "b1": "farm",
+  "b2": "library"};
+
+const game_to_title = {
+  "food": "CafeClicker",
+  "farm": "PhraseFarm",
+  "library": "LingoTorium"};
+
 
 function easeInEaseOut(t) {
   return (t*t)/(2.0 * (t*t - t) + 1.0);
@@ -384,6 +395,7 @@ class Game {
   constructor(canvas) {
     //this.minimapworker = new Worker("minimap.js");
     this.debug = false;
+    this.debug_lock = false;
     this.dirty = true;
     this.isLoaded = false;
     this.lastregion = null;
@@ -413,7 +425,7 @@ class Game {
     //replace above with transformation matrix?
     this.moveStyle = litMovement;
     this.resources = {
-      bakery: "bakery",
+      food: "bakery",
       library: "library",
       grass: "grass.small",
       field: "field.small",
@@ -622,30 +634,14 @@ class Game {
       if(building) {
         console.groupCollapsed(debugSelectObjectString);
         const town = this.findTownForBuildingPosition(building.position);
-        let game = null;
-        var complete = false;
-        switch(building.tile) {
-          case "b0":
-            complete = (town.games.food.completion == 100);
-            game = "food"
-            dataLayer.push({'event': 'clicked_bakery'});
-            // alert('clicked bakery');
-            let timer = this.setTimer();
-            window.top.postMessage({ action: 'metric', payload: { timer: timer } }, '*');
-            window.top.postMessage({ action: 'finished' }, '*');
-            
-            break;
-          case "b1":
-            complete = (town.games.farm.completion == 100);
-            game = "farm"
-            dataLayer.push({'event': 'clicked_farm'});
-            break;
-          case "b2":
-            complete = (town.games.library.completion == 100);
-            game = "library"
-            dataLayer.push({'event': 'clicked_library'});
-            break;
+        let game = building_to_game[building.tile];
+        console.log(building.tile, game, town.games);
+        var complete = (town.games[game].completion == 100);
+        if (this.debug_lock) {
+          this.socket.emit('lock', {"town_id": town.town_id, "game": game, "locked": true});
         }
+        console.info(`clicked ${game} [town: ${town.town_id}]`, town.games[game]);
+        dataLayer.push({'event': "clicked_"+game});
         if (town.document_id == "tutorial") {
           if (this.debug) {
             console.info("would redirect to tutorial ", game);
@@ -692,6 +688,11 @@ class Game {
     this.debug = !this.debug;
     this.requireDraw();
     console.info(debugString + ": " + (this.debug ? "on" : "off"));
+  }
+
+  toggleDebugLock() {
+    this.debug_lock = !this.debug_lock;
+    console.info(debugLockString + ": " + (this.debug_lock ? "on" : "off"));
   }
 
   async preload() {
@@ -799,9 +800,9 @@ class Game {
     return this.getTownInformation(this.lastregion);
   }
 
-  drawBuildingLabel(label, buildingPosition) {
+  drawBuildingLabel(label, buildingPosition, font) {
     this.context.save();
-    this.context.font = "600 20px Verdana";
+    this.context.font = font || "600 20px Verdana";
     this.context.textAlign = "center";
     const labelpos = this.toScreen(buildingPosition.clone().sub(new Vec2(4,4)));
     this.context.shadowColor = 'black';
@@ -829,26 +830,20 @@ class Game {
         highlight = this.mouseGridPosition.distance(position) < 4;
       }
       var complete = false;
+      var locked = false;
       switch(tile) {
         case "b0":
-          if (town.games.food) {
-          complete = (town.games.food.completion == 100);
-          this.drawImageToTiles(position, new Vec2(3, 3), this.resources.bakery, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b0"));
-            if (highlight) this.drawBuildingLabel("CafeClicker", position)
-          }
-          break;
         case "b1":
-          if (town.games.farm) {
-          complete = (town.games.farm.completion == 100);
-          this.drawImageToTiles(position, new Vec2(3, 3), this.resources.farm, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b1"));
-            if (highlight) this.drawBuildingLabel("PhraseFarm", position)
-          }
-          break;
         case "b2":
-          if (town.games.library) {
-          complete = (town.games.library.completion == 100);
-          this.drawImageToTiles(position, new Vec2(3, 3), this.resources.library, 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, "b2"));
-            if (highlight) this.drawBuildingLabel("LingoTorium", position)
+          const game = building_to_game[tile];
+          const game_title = game_to_title[game];
+          if (town.games[game]) {
+          complete = (town.games[game].completion == 100);
+          locked = town.games[game]['locked'];
+          const saturation = locked ? 0.1 : 1.0;
+          this.drawImageToTiles(position, new Vec2(3, 3), this.resources[game], 1.0, (!complete && highlight) || this.isBuildingHighlighted(town.town_id, tile), saturation);
+            if (highlight) this.drawBuildingLabel(game_title, position)
+            if (locked) this.drawBuildingLabel("🔒", position.clone().add(new Vec2(2,2)), "600 50px Verdana");;
           }
           break;
         case ("r" + RoadWest):
@@ -1486,6 +1481,9 @@ class Game {
         case 68: //d
           game.toggleDebug();
           break;
+        case 76: //l
+          game.toggleDebugLock();
+          break;
         case 85: //u
           game.forceLevelUp();
           break;
@@ -1614,7 +1612,7 @@ class Game {
     }
   }
 
-  drawImageToTiles(bottomlocation, footprint, img, alpha, highlight/*, flipped*/) {
+  drawImageToTiles(bottomlocation, footprint, img, alpha, highlight/*, flipped*/, saturate) {
     //image.width 
     /*
               this.context.save();
@@ -1622,6 +1620,7 @@ class Game {
                 this.context.scale(-1,1);
               }
               */
+    saturate = saturate || 1.0
     alpha = alpha || 1.0;
     highlight = highlight || false;
     var bl = this.toScreen(bottomlocation);
@@ -1635,6 +1634,7 @@ class Game {
     var right = this.toScreen(new Vec2(0, -footprint.y).add(bottomlocation));
     //
     //this.drawCircle(right);
+    var requireRestore = 0;
     const imageprops = this.atlas[img];
     const [img_width, img_height] = imageprops["size"];
     const [x, y] = imageprops["xy"];
@@ -1643,6 +1643,7 @@ class Game {
     if (alpha != 1.0) {
       this.context.save();
       this.context.globalAlpha = alpha;
+      requireRestore++;
     }
     if (highlight) {
       this.context.save();
@@ -1650,16 +1651,30 @@ class Game {
       this.context.shadowBlur = 50;
       this.context.shadowOffsetX = 1;
       this.context.shadowOffsetY = 1;
+      requireRestore++;
+    }
+    if (saturate != 1.0) {
+      this.context.save();
+      const saturation = saturate * 100;
+      this.context.filter = "saturate(" + saturation + "%)";
+      requireRestore++;
     }
     this.context.drawImage(this.atlasimg, x, y, img_width, img_height, left.x-1, bl.y-(img_height*imgScale)-1, ((img_width+2)*imgScale), ((img_height+2)*imgScale));
     //this.context.drawImage(img, left.x, bl.y-(img.height*imgScale), img.width*imgScale, img.height*imgScale);
-    if (alpha != 1.0) {
-      this.context.restore();
-    }
-    if (highlight) {
+    for(var i = 0; i < requireRestore; i++) {
       this.context.restore();
     }
     //this.context.strokeRect(this.toScreen(leftGrid).x, this.toScreen(leftGrid).y, 50, 50);
+  }
+
+  addBuildingDebugOverlay() {
+    const gameoverlay = document.createElement("div");
+    gameoverlay.className = "gameoverlay towninformation";
+    gameoverlay.innerHTML = `
+      <button class='townsummary'>Visit Game</button>
+      <div class='content'>
+      </div>`;
+    document.body.appendChild(gameoverlay);
   }
 
   addTownSummary(townInformation, townposition) {
@@ -1788,17 +1803,21 @@ class Game {
 
 
   logTownInformation(regionFilter) {
-    const columns = ["level", "document_id", "author", "document_name", "total_completion", "food_completion", "farm_completion", "library_completion", "region", "regionIdx"];
+    const columns = ["town_id", "level", "document_id", "author", "document_name", "total_completion", "food_completion", "farm_completion", "library_completion", "food_lock", "farm_lock", "library_lock","region", "regionIdx"];
+
     var tableData = this.data.levels.reduce(function(acc, cur, idx) {
         return acc.concat(cur.towns.map(function(town) {
               try {
               town.farm_completion = town.games.farm.completion;
+              town.farm_lock = town.games.farm.locked;
               } catch  {}
               try {
               town.food_completion = town.games.food.completion;
+              town.food_lock = town.games.food.locked;
               } catch  {}
               try {
               town.library_completion = town.games.library.completion;
+              town.library_lock= town.games.library.locked;
               } catch  {}
               town.level = idx; 
               return town}));}, []);
@@ -1926,7 +1945,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var last_level_count = null;
   game.onUpdateData(function(data) {
     if (last_level_count != data.levels.length) {
-      console.log("🏆 level change", last_level_count, data.levels.length);
+      console.log("🏆 level change "+last_level_count  + " → " + data.levels.length);
       last_level_count = data.levels.length
     }
     dataLayer.push({
