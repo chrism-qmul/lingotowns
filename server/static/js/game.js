@@ -1,4 +1,5 @@
 import {Vec2} from './math/Vec2.js';
+import {FireworkEmitter} from './particles/firework.js';
 import {BoundingBox} from './collections/BoundingBox.js';
 import {World,RoadEast,RoadNorth,RoadSouth,RoadWest} from './world.js';
 import {PRNG} from './algorithms/prng.js';
@@ -23,9 +24,20 @@ const game_to_title = {
   "farm": "PhraseFarm",
   "library": "LingoTorium"};
 
+function deep_clone(obj) {
+  return JSON.parse(JSON.stringify(obj))
+}
 
 function easeInEaseOut(t) {
   return (t*t)/(2.0 * (t*t - t) + 1.0);
+}
+
+function deep_copy(obj) {
+  if (obj) {
+    return JSON.parse(JSON.stringify(obj));
+  } else {
+    return obj;
+  }
 }
 
 function animate(animationlength, updatefn, donefn) {
@@ -407,6 +419,7 @@ class Game {
     this.tracking_elements = [];
     this.on_update_data = [];
     this.canvas = canvas;
+    this.particle_systems = [];
     this.wasNearBuilding = false;
     this.wasNearCompass = false;
     this.context = canvas.getContext("2d");
@@ -617,6 +630,44 @@ class Game {
     // console.log(`Task 2 took ${timeOut - this.timer} milliseconds.`);
   }
 
+  translateToZeroWorldPosition(worldposition) {
+    //pushes a translation matrix that will make a certain world position 0 so that something can be conveniently painted at 0
+    //remove to call save and restore
+    var pos = this.toScreen(worldposition);
+    this.context.translate(pos.x,pos.y);
+  }
+
+  drawFireworks(elapsed) {
+    for(var i = this.particle_systems.length-1; i >= 0; i--) {
+      this.particle_systems[i][1].update(elapsed);
+      if (this.particle_systems[i][1].isDead()) {
+        this.particle_systems.slice(i,1);
+      } else {
+        this.context.save();
+        this.translateToZeroWorldPosition(this.particle_systems[i][0]);
+        this.particle_systems[i][1].draw(this.context);
+        this.context.restore();
+      }
+    } 
+  }
+
+  addFireworks(worldposition) {
+    this.particle_systems.push([worldposition, new FireworkEmitter(Vec2.zero())]);
+  }
+
+  debugLock(mouseGridPosition) {
+    const building = this.isNearBuilding(mouseGridPosition);
+    if (building) {
+      const town = this.findTownForBuildingPosition(building.position);
+      let game = building_to_game[building.tile];
+      this.socket.emit('lock', {"town_id": town.town_id, "game": game, "locked": !town.games[game].locked});
+    }
+  }
+
+  debugFireworks(mouseGridPosition) {
+    this.addFireworks(mouseGridPosition);
+  }
+
   selectobject() {
     const debugSelectObjectString = "👆 select object";
     if (this.mouseGridPosition) {
@@ -630,6 +681,9 @@ class Game {
       return;
     }
     if (this.mouseGridPosition) {
+      if (this.debug && this.debugFn) {
+        this.debugFn(this.mouseGridPosition.clone());
+      }
       const building = this.isNearBuilding(this.mouseGridPosition);
       if(building) {
         console.groupCollapsed(debugSelectObjectString);
@@ -637,9 +691,6 @@ class Game {
         let game = building_to_game[building.tile];
         console.log(building.tile, game, town.games);
         var complete = (town.games[game].completion == 100);
-        if (this.debug_lock) {
-          this.socket.emit('lock', {"town_id": town.town_id, "game": game, "locked": true});
-        }
         console.info(`clicked ${game} [town: ${town.town_id}]`, town.games[game]);
         dataLayer.push({'event': "clicked_"+game});
         if (town.document_id == "tutorial") {
@@ -692,7 +743,7 @@ class Game {
 
   toggleDebugLock() {
     this.debug_lock = !this.debug_lock;
-    console.info(debugLockString + ": " + (this.debug_lock ? "on" : "off"));
+    
   }
 
   async preload() {
@@ -1119,6 +1170,7 @@ class Game {
 
   updateData(d) {
     this.world = new World("testa", true);
+    this.last_data = deep_copy(this.data);
     this.data = d;
     try {
        if (this.data.levels[0].towns[0].document_id != "tutorial") {
@@ -1148,7 +1200,7 @@ class Game {
     this.updateTownOverlays();
     this.updateFogLevel(10 + (22*(this.data.levels.length)));
     for(var i = 0; i < this.on_update_data.length; i++) {
-      this.on_update_data[i](this.data);
+      this.on_update_data[i](this.data, this.last_data);
     }
     console.groupEnd(updateLabel);
     this.requireDraw();
@@ -1354,6 +1406,7 @@ class Game {
         this.requireDraw();
       }
     }
+    fe.location = a;
     /*
     console.log(this.mouseGridPosition);
     this.drawCircle(this.toScreen(this.mouseGridPosition));
@@ -1481,8 +1534,13 @@ class Game {
         case 68: //d
           game.toggleDebug();
           break;
+        case 70: //f
+          console.info("debug fireworks 🎆: on");
+          game.debugFn = game.debugFireworks;
+          break;
         case 76: //l
-          game.toggleDebugLock();
+          console.info(debugLockString + ": on");
+          game.debugFn = game.debugLock;
           break;
         case 85: //u
           game.forceLevelUp();
@@ -1842,7 +1900,7 @@ class Game {
       this.fog_progress = 0;
     }
 */
-    if (this.dirty) {
+    if (this.dirty || this.particle_systems.length > 0) {
       this.dirty = false;
 	    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	    //this.drawDebugGrid(); 
@@ -1850,7 +1908,7 @@ class Game {
 	    this.drawInfo();
 	    this.drawMiniMap();
 	    this.drawCompass();
-
+      this.drawFireworks(elapsed/1000);
       //debugging
       /*
       this.drawCircle(this.toScreen(new Vec2(-5, 11)));

@@ -20,6 +20,10 @@ export class Vec2 extends Array {
     return this.x == 0 && this.y == 0;
   }
 
+  static zero() {
+    return new Vec2(0,0);
+  }
+
   lerp(b, t) {
     return new Vec2(lerpScalar(this.x, b.x, t), lerpScalar(this.y, b.y, t));
   }
