@@ -24,6 +24,8 @@ const game_to_title = {
   "farm": "PhraseFarm",
   "library": "LingoTorium"};
 
+const game_names = ["food", "farm", "library"];
+
 function deep_clone(obj) {
   return JSON.parse(JSON.stringify(obj))
 }
@@ -1406,7 +1408,6 @@ class Game {
         this.requireDraw();
       }
     }
-    fe.location = a;
     /*
     console.log(this.mouseGridPosition);
     this.drawCircle(this.toScreen(this.mouseGridPosition));
@@ -1858,7 +1859,26 @@ class Game {
     }
   }
 
-
+  addFireworksOnUnlock(data, old_data) {
+    for(var level = 0; level < data.levels.length;level++) {
+      for(var town = 0; town < data.levels[level].towns.length; town++) {
+        for(var game = 0; game < game_names.length; game++) {
+          try {
+            let currently_locked = data.levels[level].towns[town].games[game_names[game]].locked;
+            let previously_locked = old_data.levels[level].towns[town].games[game_names[game]].locked;
+            if (!currently_locked && previously_locked) {
+              //has been unlocked
+              this.addFireworks(this.world.locations[level].towns[town].buildings[game].position);
+              this.addFireworks(this.world.locations[level].towns[town].buildings[game].position);
+              this.addFireworks(this.world.locations[level].towns[town].buildings[game].position);
+              this.addFireworks(this.world.locations[level].towns[town].buildings[game].position.clone().sub(new Vec2(1,1)));
+              this.addFireworks(this.world.locations[level].towns[town].buildings[game].position.clone().add(new Vec(2,2)));
+            }
+          } catch {}
+        }
+      }
+    }
+  }
 
   logTownInformation(regionFilter) {
     const columns = ["town_id", "level", "document_id", "author", "document_name", "total_completion", "food_completion", "farm_completion", "library_completion", "food_lock", "farm_lock", "library_lock","region", "regionIdx"];
@@ -2011,6 +2031,7 @@ document.addEventListener('DOMContentLoaded', function() {
       'current_level': data.levels.length,
     });
    });
+  game.onUpdateData(game.addFireworksOnUnlock.bind(game));
   
 //   if (last_level_count != null) {
 //     console.log("🏆 level up");
