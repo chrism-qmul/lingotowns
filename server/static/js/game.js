@@ -695,6 +695,9 @@ class Game {
         var complete = (town.games[game].completion == 100);
         console.info(`clicked ${game} [town: ${town.town_id}]`, town.games[game]);
         dataLayer.push({'event': "clicked_"+game});
+        let timer = this.setTimer();
+        window.top.postMessage({ action: 'metric', payload: { timer: timer } }, '*');
+        window.top.postMessage({ action: 'finished' }, '*');
         if (town.document_id == "tutorial") {
           if (this.debug) {
             console.info("would redirect to tutorial ", game);
