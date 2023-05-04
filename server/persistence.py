@@ -399,6 +399,12 @@ def town_naming(document):
 def remove_top_level(session, uuid):
     pass
 
+class DocumentSelectionPolicy:
+    pass
+
+class GameUnlockPolicy:
+    pass
+
 def add_level(session, uuid, documents, games, level):
     user = get_or_create(session, User, name=uuid)
     region = random.choice(["Desert", "Farms", "Lakes", "Woods"])
@@ -410,8 +416,8 @@ def add_level(session, uuid, documents, games, level):
         if not town_name.name:
             town_name.name = rnn_town_namer(region, title[0])
             town_name.region = region
-        for game in games:
-            create(session, Completion, game=get_or_create(session, Game, name=game), town=town, pc=0)
+        for game, pc in games:
+            create(session, Completion, game=get_or_create(session, Game, name=game), town=town, pc=pc)
 
 if __name__ == "__main__":
     #print(load_data())

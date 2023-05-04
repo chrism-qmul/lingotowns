@@ -14,6 +14,7 @@ import random
 from namegen.sample import sample
 import os
 import json
+from base_progression_policy import BaseProgressionPolicy
 
 #AUTH_SERVER = "http://localhost:5000"
 #can't access localhost, it's this container
@@ -39,41 +40,31 @@ admin = Admin(app, name='lingotowns', template_mode='bootstrap3')
 models = [persistence.Document, persistence.User, persistence.Town, persistence.Game, persistence.Completion, persistence.TownName, persistence.CollectionAvailability, persistence.Experiment, persistence.TutorialCompletion]
 
 #db.create_all()
+#
 
-def is_ready_for_new_level(update):
-    # if any towns in the last level are over n % complete then add a new level
-    if not update:
+class RandomProgressionPolicy(BaseProgressionPolicy):
+    def get_next_documents(self, quantity=1):
+        n = random.randint(1, quantity)
+        return self.unseen_documents()[:n]
+
+    def is_ready_for_unlock(self):
         return True
-    if not update.get("levels"):
-        return True
-    max_town_completion = max([town.get("total_completion", 0) for town in update.get("levels")[-1].get('towns', [])])
-    return max_town_completion > 70
 
-def next_level(update):
-    if not update:
-        return 0
-    return len(update.get("levels", []))
+class RecommenderProgressionPolicy(BaseProgressionPolicy):
+    def get_next_documents(self, quantity=1):
+        doc_hash = requests.get(f"https://recommender.tileattack.com/task/{self.uuid}").text
+        doc = persistence.get(self.db_session, persistence.Document, doc_hash=doc_hash)
+        return [(doc.author, doc.title)]
 
-def get_random_next_level_for(uuid):
-    collection = persistence.current_collection(db.session)
-    documents = list(persistence.unseen_documents_for_user(db.session, uuid, collection))[:random.randint(1, 3)]
-    return documents
+progression_policy = RecommenderProgressionPolicy
 
-def get_mpa_next_level_for(uuid):
-    doc_hash = requests.get("https://recommender.tileattack.com/task/" + uuid).text
-    doc = persistence.get(db.session, persistence.Document, doc_hash=doc_hash)
-    return [(doc.author, doc.title)]
-    
-def get_next_level_for(uuid):
-    #return get_mpa_next_level_for(uuid) or get_random_next_level_for(uuid)
-    return get_random_next_level_for(uuid)
-
-def create_next_level_for(uuid, level):
+@progression_policy.before_add_level
+def add_level_analytics(uuid, level):
     send_analytics({"level": level}, uuid)
-    docs = get_next_level_for(uuid)
-    for doc in docs:
-        persistence.add_level(db.session, uuid, [doc], ["farm", "library", "food"], level)
-    db.session.commit()
+
+@progression_policy.after_tutorial_complete
+def tutorial_complete_analytics(uuid):
+    send_analytics({"tutorial town complete":True}, uuid)
 
 def send_update(update, user):
     app.logger.info("[%s] %s", user, update)
@@ -82,19 +73,12 @@ def send_update(update, user):
 def send_analytics(analytics, user):
     app.logger.info("analytics: [%s] %s", user, analytics)
     socketio.emit("game-analytics", analytics, to=str(user))
-    
-def tutorials_completed_for_level(level, user_id):
-    games = ["farm", "library", "food"]
-    return {game:persistence.is_tutorial_complete(user_id, 0, game, session=db.session) for game in games}
 
 def send_update_for_user(user_id):
-    user_update = persistence.load_data_for_user(user_id, session=db.session)
-    tutorials_complete = tutorials_completed_for_level(0, user_id).values()
-    if all(tutorials_complete) and is_ready_for_new_level(user_update):
-        create_next_level_for(user_id, next_level(user_update))
-        send_analytics({"tutorial town complete"}, user_id)
-    user_update = persistence.load_data_for_user(user_id, session=db.session)
-    send_update(user_update, user_id)
+    # run the progression policy to see if anything needs to change
+    policy = progression_policy(user_id, db.session)
+    policy.update()
+    send_update(policy.user_update(), user_id)
 
 class ModelViewWatch(ModelView):
     def after_model_change(self, form, model, is_created):
@@ -146,7 +130,9 @@ def socket_force_level_up(auth=None):
     if auth:
         uuid = auth['uuid']
         if uuid:
-            force_level_up(uuid)
+            policy = progression_policy(uuid, db.session)
+            policy.add_level()
+            send_update_for_user(uuid)
 
 @socketio.on('lock')
 def socket_lock(x):
@@ -170,9 +156,6 @@ def connect(auth=None):
             join_room(uuid)
             send_update_for_user(uuid)
 
-
-
-
 @socketio.on('disconnect')
 def disconnect():
     print("they left :( " + request.sid)
@@ -184,21 +167,6 @@ def disconnect():
 def auth_from_token(token):
     url = AUTH_SERVER + "/api/verify"
     return requests.get(url, {"auth_token":token}).json()
-#
-#@socketio.on('auth')
-#def handle_auth(auth_token):
-#    app.logger.info("auth mesg %s", auth_token)
-#    resp = auth_from_token(auth_token)
-#    app.logger.info("the always wrong response", str(resp))
-#    uuid = resp.get('uuid')
-#    session_uuid[request.sid] = uuid
-#    if uuid:
-#        join_room(uuid)
-#        send_update_for_user(uuid)
-
-#@app.route("/admin/")
-#def index():
-#    return render_template("index.html", users=sessions, client_info=client_info, prefix=prefix)
 
 @app.route("/info")
 def info():
@@ -211,23 +179,6 @@ def nextlevel():
         return str(get_next_level_for(auth['uuid']))
     else:
         return "No user information"
-    
-
-# @app.route("/")
-# def lingotowns():
-#     auth_token = request.args.get("auth_token")
-#     session_auth = session.get('auth')
-#     if auth_token:
-#         session['auth'] = auth_from_token(auth_token)
-#         session['auth_token'] = auth_token
-#         return redirect("/")
-#     elif session_auth:
-#         if True:#session.get('seen_intro'):
-#             return render_template("game.html", auth_server=AUTH_SERVER, is_guest=(session_auth['username'] == "Guest"))
-#         else:
-#             return redirect("/intro")
-#     else:
-#         return redirect(AUTH_SERVER + "/login-as-guest?redirect=" + HOSTNAME)
 
 @app.route("/current-collection")
 def currentcollection():
@@ -254,23 +205,6 @@ def lingotowns():
         return redirect(AUTH_SERVER + "/login-as-guest?redirect=" + HOSTNAME)
   
     # return render_template("game.html", logged_in=logged_in)
-
-# @app.route("/play")
-# def lingotowns():   
-#     auth_token = request.args.get("auth_token")
-#     session_auth = session.get('auth')
-    # if auth_token:
-    #     session['auth'] = auth_from_token(auth_token)
-    #     session['auth_token'] = auth_token
-    #     return redirect("/")
-    # elif session_auth:
-    #     if True:#session.get('seen_intro'):
-    #         return render_template("game.html", auth_server=AUTH_SERVER, is_guest=(session_auth['username'] == "Guest"))
-    #     else:
-    #         return redirect("/intro")
-    # else:
-    #     return redirect(AUTH_SERVER + "/login-as-guest?redirect=" + HOSTNAME)
-
 
 @app.route("/intro")
 def intro():
@@ -314,30 +248,6 @@ def tutorial_text():
 def tutorial_playgame():
     session['seen_tutorial'] = True
     return render_template("story/playgame.html")
-
-@app.route("/tutorial-complete")
-def tutorial_complete():
-    # THIS IS UNUSED
-    # IT SERVES AS AN EXAMPLE OF HOW THE MANUAL TUTORIAL
-    # HANDLER MIGHT WORK - CURRENTLY IN MIDDLEWARE
-    game = request.args.get("game")
-    level = int(request.args.get("level"))
-    uuid = session['auth']['uuid']
-    persistence.tutorial_complete(uuid, level, game, session=db.session)
-    create_next_level_for(uuid, next_level(user_update))
-    return redirect("/")
-
-def force_level_up(uuid):
-    user_update = persistence.load_data_for_user(uuid, session=db.session)
-    create_next_level_for(uuid, next_level(user_update))
-    user_update = persistence.load_data_for_user(uuid, session=db.session)
-    send_update(user_update, uuid)
-
-@app.route("/forcelevelup")
-def forcelevelup():
-    force_level_up(session['auth']['uuid'])
-    #send_update_for_user(uuid)
-    return redirect("/")
 
 @app.route("/logout")
 def logout():
