@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, session
+from functools import wraps
 from flask_admin import Admin
 from flask_socketio import SocketIO
 from flask_socketio import send, emit, join_room, leave_room
@@ -15,6 +16,7 @@ from namegen.sample import sample
 import os
 import json
 from base_progression_policy import BaseProgressionPolicy
+from util import update_url_query_string
 
 #AUTH_SERVER = "http://localhost:5000"
 #can't access localhost, it's this container
@@ -40,7 +42,16 @@ admin = Admin(app, name='lingotowns', template_mode='bootstrap3')
 models = [persistence.Document, persistence.User, persistence.Town, persistence.Game, persistence.Completion, persistence.TownName, persistence.CollectionAvailability, persistence.Experiment, persistence.TutorialCompletion]
 
 #db.create_all()
-#
+
+def require_login(function,guest=False):
+    @wraps(function)
+    def wrap(request, *args, **kwargs):
+        session_auth = session.get('auth')
+        if session_auth:
+            return function(request, *args, **kwargs)
+        else:
+            return redirect(f"{AUTH_SERVER}/login?redirect={HOSTNAME}{request.full_path}")
+    return wrap
 
 class RandomProgressionPolicy(BaseProgressionPolicy):
     def get_next_documents(self, quantity=1):
@@ -192,17 +203,10 @@ def lingotowns():
     auth_missing = username is None
     is_guest = username == "Guest"
     logged_in = not auth_missing and not is_guest
-    if auth_token:
-        session['auth'] = auth_from_token(auth_token)
-        session['auth_token'] = auth_token
-        return redirect("/")
-    elif session_auth:
-        if True:#session.get('seen_intro'):
-            return render_template("game.html", auth_server=AUTH_SERVER, is_guest=(session_auth['username'] == "Guest"), logged_in=logged_in, username=session_auth['username'])
-        else:
-            return redirect("/intro")
+    if True:#session.get('seen_intro'):
+        return render_template("game.html", auth_server=AUTH_SERVER, is_guest=(session_auth['username'] == "Guest"), logged_in=logged_in, username=session_auth['username'])
     else:
-        return redirect(AUTH_SERVER + "/login-as-guest?redirect=" + HOSTNAME)
+        return redirect("/intro")
   
     # return render_template("game.html", logged_in=logged_in)
 
@@ -312,7 +316,7 @@ def manage_login():
     if auth_token:
         session['auth'] = auth_from_token(auth_token)
         session['auth_token'] = auth_token
-        return redirect(HOSTNAME + request.full_path)
+        return redirect(update_url_query_string(HOSTNAME + request.full_path, auth_token=None))
     elif session_auth:
         # this should be in its own handler, but...
         # flask middleware can't be ordered??? ...so this has to go here
