@@ -1,5 +1,6 @@
 import persistence
 import config
+import lingotorium
 
 class BaseProgressionPolicy:
     before_add_level_callbacks = []
@@ -44,7 +45,8 @@ class BaseProgressionPolicy:
         result = {}
         for game in config.games:
             if last_completed:
-                result[game] = False
+                library_lock = game == "library" and lingotorium.is_document_locked(self.uuid, town['document_id'])
+                result[game] = library_lock#False
             if town['games'][game]['completion'] > 0:
                 last_completed = True
         return result
