@@ -55,8 +55,8 @@ def require_login(function,guest=False):
 
 class RandomProgressionPolicy(BaseProgressionPolicy):
     def get_next_documents(self, quantity=1):
-        n = random.randint(1, quantity)
-        return self.unseen_documents()[:n]
+        #n = random.randint(1, quantity)
+        return self.unseen_documents()[:2]
 
     def is_ready_for_unlock(self):
         return True
@@ -67,7 +67,8 @@ class RecommenderProgressionPolicy(BaseProgressionPolicy):
         doc = persistence.get(self.db_session, persistence.Document, doc_hash=doc_hash)
         return [(doc.author, doc.title)]
 
-progression_policy = RecommenderProgressionPolicy
+#progression_policy = RecommenderProgressionPolicy
+progression_policy = RandomProgressionPolicy
 
 @progression_policy.before_add_level
 def add_level_analytics(uuid, level):
@@ -121,7 +122,7 @@ session_uuid = {}
 prefix = "/"
 
 game_tutorial_url_builders = {"farm": lambda auth_token: "https://phrasefarm.org/?auth_token={auth_token}&from=lingotowns#/tutorial".format(auth_token=auth_token),
-        "library": lambda auth_token: "https://lingotorium.com/?auth_token={auth_token}&from=lingotowns".format(auth_token=auth_token),
+        "library": lambda auth_token: "https://lingotorium.com/?auth_token={auth_token}&from=lingotowns&lt_tutorial=true".format(auth_token=auth_token),
         "food": lambda auth_token:  "https://cafeclicker.com/?auth_token={auth_token}&from=lingotowns#/tutorial".format(auth_token=auth_token),
         "detectives": lambda a:  "https://anawiki.essex.ac.uk/phrasedetectives/"}
 
@@ -302,6 +303,7 @@ def update_progress(): #POST
         return "updated", 200
     else:
         return "invalid request " + str(data), 500
+
 
 @app.route("/town-summary/<townid>")
 def townsummary(townid):

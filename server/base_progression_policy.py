@@ -27,7 +27,7 @@ class BaseProgressionPolicy:
                     after_tutorial_complete(self.uuid)
             for before_add_level in self.before_add_level_callbacks:
                 before_add_level(self.uuid, next_level)
-            self.add_level(self.get_next_games_and_documents())
+            self.add_level(self.get_next_documents())
 
     def get_current_collection(self):
         return persistence.current_collection(self.db_session)
@@ -61,11 +61,14 @@ class BaseProgressionPolicy:
 
     def add_level(self, docs_and_games=None):
         next_level = self.next_level()
+        #if not docs_and_games:
         if not docs_and_games:
-            docs_and_games = self.get_next_games_and_documents()
-        for doc, games in docs_and_games:
-            #persistence.add_level(self.db_session, self.uuid, [doc], [("food", 0), ("farm", -1), ("library", -1)], level)
-            persistence.add_level(self.db_session, self.uuid, [doc], [(game, 0 if unlocked else -1) for game, unlocked in games], next_level)
+            #docs_and_games = self.get_next_games_and_documents()
+            docs_and_games = self.get_next_documents()
+        #for doc, games in docs_and_games:
+        for doc in docs_and_games:
+            persistence.add_level(self.db_session, self.uuid, [doc], [("food", 0), ("farm", 0), ("library", 0)], next_level)
+            #persistence.add_level(self.db_session, self.uuid, [doc], [(game, 0 if unlocked else -1) for game, unlocked in games], next_level)
         self.db_session.commit()
 
     def next_level(self):
