@@ -1,122 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'lto_layout.html' %}
 
-<head>
-    <!-- Google Tag Manager -->
-    <script>(function (w, d, s, l, i) {
-            w[l] = w[l] || []; w[l].push({
-                'gtm.start':
-                    new Date().getTime(), event: 'gtm.js'
-            }); var f = d.getElementsByTagName(s)[0],
-                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
-                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', 'GTM-N7B3K6B');</script>
-    <!-- End Google Tag Manager -->
-    <script src="https://www.googleoptimize.com/optimize.js?id=OPT-MPCCLF3"></script>
-    <title>LingoTowns | Home</title>
-    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/css/homepage.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
-    <link rel="stylesheet" href="https://use.typekit.net/frj5pjr.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
-    <link href="https://fonts.googleapis.com/css2?family=Mouse+Memoirs&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <style>
-        body,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            font-family: "Lato", sans-serif
-        }
+{% block page_head %}
 
-        .w3-bar,
-        h1,
-        button {
-            font-family: "Montserrat", sans-serif
-        }
+     <script src="https://www.googleoptimize.com/optimize.js?id=OPT-MPCCLF3"></script>
+     <link rel="stylesheet" href="/css/homepage.css">
+     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+     <link rel="stylesheet" href="https://use.typekit.net/frj5pjr.css">
+     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-interactivity@latest/dist/lottie-interactivity.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.min.js" integrity="sha512-L6Z/YtIPQ7eU3BProP34WGU5yIRk7tNHk7vaC2dB1Vy1atz6wl9mCkTPPZ2Rn1qPr+vY2mZ9odZLdGYuaBk7dQ==" crossorigin="anonymous"></script>
+    <script src="/js/intro.js"></script>
+    <script>
+        var intro_handler;
+ 
+        $(document).ready(function() {
+            intro_handler = new IntroHandler({container: $('header.w3-container #play.lingobannerwrapper')});
+            $('.play-now-button').click(function(){ start_intro_animation(); });
+        });
+ 
+        function start_intro_animation(){
+            var header = $('header.w3-container');
+ 
+            $(header).css({overflow: 'hidden'});
+            $('.hide-on-intro-animation').hide();
+ 
+            $(header).find('.lingobanner-img-wrapper').animate({bottom: '-70vh'}, 600, function(){ 
+                $(this).remove();
+             });
+ 
+            setTimeout(function(){
+                $(header).find('.lingobanner-text-wrapper').addClass('minimised');
+                $(header).find('.mute-button-wrapper').fadeIn();
+ 
+                $(header).find('.intro-container').show();
+                setTimeout(function(){ intro_handler.start_intro(); }, 600); 
 
-        .fa-anchor,
-        .fa-coffee {
-            font-size: 200px
-        }
-
-        #logout {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            height: 3em;
-        }
-
-        .info-dialog {
-            height: 100vh;
-            width: 100vw;
-            display: block;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            background-color: rgba(95, 100, 127, 0.7);
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1000000;
-            /* opacity: 0;
-            -webkit-transition: opacity 400ms ease-in;
-            -moz-transition: opacity 400ms ease-in;
-            transition: opacity 400ms ease-in; */
-        }
-
-        /* .info-dialog:target {
-            opacity: 1;
-            pointer-events: auto;
-        } */
-
-        .info-text {
-            background-color: #ffffff;
-            padding: 4vh 3vw;
-            top: 20vh;
-            left: 25vw;
-            width: 50vw;
-            position: relative;
-            border-radius: 15px;
-            font-size: min(2.5vw, 15px);
-        }
-
-        .button-wrapper {
-            display: flex;
-            margin-top: 20px;
-            padding-top: 2%;
-            margin-left: 25%;
-
-        }
-
-        #notAcceptBtn {
-            padding: 1% 2%;
-            margin-right: 5%;
-        }
-
-        #acceptBtn {
-            padding: 1% 2%;
-        }
-    </style>
-</head>
-
-<body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N7B3K6B" height="0" width="0"
-            style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-
-    <div id="infoDialog" class="info-dialog">
-        <div class="info-text">Welcome to LingoTowns. By participating in our online game, you agree that you are over
-            the age of 18 and your
-            participation is voluntary and can be used for research purposes. The goal
-            of this project is to understand player engagement in language learning and linguistic games.
+            }, 220);
+         }
+ 
+    </script>
+{% endblock %}
+ 
+{% block page_body %}
+     <div id="infoDialog" class="info-dialog">
+        <div class="info-text">
+            Welcome to LingoTowns. By participating in our online game, you agree that you are over
+             the age of 18 and your
+             participation is voluntary and can be used for research purposes. The goal
+             of this project is to understand player engagement in language learning and linguistic games.
             If you agree to participate, we will collect analytical data based on your interactions in the game. The
             data collected is anonymised upon collection and no personal data is stored. This data may be released
             publicly in the future
@@ -180,41 +113,79 @@
 
                 </div>
             </div>
-        </div>
-    </div>
-    <div id="overlay" class="overlay" onclick="hideMenu()"></div>
-    <div class="nav-bar">
-        <div class="menu-wrapper"><button id="menu-button" onclick="showMenu()"><svg id="menu-icon" class="menu-icon"
-                    version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <g transform="matrix(1.2076 0 0 1.331 -9.584 -1285.7)">
-                        <path
-                            d="m16 979.37c-1.6568 0-3 1.3431-3 3 0 1.6568 1.3432 3 3 3h68c1.6568 0 3-1.3432 3-3 0-1.6569-1.3432-3-3-3zm0 21c-1.6568 0-3 1.3431-3 3 0 1.6568 1.3432 3 3 3h68c1.6568 0 3-1.3432 3-3 0-1.6569-1.3432-3-3-3zm0 21c-1.6568 0-3 1.3431-3 3 0 1.6568 1.3432 3 3 3h68c1.6568 0 3-1.3432 3-3 0-1.6569-1.3432-3-3-3z"
-                            color="#000000" overflow="visible" style="text-indent:0;text-transform:none" />
-                    </g>
-                </svg></button></div>
-    </div>
-    <a id="back-top-button"></a>
-    <header class="w3-container w3-red w3-center">
-        <div id="play" class="lingobannerwrapper">
-            <div class="lingobanner-text-wrapper">
-                <h1 class="w3-margin w3-jumbo">LingoTowns</h1>
-                <p class="w3-xlarge">Help us with our research in Natural Language Processing. Your fun becomes our data
-                    as
-                    we uncover ambiguities in natural expression.</p>
-                <div class="buttoncontainer">
-                    <button class="playbutton" onclick="window.location.href='intro'">play</button>
+         </div>
+     </div>
+     <div id="overlay" class="overlay" onclick="hideMenu()"></div>
+     <a id="back-top-button"></a>
+     <header class="w3-container w3-red w3-center">
+         <div id="play" class="lingobannerwrapper">
+             <div class="lingobanner-text-wrapper">
+                <h1 class="w3-jumbo">LingoTowns</h1>
+                <p class="w3-xlarge hide-on-intro-animation">Help us with our research in <span class="mobile-break"></span> Natural Language Processing.<br><br>Your fun becomes our data as we uncover<span class="mobile-break"></span>ambiguities in natural expression.</p>
+                <div class="button-container hide-on-intro-animation">
+                    {% if 'seen_tutorial' in session and session['seen_tutorial'] %}
+                        <a href="/play"><button>continue</button></a>
+                    {% else %}
+                        <a href="https://auth.tileattack.com/login?redirect={{ url_for('homepage', _external=True) }}play"><button class="secondary">login</button></a>
+                        <a class="play-now-button"><button>new game</button></a>
+                    {% endif %}
                 </div>
             </div>
-
-
-            <div class="lingobanner-img-wrapper">
-                <img class="lingobanner" src="/story/lingobanner.png" alt="banner">
+            <div class="intro-container" style="display: none; ">
+                <lottie-player class="animation-player animation-player1" src="/intro/scene1.json" background="transparent" count="1" speed="1"></lottie-player>
+                <lottie-player class="animation-player animation-player2" src="/intro/scene2.json" background="transparent" count="1" speed="1"></lottie-player>
+                <lottie-player class="animation-player animation-player3" src="/story/scene1.json" background="transparent" count="1" speed="1"></lottie-player>
+                <lottie-player class="animation-player animation-player4" src="/intro/scene3.json" background="transparent" count="1" speed="1"></lottie-player>
+                <div class="dialog-container dialog-container-1">
+                    <div class="character-avatar">
+                        <lottie-player src="/intro/closeup_larunda.json" background="transparent" speed="1.5"></lottie-player>
+                    </div>
+                    <div class="character-name">Larunda</div>
+                    <div class="dialog-text">Greetings! We are scientists from the future. The future world has significantly regressed. Luckily, we discovered documents from the 21st century and we need your help in understanding them.</div>
+                    <div class="progress-indicator">1/3</div>
+                    <button class="continue-intro-button">next</button>
+                    <button class="skip-intro-button tertiary">skip intro</button>
+                </div>
+                <div class="dialog-container dialog-container-2">
+                    <div class="character-avatar">
+                        <lottie-player src="/intro/closeup_echo.json" background="transparent" speed="1.5"></lottie-player>
+                    </div>
+                    <div class="character-name">Echo</div>
+                    <div class="dialog-text">Those documents are scattered all around our towns. We don't know what they mean but we believe they hold valuable information to help our society progress.</div>
+                    <div class="progress-indicator">2/3</div>
+                    <button class="continue-intro-button">next</button>
+                    <button class="skip-intro-button tertiary">skip intro</button>
+                </div>
+                <div class="dialog-container dialog-container-3">
+                    <div class="character-avatar">
+                        <lottie-player src="/intro/closeup_larunda.json" background="transparent" speed="1.5"></lottie-player>
+                    </div>
+                    <div class="character-name">Larunda</div>
+                    <div class="dialog-text">Will you come and help us understand those documents?</div>
+                    <div class="progress-indicator">3/3</div>
+                    <button class="continue-intro-button">Yes</button>
+                    <button class="skip-intro-button tertiary">skip intro</button>
+                </div>
             </div>
-        </div>
-    </header>
-    <div class="container">
+            <div class="mute-button-wrapper" style="display: none;">
+                <div class="music-icon">
+                    <input type="checkbox" name="un-mute" id="un-mute">
+                    <label for="un-mute" class="unmute" >
+                        <img src="http://upload.wikimedia.org/wikipedia/commons/3/3f/Mute_Icon.svg" alt="Mute_Icon.svg" title="Turn off sound" style="height: 25px;">
+                    </label>
+                    <label for="un-mute" class="mute">
+                        <img src="http://upload.wikimedia.org/wikipedia/commons/2/21/Speaker_Icon.svg" alt="Speaker_Icon.svg" title="Turn on sound" style="height: 25px; fill:white;">
+                    </label>
+                 </div>
+             </div>
 
-        <!-- Second Grid -->
+             <div class="lingobanner-img-wrapper">
+                 <img class="lingobanner" src="/story/lingobanner.png" alt="banner">
+             </div>
+         </div>
+     </header>
+    <div class="container hide-on-intro-animation"> 
+         <!-- Second Grid -->
         <div id="about" class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
             <div class="w3-content">
                 <h1>About</h1>
@@ -235,11 +206,11 @@
         </div>
     </div>
     <!-- First Grid -->
-
-    <div id="updates" class="w3-row-padding w3-padding-64 w3-container">
-        <div class="w3-content">
-            <div class="w3-twothird">
-                <h1>Updates</h1>
+ 
+    <div id="updates" class="w3-row-padding w3-padding-64 w3-container hide-on-intro-animation">
+         <div class="w3-content">
+             <div class="w3-twothird">
+                 <h1>Updates</h1>
                 <div class="twitterfeed">
                     <a class="twitter-timeline" href="https://twitter.com/GamesNlp?ref_src=twsrc%5Etfw">Tweets by
                         GamesNlp</a>
@@ -254,9 +225,9 @@
 
 
 
-    <div id="DALI" class="w3-row-padding w3-padding-64 w3-container">
+    <div id="DALI" class="w3-row-padding w3-padding-64 w3-container hide-on-intro-animation">
         <div class="w3-content">
-            <h1>DALI: Disagreements and Language Interpretation</h1>
+             <h1>DALI: Disagreements and Language Interpretation</h1>
 
             <p class="w3-text-grey2">Natural language expressions are supposed to be unambiguous in context. Yet more
                 and more examples of use of expressions that are ambiguous in context, yet felicitous and rhetorically
@@ -282,8 +253,8 @@
                 methods. Third, we will use these data to revisit current theories about anaphoric expressions that do
                 not seem to cause infelicitousness when ambiguous. Finally, we intend to develop the first supervised
                 approach to anaphora resolution that does not require a gold standard as a blueprint for other areas.
-
-            </p>
+ 
+             </p>
             <h1 class="w3-margin w3-large">Find out more about DALI <a href="https://dali.eecs.qmul.ac.uk/"
                     style="text-decoration: underline;">here</a></h1>
         </div>
@@ -291,18 +262,18 @@
     </div>
     </div>
     <!-- Footer -->
-
-    <footer class="footer">
-        <div class="footer-logos">
+ 
+    <footer class="footer hide-on-intro-animation">
+         <div class="footer-logos">
             <a href="https://erc.europa.eu/" target="_blank"><img src="images/logo_EU.png"></a>
             <a href="https://erc.europa.eu/" target="_blank"><img src="images//logo_ERC.png"></a>
             <a href="https://www.qmul.ac.uk/" class="mobile-hidden" target="_blank"><img class="logoQMUL"
                     src="images/logoQMUL_black.png"></a>
             <a href="https://www.essex.ac.uk/" class="mobile-hidden" target="_blank"><img class="logoEssex"
                     src="images/logoEssex_black.png"></a>
-        </div>
-        <div class="w3-xlarge w3-padding-32">
-            <a class="fa fa-facebook-official w3-hover-opacity" href="https://www.facebook.com/gamesandnlp"></a>
+         </div>
+        <div class="social-links-container">
+             <a class="fa fa-facebook-official w3-hover-opacity" href="https://www.facebook.com/gamesandnlp"></a>
             <a class="fa fa-twitter w3-hover-opacity" href="https://twitter.com/GamesNlp"></a>
         </div>
     </footer>
@@ -335,8 +306,6 @@
             return "";
         }
 
-
-
         // function openPopup() {
         //     window.location.hash = 'infoDialog';
         //     setCookie("viewed_info_dialog");
@@ -360,6 +329,4 @@
         }
 
     </script>
-</body>
-
-</html>
+{% endblock %}

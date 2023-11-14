@@ -1,0 +1,18 @@
+/*added by doruk*/
+input[type=password] { &:extend(input[type=text]); }
+section p label:first-of-type { width: 100%; }
+
+aside.popup .btn-panel { margin: 0px; margin-top: 1em; }
+aside.popup .btn-panel button { position: unset; right: unset; }
+
+each(@special-buttons, {
+	.btn-@{value}.small{ 
+		&::before { width: 24px; height: 24px; top: 7px; left: 8px; }
+		&::after { display: none; }
+	}
+});
+
+.switch{ cursor: pointer; }
+button{
+	&.primary-button{ background: #007bff; }
+}

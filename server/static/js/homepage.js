@@ -22,9 +22,9 @@ function hideMenu() {
 }
 
 
-menuButton.onclick = function () {
-    showMenu()
-};
+// menuButton.onclick = function () {
+//     showMenu()
+// };
 
 closeButton.onclick = function () {
     hideMenu()

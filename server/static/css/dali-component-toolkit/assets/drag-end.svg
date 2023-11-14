@@ -1,0 +1,6 @@
+<svg version="1.1" viewBox="0 0 47 72" xmlns="http://www.w3.org/2000/svg">
+ <g transform="translate(0 -224.91)">
+  <path transform="matrix(.26458 0 0 .26458 0 225)" d="m0.26367-0.054688-0.083984 179.17a88.893 88.893 0 0 0 -0.17969 3.6094 88.893 88.893 0 0 0 88.893 88.895 88.893 88.893 0 0 0 88.895 -88.895 88.893 88.893 0 0 0 -31.117 -67.514l0.0312-0.0137-0.29687-0.23438a88.893 88.893 0 0 0 -1.5469 -1.2168z"/>
+  <text x="8.0319929" y="279.64078" fill="#ffffff" font-family="sans-serif" font-size="10.583px" letter-spacing="0px" stroke-width=".26458" word-spacing="0px" style="line-height:1.25" xml:space="preserve"><tspan x="8.0319929" y="279.64078" fill="#ffffff" stroke-width=".26458">DRAG</tspan></text>
+ </g>
+</svg>

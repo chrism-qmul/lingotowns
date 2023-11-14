@@ -3,3 +3,5 @@ __pycache__
 env
 .DS_Store
 .vscode
+git_diff_output/
+data/db/

@@ -1,0 +1,48 @@
+@import (css) url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+
+@warning: #f97291;
+@warning-hint:#e6a6ae;
+@success: #6ce8b0;
+@success-hint: #a3d6bf;
+@primary: #2a2a2a;
+@call-out: #8642fe;
+@secondary: #fff;
+@special-buttons: help, done, map, close, open, start, skip, forum, menu;
+
+.clearfix {
+	clear:both;
+}
+
+* {
+	outline:none;
+	font-family: 'Nunito', sans-serif;
+}
+
+.hide() {
+	float:left;
+	opacity:0;
+	width:0;
+	height:0;
+}
+
+.colorized-svg-background(@background-color, @image) {
+	background-color:@background-color;
+	mask-image: @image;
+	-webkit-mask-image: $mask-image;
+	mask-repeat: no-repeat;
+	-webkit-mask-repeat: $mask-repeat;
+	mask-size:contain;
+	-webkit-mask-size: $mask-size;
+}
+
+.user-select(@userselect) {
+	-webkit-user-select: @userselect;
+	-moz-user-select: @userselect;
+	-ms-user-select: @userselect;
+	user-select: @userselect;
+}
+
+@dalibaseurl:"./";
+@import "components.less";
+@import "layout.less";
+@import "added_by_doruk.less";
