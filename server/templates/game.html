@@ -41,7 +41,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Mouse+Memoirs&display=swap" rel="stylesheet">
     <script src="/js/array.polyfill.js"></script>
-
+    <script>
+        function showMenu_at_game_html(){
+            document.getElementById('nav-bar-expanded-wrapper').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+            // document.getElementById('nav-bar-expanded-wrapper').style.animationFillMode = "inherit";
+            document.getElementById('nav-bar-expanded-wrapper').style.animation = "menu-show 0.3s";
+        }
+    </script>
 
     <title>LingoTowns | Play</title>
 </head>
@@ -754,7 +761,7 @@
     </div>
     <div id="overlay" class="overlay" onclick="hideMenu()"></div>
     <div class="nav-bar">
-        <div class="menu-wrapper"><button id="menu-button" onclick="showMenu()"><svg id="menu-icon" class="menu-icon"
+        <div class="menu-wrapper"><button id="menu-button" onclick="showMenu_at_game_html();"><svg id="menu-icon" class="menu-icon"
                     version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                     <g transform="matrix(1.2076 0 0 1.331 -9.584 -1285.7)">
                         <path
